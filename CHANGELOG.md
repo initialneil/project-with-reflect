@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.0 — 2026-06-24
+
+- Discoverability + knowledge linking: argument-hint on every command/skill (tab-complete menus like /goal); new use-knowledge action (link a global knowledge module into a project — the knowledge analog of binding a machine, one module serves many projects).
+
 ## v0.2.1 — 2026-06-24
 
 - Obsidian folder-notes integration: register-project re-attaches a project's <name>.md as its folder note when the root is in an Obsidian vault (clears stale detached records; never alters the .md). Mentioned only in the post-register summary for Obsidian users.

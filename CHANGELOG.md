@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.1 — 2026-06-24
+
+- MCP-aware register-knowledge (note|mcp|api) — wires the server via 'claude mcp add'; README polish (grounding-rules link, splattingavatar example)
+
 ## v0.1.0 — 2026-06-24
 
 - Initial release of the `project-with-reflect` meta-skill.

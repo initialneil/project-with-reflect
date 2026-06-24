@@ -31,10 +31,16 @@ readability + modularity (split a long rule module into another topic).
 script exits `3` printing `PWR_FIRST_RUN` when no root is configured (no env var, no
 pointer at `~/.config/project-with-reflect/root`, no legacy `~/.project-with-reflect`).
 On that signal:
-1. **AskUserQuestion** for the path. A **custom path is recommended** — a *synced,
-   human-readable* location such as an **Obsidian vault, iCloud, or Dropbox** folder
-   (e.g. `~/Obsidian Vault/project-with-reflect`) so your rules + knowledge sync across
-   machines and stay readable. Offer `~/.project-with-reflect` as the no-sync default.
+1. **AskUserQuestion** for the path. A **custom synced + readable path is recommended**.
+   **Detect what the user actually has** and offer those (don't suggest providers they
+   lack): their **Obsidian vault**, or a **cloud file-sync folder** — Dropbox, Google
+   Drive, OneDrive, iCloud, Nutstore, etc. (macOS often mounts these under
+   `~/Library/CloudStorage/*`, plus iCloud at `~/Library/Mobile Documents/com~apple~CloudDocs`;
+   Linux/Windows use each provider's own sync dir). In a visible/synced location use a
+   Title-Case folder: `<provider>/Project-with-Reflect`. Offer hidden
+   `~/.project-with-reflect` as the no-sync system default.
+   **Notion / Google Docs are not local folders — they can't be the root** (knowledge
+   can be mirrored to them later via an MCP, but the root must be a real directory).
 2. `SK/scripts/bootstrap.sh "<path>"` — creates the root, writes the pointer, persists
    the export to your shell rc.
 3. **Re-run the original command with `PROJECT_WITH_REFLECT_ROOT="<path>"` prefixed**

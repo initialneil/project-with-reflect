@@ -30,10 +30,11 @@ before acting**.
 ```
 
 On first run it asks where to keep `$PROJECT_WITH_REFLECT_ROOT`. A **custom, synced,
-readable path is recommended** — e.g. an Obsidian vault / iCloud / Dropbox folder
-(`~/Obsidian Vault/project-with-reflect`) so your rules and knowledge sync across
-machines and stay easy to read; `~/.project-with-reflect` is the no-sync default. The
-choice is saved (pointer + shell rc).
+readable path is recommended** — your Obsidian vault or a cloud file-sync folder
+(Dropbox / Google Drive / OneDrive / iCloud / Nutstore), using a `Project-with-Reflect`
+folder there, so your rules and knowledge sync across machines and stay easy to read.
+`~/.project-with-reflect` is the no-sync default. (Notion / Google Docs can't be the
+root — the root must be a real local folder.) The choice is saved (pointer + shell rc).
 
 ## The model
 

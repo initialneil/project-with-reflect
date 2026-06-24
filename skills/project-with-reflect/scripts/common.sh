@@ -24,13 +24,16 @@ pwr_first_run_guard() {
   [ -d "$HOME/.project-with-reflect" ] && return 0   # legacy install, no pointer
   {
     echo "PWR_FIRST_RUN: no project-with-reflect root configured."
-    echo "Ask the user where to keep it. A CUSTOM path is RECOMMENDED — a synced,"
-    echo "human-readable location like an Obsidian vault / iCloud / Dropbox folder"
-    echo "(e.g. \"~/Obsidian Vault/project-with-reflect\") so rules + knowledge sync"
-    echo "across machines and stay readable. Default fallback: ~/.project-with-reflect."
-    echo "Then run: bootstrap.sh \"<chosen-path>\"  and retry this command with"
-    echo "PROJECT_WITH_REFLECT_ROOT=\"<chosen-path>\" prefixed (the rc export only"
-    echo "affects future shells)."
+    echo "Ask the user where to keep it. A CUSTOM synced + readable path is RECOMMENDED."
+    echo "DETECT what they have and offer those: their Obsidian vault, or a cloud file-sync"
+    echo "folder (Dropbox / Google Drive / OneDrive / iCloud / Nutstore / ...). On macOS these"
+    echo "are often under ~/Library/CloudStorage/* (+ iCloud at ~/Library/Mobile Documents/"
+    echo "com~apple~CloudDocs); Linux/Windows use each provider's own sync dir."
+    echo "In a visible location use a Title-Case folder: '<provider>/Project-with-Reflect'."
+    echo "Notion / Google Docs are NOT local folders, so they can't be the root."
+    echo "System default (hidden, no sync): ~/.project-with-reflect."
+    echo "Then: bootstrap.sh \"<chosen-path>\"  and retry with"
+    echo "PROJECT_WITH_REFLECT_ROOT=\"<chosen-path>\" prefixed (rc export affects future shells only)."
   } >&2
   exit 3
 }

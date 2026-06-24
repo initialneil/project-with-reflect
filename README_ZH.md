@@ -28,9 +28,10 @@ learning loop；可读性思路借鉴 [grounding-rules](https://github.com/initi
 ```
 
 首次运行会询问 `$PROJECT_WITH_REFLECT_ROOT` 放哪。**推荐用一个 custom、可同步、可读的
-路径** —— 比如 Obsidian vault / iCloud / Dropbox 文件夹（`~/Obsidian Vault/project-with-reflect`），
-这样你的 rules 和 knowledge 能跨机器同步、也方便阅读；`~/.project-with-reflect` 是不同步的
-默认值。选择会被保存（pointer + shell rc）。
+路径** —— 你的 Obsidian vault，或一个云文件同步文件夹（Dropbox / Google Drive / OneDrive /
+iCloud / Nutstore），在其中用一个 `Project-with-Reflect` 文件夹，这样 rules 和 knowledge
+能跨机器同步、也方便阅读；`~/.project-with-reflect` 是不同步的默认值。（Notion / Google Docs
+不是本地文件夹，不能作为 root —— root 必须是真实的本地目录。）选择会被保存（pointer + shell rc）。
 
 ## 结构 The model
 

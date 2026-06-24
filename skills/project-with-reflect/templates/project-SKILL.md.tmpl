@@ -1,0 +1,68 @@
+---
+name: {{NAME}}
+description: "Work on the {{NAME}} project with persistent, self-improving context: loads rules + decisions + the active workstream, auto-logs key events, and reflects logs into lean readable rules. Use for any work on {{NAME}}."
+---
+# {{NAME}} — project skill (project-with-reflect)
+
+State dir: `{{PDIR}}`
+- `rules/<topic>.md` — modular, readable rules (knowledge). Loaded on demand.
+- `workstreams/<branch>/` — `stream.json` (state) + `log.md` (history) per lane.
+- `decisions.md` — ideas tried / chosen / rejected (+ datasets, settings).
+- `status.md` — the human dashboard (you regenerate it on reflect).
+- `evals/<eval>/`, `tasks/<task>.md`, `config.json`.
+
+This skill is self-contained: it works even without the meta-skill installed
+(in-repo projects stay portable). When the meta-skill IS installed, prefer its
+helpers at `~/.claude/skills/project-with-reflect/scripts/` for deterministic ops.
+
+## Rule index
+<!-- one line per rule module: `topic — load when …`. reflect maintains this list. -->
+
+## Behavioral contract — every session, before acting
+1. **Load first, propose second.** Read `status.md` + `decisions.md` + the active
+   workstream, and the rule modules whose "load when…" matches the task.
+2. **Check the ledger before proposing.** If an idea/experiment is already in
+   `decisions.md`, say so and cite it — never re-propose blind.
+3. **Never improvise guarded state.** Datasets, training settings, branch/release
+   conventions live in `rules/` as invariants — change only with explicit sign-off,
+   then log it.
+4. **Surface, don't bury.** When work touches an area with a rule module or a
+   registered eval, name it.
+
+## Working
+Auto-log to the active stream's `log.md` on: complex error + fix, PR / merge /
+rebase, key finding. `note "…"` forces a log line.
+
+## Subcommands
+- `status` — print `status.md`.
+- `list` — handles: workstreams (+ lineage / behind-base), evals, tasks, rule
+  modules, global knowledge used (`config.json.knowledge`).
+- `help` — this menu.
+- `reflect [--reground]` — fold new stream-log entries into the right
+  `rules/<topic>.md` + `decisions.md` (**bounded update**: add facts, fix wrong
+  ones; **split a module** into another topic if it gets too long to read — no
+  caps), regenerate `status.md`, then archive consumed logs
+  (`reflect.sh archive {{PDIR}} <stream>`). Report what changed. `--reground` =
+  full grounding-rules-style rewrite of one module.
+- `streams` — list `workstreams/*/stream.json`; flag any behind their `base`.
+- `register-branch <b> --base <x> [--track-only]` — make `workstreams/<b>/` per
+  `config.workstream_mode` (worktree → `git worktree add`; in-repo → `git checkout
+  -b`; logical → no branch), set `base`/`pr_into`, then generate the
+  `/{{NAME}}-<b>` alias (`gen-command.sh {{NAME}} <b> branch {{PDIR}}`).
+  `--track-only` records lineage only (e.g. an integration branch you rebase onto).
+- `<branch>` — switch to that workstream (load its log + base + rules).
+  - `pr` — rebase onto `base`; if `base` is behind ITS base
+    (`git rev-list --count origin/<base>..origin/<base's base>` > 0) warn + offer
+    to rebase the integration branch first; then `gh pr create --base <pr_into>`;
+    log the PR + check. A merged stream is **reusable**: `reset` recycles it.
+  - `rebase` — `git rebase origin/<base>`.
+  - `reset` — after a merged PR, fast-forward the lane onto latest `origin/<base>`;
+    bump `cycle` in `stream.json`.
+- `register-eval <e> [path]` — copy the case into `evals/<e>/`; generate
+  `/{{NAME}}-<e>` (`gen-command.sh {{NAME}} <e> eval {{PDIR}}`). `eval all` runs
+  the whole suite as a pre-release gate.
+- `register-task <t>` — save a runbook `tasks/<t>.md`; generate `/{{NAME}}-<t>`.
+- `note "…"` — force a log entry into the active stream.
+
+Leanness: **no caps** — keep rules readable; split a long module into another
+topic; reflect makes bounded updates, not whole-doc rewrites.

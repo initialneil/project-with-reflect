@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Scaffold a project and generate its /<name> command (user scope).
+#   register-project.sh <name> <repo_path> <mode> <workstream_mode> [machine] [device]
+#     mode            = central | in-repo
+#     workstream_mode = worktree | in-repo
+set -euo pipefail
+HERE="$(cd "$(dirname "$0")" && pwd)"
+source "$HERE/common.sh"
+pwr_ensure_root
+TPL="$HERE/../templates"
+
+NAME="${1:?project name required}"
+REPO="${2:-}"
+MODE="${3:-central}"
+WSM="${4:-in-repo}"
+MACHINE="${5:-}"
+DEVICE="${6:-}"
+
+if [ "$MODE" = "in-repo" ]; then
+  [ -n "$REPO" ] || { echo "in-repo mode needs a repo path (arg 2)" >&2; exit 1; }
+  PDIR="$REPO/.project-with-reflect"
+  mkdir -p "$PDIR"
+  ln -sfn "$PDIR" "$PWR_ROOT/projects/$NAME"
+else
+  PDIR="$PWR_ROOT/projects/$NAME"
+  mkdir -p "$PDIR"
+fi
+
+mkdir -p "$PDIR"/rules "$PDIR"/workstreams/main "$PDIR"/evals "$PDIR"/tasks "$PDIR"/knowledge
+
+python3 - "$PDIR/config.json" "$NAME" "$REPO" "$MODE" "$WSM" "$MACHINE" "$DEVICE" <<'PY'
+import json, sys
+path, name, repo, mode, wsm, machine, device = sys.argv[1:8]
+cfg = {"name": name, "repo": repo, "mode": mode, "workstream_mode": wsm,
+       "knowledge": [], "template_version": "0.1.0"}
+if machine: cfg["machine"] = machine
+if device:  cfg["device"]  = device
+json.dump(cfg, open(path, "w"), indent=2)
+PY
+
+python3 - "$PDIR/workstreams/main/stream.json" <<'PY'
+import json, sys
+json.dump({"branch": None, "base": None, "pr_into": None, "kind": "logical",
+           "worktree_path": None, "status": "active", "cycle": 1},
+          open(sys.argv[1], "w"), indent=2)
+PY
+
+[ -f "$PDIR/workstreams/main/log.md" ] || echo "# main — stream log" > "$PDIR/workstreams/main/log.md"
+[ -f "$PDIR/decisions.md" ] || printf '# Decisions — %s\n\n> Ideas tried / chosen / rejected (+ datasets, settings). Check here before proposing.\n' "$NAME" > "$PDIR/decisions.md"
+[ -f "$PDIR/status.md" ]    || printf '# %s — status\n\n- **Where:** fresh project\n- **System:** (reflect fills this in)\n- **Tried / decided:** —\n- **Next:** —\n' "$NAME" > "$PDIR/status.md"
+[ -f "$PDIR/SKILL.md" ]     || sed "s/{{NAME}}/$NAME/g; s|{{PDIR}}|$PDIR|g" "$TPL/project-SKILL.md.tmpl" > "$PDIR/SKILL.md"
+
+mkdir -p "$HOME/.claude/commands"
+sed "s/{{NAME}}/$NAME/g; s|{{PDIR}}|$PDIR|g" "$TPL/project-command.md.tmpl" > "$HOME/.claude/commands/$NAME.md"
+
+pwr_registry_put projects "$NAME" "{\"dir\":\"$PDIR\",\"repo\":\"$REPO\",\"mode\":\"$MODE\",\"workstream_mode\":\"$WSM\"}"
+echo "Registered project '$NAME' ($MODE / $WSM) at $PDIR"
+echo "Use /$NAME to work on it."

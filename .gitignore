@@ -1,0 +1,6 @@
+.DS_Store
+# planning workspace (kept local, not shipped)
+task_plan.md
+findings.md
+progress.md
+.planning/

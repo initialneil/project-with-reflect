@@ -62,6 +62,14 @@ Bare `/project-with-reflect` → `help`.
   `SK/scripts/register-project.sh <name> <path> <mode> <workstream_mode> [machine] [device]`.
   Generates `/<name>`. If "import", read the named docs and distill into
   `rules/<topic>.md` (confirm what you cut). See §SSOT below for mode trade-offs.
+  - **Obsidian folder-notes (mention only in the post-register summary):**
+    register-project runs `SK/scripts/obsidian-folder-note.sh <project_dir>` — it is
+    silent unless the root is in an Obsidian vault with folder-notes, where it clears any
+    stale `detached` record (the only thing that severs the link; the `.md` is never
+    altered) and prints a folder-notes line. **Only if it printed that line**, add one
+    sentence to your summary: the project's `<name>.md` is its Obsidian folder note —
+    reload the folder-notes plugin (or restart Obsidian) to see it. Otherwise don't
+    mention folder-notes at all.
 - **register-machine `<name>`** — for an existing host:
   `SK/scripts/register-machine.sh <name> <ssh_alias> [repo] [endpoint] ssh` (ensure a
   key-based `Host` alias in `~/.ssh/config`; never store passwords). For one you

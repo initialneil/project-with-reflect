@@ -55,5 +55,10 @@ mkdir -p "$HOME/.claude/commands"
 sed "s/{{NAME}}/$NAME/g; s|{{PDIR}}|$PDIR|g" "$TPL/project-command.md.tmpl" > "$HOME/.claude/commands/$NAME.md"
 
 pwr_registry_put projects "$NAME" "{\"dir\":\"$PDIR\",\"repo\":\"$REPO\",\"mode\":\"$MODE\",\"workstream_mode\":\"$WSM\"}"
+
+# If the project lives inside an Obsidian vault with the folder-notes plugin, make sure
+# <name>/<name>.md attaches as the folder note (no-ops otherwise).
+bash "$HERE/obsidian-folder-note.sh" "$PDIR" || true
+
 echo "Registered project '$NAME' ($MODE / $WSM) at $PDIR"
 echo "Use /$NAME to work on it."

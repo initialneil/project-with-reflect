@@ -41,3 +41,4 @@ print("device=%s machine=%s build_cmd=%s" % (
     "set" if cfg.get("build_cmd") else "-"))
 PY
 echo "Updated bindings in $CFG."
+bash "$HERE/gen-dashboard.sh" "$PDIR"   # reflect the new binding in <name>.md facts

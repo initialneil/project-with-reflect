@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.1 — 2026-06-24
+
+- Vault files read as clean notes: knowledge note is now knowledge/<k>/<k>.md (attaches as an Obsidian folder note); dashboard facts (repo/mode/device/machine/build/knowledge/workstreams) are written as YAML frontmatter (Obsidian Properties) by new gen-dashboard.sh — stdlib-only YAML merge preserves tags + narrative, idempotent, migrates legacy comment blocks, wired into register-project/bind/use-knowledge; scaffolds are now minimal clean headings (no meta-instructions or comment cruft in user files — guidance lives in SKILL.md).
+
 ## v0.4.0 — 2026-06-24
 
 - Device orchestration: register-device bakes real flash/monitor commands into runnable scripts (was a TODO stub); projects gain bind/build/flash/monitor handlers + a 'load the bound device/machine before build/flash/deploy' contract rule (binding was inert); meta-skill gains a Compound-requests sequencing guide (knowledge->device->project+bind->use-knowledge->build). New bind.sh; template_version 0.2.0.

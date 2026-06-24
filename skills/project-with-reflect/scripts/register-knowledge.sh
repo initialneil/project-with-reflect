@@ -11,18 +11,23 @@ set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"; source "$HERE/common.sh"; pwr_first_run_guard; pwr_ensure_root
 NAME="${1:?knowledge name required}"; KIND="${2:-note}"; SETUP="${3:-}"
 KDIR="$PWR_ROOT/knowledge/$NAME"; mkdir -p "$KDIR"
-KFILE="$KDIR/knowledge.md"
+# Note file is <name>.md (matches the folder name) so it attaches as the Obsidian folder
+# note when the root is a vault — same convention as a project's <name>.md dashboard.
+KFILE="$KDIR/$NAME.md"
 
+# Scaffolds are clean headings + real structure only — no meta-notes about opting in, no
+# comment cruft (that guidance lives in SKILL.md). The model fills the sections with real
+# content; what's known now (the setup line) goes in verbatim.
 if [ ! -f "$KFILE" ]; then
   case "$KIND" in
     mcp)
       cat > "$KFILE" <<EOF
-# $NAME (MCP)
-
-> Global, agent-usable MCP. A project opts in via \`config.json.knowledge: ["$NAME"]\`.
-
-## What it is
-(one line)
+---
+tags:
+  - knowledge
+kind: mcp
+---
+# $NAME
 
 ## Setup — already wired (user scope)
 \`${SETUP:-claude mcp add --scope user $NAME -- <command...>}\`
@@ -32,36 +37,37 @@ Verify: \`claude mcp get $NAME\` · re-add on a new machine with the line above.
 \`mcp__${NAME}__*\`
 
 ## Usage rules
-- (when to reach for it; what NOT to do)
 
 ## Gotchas
-- (editor must be open / auth / port / etc.)
 EOF
       ;;
     api)
       cat > "$KFILE" <<EOF
-# $NAME (API)
-
-> Global, agent-usable API/SDK setup. Opt in via \`config.json.knowledge: ["$NAME"]\`.
+---
+tags:
+  - knowledge
+kind: api
+---
+# $NAME
 
 ## Setup
-${SETUP:-(install + auth steps)}
+${SETUP:-_(install + auth steps — fill in)_}
 Secrets live in env/keychain — **never on disk here.**
 
 ## Usage rules
--
 
 ## Gotchas
--
 EOF
       ;;
     *)
-      printf '# %s\n\n> Global knowledge module. Opt in via `config.json.knowledge: ["%s"]`.\n\n-\n' "$NAME" "$NAME" > "$KFILE"
+      printf -- '---\ntags:\n  - knowledge\nkind: note\n---\n# %s\n' "$NAME" > "$KFILE"
       ;;
   esac
 fi
 
 pwr_registry_put knowledge "$NAME" "{\"dir\":\"$KDIR\",\"kind\":\"$KIND\"}"
-echo "Registered global knowledge '$NAME' (kind=$KIND) at $KDIR"
+echo "Registered global knowledge '$NAME' (kind=$KIND) at $KDIR/$NAME.md"
+# If the knowledge dir lives in an Obsidian vault with folder-notes, attach <name>/<name>.md.
+bash "$HERE/obsidian-folder-note.sh" "$KDIR" || true
 [ "$KIND" = "mcp" ] && echo "Reminder: ensure the MCP is wired — 'claude mcp add --scope user $NAME ...' (then 'claude mcp get $NAME')."
 exit 0

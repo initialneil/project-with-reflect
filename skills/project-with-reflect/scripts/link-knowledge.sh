@@ -25,3 +25,4 @@ else:
 json.dump(d, open(cfg, "w"), indent=2)
 print(f"{action} knowledge '{k}' {prep} {d.get('name', cfg)} (config.json.knowledge = {d['knowledge']})")
 PY
+bash "$HERE/gen-dashboard.sh" "$PDIR"   # reflect linked/unlinked knowledge in <name>.md facts

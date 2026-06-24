@@ -12,9 +12,11 @@ Facts live in this folder's `{{NAME}}.md` frontmatter (ssh_alias / kind / repo /
 1. Load `{{NAME}}.md` — the **facts** (ssh alias, endpoint) + **learned quirks** in the body
    (`## Quirks`). Apply known quirks (e.g. "after reboot, `nvidia-smi -pl 300`"; the dataset
    mount path) instead of rediscovering them.
-2. **Read-only commands run freely** (nvidia-smi, df, ls, tail). **Confirm before mutating or
+2. **Ground in the docs.** For non-trivial / unfamiliar ops, **fetch `docs_url`** (frontmatter) —
+   the provider/runbook docs — rather than guessing.
+3. **Read-only commands run freely** (nvidia-smi, df, ls, tail). **Confirm before mutating or
    destructive** ops (reboot, rm, kill, package installs, anything writing outside scratch).
-3. Auto-log notable events to `log.md`: a fix, a recurring setup step, a gotcha.
+4. Auto-log notable events to `log.md`: a fix, a recurring setup step, a gotcha.
 
 ## Actions
 - `<command>` — run over ssh: `ssh <ssh_alias> <command>` (alias from `connection.json`). E.g.

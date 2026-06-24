@@ -9,9 +9,11 @@ in this folder's `{{NAME}}.md` frontmatter (`add_command`) and `connection.json`
 
 ## Before acting
 1. Load `{{NAME}}.md` — the re-add line, usage rules, and learned quirks (`## Quirks`). Apply them.
-2. If the tools aren't available (new machine / dropped), re-wire: run the `add_command`, then
+2. **Ground in the docs.** For non-trivial use, **fetch `docs_url`** (frontmatter) for the
+   authoritative tool list / args — don't guess.
+3. If the tools aren't available (new machine / dropped), re-wire: run the `add_command`, then
    verify `claude mcp get {{NAME}}`.
-3. Auto-log notable events to `log.md`: a usage recipe, an auth/port gotcha.
+4. Auto-log notable events to `log.md`: a usage recipe, an auth/port gotcha.
 
 ## Actions
 - Use the `mcp__{{NAME}}__*` tools per `{{NAME}}.md`'s usage rules (what to reach for; what not to).

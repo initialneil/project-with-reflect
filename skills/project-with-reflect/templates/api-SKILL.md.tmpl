@@ -9,9 +9,11 @@ Facts live in this folder's `{{NAME}}.md` frontmatter (`base_url`, `key_env`) an
 
 ## Before acting
 1. Load `{{NAME}}.md` — base URL, endpoints, usage, and learned quirks (`## Quirks`). Apply them.
-2. Read the key from the env var named by `key_env` at call time; if it's unset, tell the user to
+2. **Ground in the docs.** When implementing or deciding against this API, **fetch `docs_url`**
+   (frontmatter) for authoritative endpoints/params/limits — don't guess; cite what you used.
+3. Read the key from the env var named by `key_env` at call time; if it's unset, tell the user to
    set it — don't proceed with a blank key.
-3. Auto-log notable events to `log.md`: a working call recipe, an error + fix, a rate/cost gotcha.
+4. Auto-log notable events to `log.md`: a working call recipe, an error + fix, a rate/cost gotcha.
 
 ## Actions
 - `<action> [args]` — make the documented call (curl / SDK / WebSocket) to the right endpoint

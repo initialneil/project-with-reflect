@@ -1,6 +1,6 @@
 ---
 description: "Register an MCP server as a connection skill — project-with-reflect"
-argument-hint: "<name> \"<claude mcp add command>\""
+argument-hint: "<name> \"<claude mcp add command>\" [docs_url]"
 ---
 Run the **register-mcp** action of the `project-with-reflect` skill with arguments: $ARGUMENTS
 

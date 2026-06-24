@@ -1,26 +1,28 @@
 #!/usr/bin/env bash
 # Register an SSH connection (host / cloud server) as a skill under connections/. NO secrets on disk.
-#   register-machine.sh <name> [ssh_alias] [repo_path] [endpoint] [kind]
+#   register-machine.sh <name> [ssh_alias] [repo_path] [endpoint] [kind] [docs_url]
 #     kind = ssh | cloud-vm | cloud-storage  (default ssh)
 # For a cloud server you don't have yet, the model runs the guided provision+pay flow first
 # (gcloud/etc., confirm cost + billing), then calls this to record it.
+# docs_url = provider/runbook docs (recorded for grounding — fetch before non-trivial ops).
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"; source "$HERE/common.sh"; pwr_first_run_guard; pwr_ensure_root
 TPL="$HERE/../templates"
-NAME="${1:?machine name required}"; ALIAS="${2:-$1}"; REPO="${3:-}"; ENDPOINT="${4:-}"; KIND="${5:-ssh}"
+NAME="${1:?machine name required}"; ALIAS="${2:-$1}"; REPO="${3:-}"; ENDPOINT="${4:-}"; KIND="${5:-ssh}"; DOCS="${6:-}"
 CDIR="$PWR_ROOT/connections/$NAME"; mkdir -p "$CDIR"
 
-python3 - "$CDIR/connection.json" "$NAME" "$ALIAS" "$REPO" "$ENDPOINT" "$KIND" <<'PY'
+python3 - "$CDIR/connection.json" "$NAME" "$ALIAS" "$REPO" "$ENDPOINT" "$KIND" "$DOCS" <<'PY'
 import json, sys
-path, name, alias, repo, endpoint, kind = sys.argv[1:7]
+path, name, alias, repo, endpoint, kind, docs = sys.argv[1:8]
 m = {"name": name, "transport": "ssh", "ssh_alias": alias, "kind": kind}
 if repo: m["repo"] = repo
 if endpoint: m["endpoint"] = endpoint
+if docs: m["docs_url"] = docs
 json.dump(m, open(path, "w"), indent=2)
 PY
 
 python3 "$HERE/_note.py" "$CDIR/$NAME.md" "$NAME" connection \
-  transport=ssh ssh_alias="$ALIAS" kind="$KIND" repo="$REPO" endpoint="$ENDPOINT"
+  transport=ssh ssh_alias="$ALIAS" kind="$KIND" repo="$REPO" endpoint="$ENDPOINT" docs_url="$DOCS"
 
 pwr_install_skill "$CDIR" "$NAME" "$TPL/machine-SKILL.md.tmpl"
 pwr_registry_put connections "$NAME" "{\"transport\":\"ssh\",\"ssh_alias\":\"$ALIAS\",\"kind\":\"$KIND\"}"

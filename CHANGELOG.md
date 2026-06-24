@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.1 — 2026-06-24
+
+- connections record a docs_url grounding pointer; per-skill reflect routing — log + reflect each finding at the skill it's about (project vs connection), with triage + a no-cascade nudge on /<project> reflect
+
 ## v0.5.0 — 2026-06-24
 
 - Connections model (pre-1.0): unify machines + devices + APIs + MCPs into one connections/ folder, each a skill with a transport (ssh|serial|http|mcp) + the log->reflect->quirks loop. New register-api/register-mcp; register-machine/device create connections; register-knowledge is plain-md notes only; projects bind connections (config.json.connections); /update + a native per-connection update action; shared helpers pwr_install_skill + _note.py. Supersedes the retracted v1.0.0/v1.0.1 tags (not ready for v1). BREAKING vs 0.4.x: machines//devices/ -> connections/; register-knowledge no longer takes api/mcp kinds.

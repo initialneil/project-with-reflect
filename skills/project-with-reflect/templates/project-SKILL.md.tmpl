@@ -36,8 +36,14 @@ helpers at `~/.claude/skills/project-with-reflect/scripts/` for deterministic op
    (`/<name>`).
 
 ## Working
-Auto-log to the active stream's `log.md` on: complex error + fix, PR / merge /
-rebase, key finding. `note "…"` forces a log line.
+Auto-log key events — **to the skill the finding is about**, so knowledge lands where it's reusable:
+- **Project finding** (this app's code / build / architecture / a decision) → the active stream's
+  `log.md`. Triggers: complex error + fix, PR / merge / rebase, key finding. `note "…"` forces a line.
+- **Connection finding** (a device / host / API quirk or workaround *any* project binding it would
+  hit — a flash boot-mode dance, an endpoint gotcha, "serial silent ≠ crash") → that connection's
+  log via `/<name> note "…"`. Test: *would the next project that binds this connection need it?* →
+  connection's log; *only true for this app?* → stream log. Device/API knowledge thus stays with the
+  device/API (reusable across projects), not buried in one project's rules.
 
 ## Subcommands
 - `bootstrap` — **seed this project from existing material** (run right after
@@ -53,12 +59,15 @@ rebase, key finding. `note "…"` forces a log line.
 - `list` — handles: workstreams (+ lineage / behind-base), evals, tasks, rule
   modules, global knowledge used (`config.json.knowledge`).
 - `help` — this menu.
-- `reflect [--reground]` — fold new stream-log entries into the right
-  `rules/<topic>.md` + `decisions.md` (**bounded update**: add facts, fix wrong
-  ones; **split a module** into another topic if it gets too long to read — no
-  caps), refresh the dashboard frontmatter facts (`gen-dashboard.sh {{PDIR}}`) and update
-  the `{{NAME}}.md` narrative body, then archive consumed logs
-  (`reflect.sh archive {{PDIR}} <stream>`). Report what changed. `--reground` =
+- `reflect [--reground]` — **triage first:** any new stream-log entry that's really about a bound
+  connection (a device/API quirk, not this app) → move it to that connection's `log.md` (it reflects
+  into that connection's quirks via `/<name> reflect`), don't fold it into project rules. Then fold
+  the remaining entries into the right `rules/<topic>.md` + `decisions.md` (**bounded update**: add
+  facts, fix wrong ones; **split a module** into another topic if it gets too long to read — no caps),
+  refresh the dashboard frontmatter facts (`gen-dashboard.sh {{PDIR}}`) and the `{{NAME}}.md` narrative
+  body, then archive consumed logs (`reflect.sh archive {{PDIR}} <stream>`). Reflect stays **per-skill
+  — no cascade**: end by listing bound connections that have unreflected `log.md` lines and suggesting
+  `/<name> reflect` for each. Report what changed. `--reground` =
   full grounding-rules-style rewrite of one module.
 - `streams` — list `workstreams/*/stream.json`; flag any behind their `base`.
 - `register-branch <b> --base <x> [--track-only]` — make `workstreams/<b>/` per

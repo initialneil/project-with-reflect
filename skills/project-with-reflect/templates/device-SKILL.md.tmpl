@@ -12,8 +12,10 @@ monitor) and `connection.json` (transport: serial). Flash & monitor are baked in
 1. Load `{{NAME}}.md` — the **facts** (board/port/toolchain) + any **learned quirks** in the
    body (`## Quirks`). Apply known quirks (e.g. the GPIO0 download-mode dance) instead of
    rediscovering them.
-2. **Confirm before anything destructive** — a reflash that wipes data, a reboot mid-write.
-3. Auto-log notable events to `log.md`: a flash that needed a quirk, a fix, a gotcha.
+2. **Ground in the docs.** For low-level / unfamiliar work, **fetch `docs_url`** (frontmatter)
+   — the board's docs/datasheet — rather than guessing pins / boot modes / specs.
+3. **Confirm before anything destructive** — a reflash that wipes data, a reboot mid-write.
+4. Auto-log notable events to `log.md`: a flash that needed a quirk, a fix, a gotcha.
 
 ## Actions
 - `flash` — run `flash.sh` (board/port/baud baked in). Log the result.

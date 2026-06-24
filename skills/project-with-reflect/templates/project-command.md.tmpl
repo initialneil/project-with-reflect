@@ -6,13 +6,13 @@ description: "{{NAME}} — work on this project with persistent, self-improving 
 Work on the **{{NAME}}** project. Its persistent memory lives in `{{PDIR}}`.
 
 **Read `{{PDIR}}/SKILL.md` and follow it** — it carries the behavioral contract
-(load `status.md` + `decisions.md` + the active workstream + matching rule modules
+(load `{{NAME}}.md` + `decisions.md` + the active workstream + matching rule modules
 *before* proposing anything) and every subcommand handler.
 
 Arguments after `/{{NAME}}` select the action; with none, just do the work the user
 asks and auto-log key events to the active workstream's `log.md`.
 
-Common: `status` · `list` · `help` · `reflect [--reground]` · `streams` ·
+Common: `bootstrap` · `status` · `list` · `help` · `reflect [--reground]` · `streams` ·
 `register-branch <b> --base <x>` · `<branch> [pr|rebase|reset]` ·
 `register-eval <e> [path]` · `eval all` · `register-task <t>` · `note "…"`.
 

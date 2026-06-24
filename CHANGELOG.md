@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.0 — 2026-06-24
+
+- Add bootstrap — meta: configure/repair the root; project: seed a freshly-registered project from repo docs + the current session. Rename per-project dashboard status.md -> <name>.md (folder note). Documented in README.
+
 ## v0.1.3 — 2026-06-24
 
 - First-run root prompt polished: detect the user's actual sync folders (Obsidian / Dropbox / Drive / OneDrive / iCloud / Nutstore), Title-Case 'Project-with-Reflect' folder for custom paths, note Notion/Docs can't be the root; cross-OS guidance

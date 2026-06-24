@@ -1,0 +1,30 @@
+---
+name: {{NAME}}
+description: "Operate the {{NAME}} machine over ssh — run commands, check status/GPU, tail logs, sync, and apply its learned quirks. Use when the user types /{{NAME}}, mentions the {{NAME}} host/server/box, or asks to ssh / run / check / reboot it."
+---
+# {{NAME}} — machine skill (project-with-reflect)
+
+Facts live in this folder's `{{NAME}}.md` frontmatter (ssh_alias / kind / repo / endpoint) and
+`connection.json` (transport: ssh). ssh uses the key-based `Host` alias in `~/.ssh/config` —
+**no passwords**.
+
+## Before acting
+1. Load `{{NAME}}.md` — the **facts** (ssh alias, endpoint) + **learned quirks** in the body
+   (`## Quirks`). Apply known quirks (e.g. "after reboot, `nvidia-smi -pl 300`"; the dataset
+   mount path) instead of rediscovering them.
+2. **Read-only commands run freely** (nvidia-smi, df, ls, tail). **Confirm before mutating or
+   destructive** ops (reboot, rm, kill, package installs, anything writing outside scratch).
+3. Auto-log notable events to `log.md`: a fix, a recurring setup step, a gotcha.
+
+## Actions
+- `<command>` — run over ssh: `ssh <ssh_alias> <command>` (alias from `connection.json`). E.g.
+  `/{{NAME}} nvidia-smi` → `ssh <alias> nvidia-smi`.
+- `status` — quick health (adapt to the box): `ssh <alias> 'uptime; nvidia-smi; df -h'`.
+- `logs [unit]` — tail a service/journal. `sync <src> <dst>` — rsync over the alias.
+- `reboot` — confirm first, then `ssh <alias> sudo reboot`.
+- `note "…"` — force a line into `log.md`.
+- `reflect` — fold `log.md` into the `## Quirks` section of `{{NAME}}.md`, then archive the log
+  (`reflect.sh archive-entity {{DIR}}`).
+- `help` — this menu.
+
+Quirks live in `{{NAME}}.md` under `## Quirks`; reflect maintains them. No caps — keep it lean.

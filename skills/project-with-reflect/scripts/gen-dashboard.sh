@@ -19,30 +19,27 @@ cfg = json.load(open(cfg_path))
 name = cfg["name"]
 dash = os.path.join(pdir, name + ".md")
 
-def load(p):
-    try: return json.load(open(p))
-    except Exception: return {}
-
 def q(s):  # safe double-quoted YAML scalar (valid YAML, handles spaces/punct/unicode)
     return json.dumps(str(s), ensure_ascii=False)
 
 # --- build the managed (PWR-owned) frontmatter keys ------------------------------------
-MANAGED = {"repo", "mode", "workstream_mode", "device", "machine", "build",
-           "knowledge", "workstreams"}
+MANAGED = {"repo", "mode", "workstream_mode", "connections", "build",
+           "knowledge", "workstreams", "device", "machine"}  # device/machine: drop legacy blocks
 m = [f"repo: {q(cfg.get('repo') or '—')}",
      f"mode: {cfg.get('mode','?')}",
      f"workstream_mode: {cfg.get('workstream_mode','?')}"]
-dev = cfg.get("device")
-if dev:
-    dj = load(os.path.join(root, "devices", dev, "device.json"))
-    desc = (f"{dev} — {dj.get('board','?')} @ {dj.get('port','?')} ({dj.get('toolchain','?')})"
-            if dj else f"{dev} (not registered yet)")
-    m.append(f"device: {q(desc)}")
-if cfg.get("machine"):   m.append(f"machine: {q(cfg['machine'])}")
+# bound connections + linked knowledge link to their own notes — quoted so the bare [[..]]
+# isn't read as a YAML flow sequence. (Connections live in $ROOT/connections/<c>, knowledge in
+# $ROOT/knowledge/<k> — clickable from here, detail lives there.)
+conns = cfg.get("connections", [])
+if conns:
+    m.append("connections:")
+    m += [f'  - "[[{c}]]"' for c in conns]
 if cfg.get("build_cmd"): m.append(f"build: {q(cfg['build_cmd'])}")
 know = cfg.get("knowledge", [])
 if know:
-    m.append("knowledge:"); m += [f"  - {k}" for k in know]
+    m.append("knowledge:")
+    m += [f'  - "[[{k}]]"' for k in know]
 wsdir = os.path.join(pdir, "workstreams")
 streams = sorted(d for d in os.listdir(wsdir)
                  if os.path.isdir(os.path.join(wsdir, d))) if os.path.isdir(wsdir) else []

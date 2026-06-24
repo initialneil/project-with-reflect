@@ -1,14 +1,13 @@
 ---
-description: "Register a global, agent-usable knowledge module (note / MCP / API) — project-with-reflect"
-argument-hint: "<name> [note | mcp | api]"
+description: "Register a plain-markdown knowledge note (reference) — project-with-reflect"
+argument-hint: "<slug>"
 ---
 Run the **register-knowledge** action of the `project-with-reflect` skill with arguments: $ARGUMENTS
 
-Creates a global module under `$PROJECT_WITH_REFLECT_ROOT/knowledge/<name>/` (a folder, like
-`machines/`) that any project opts into via `config.json.knowledge`.
+Creates a flat plain-md note at `$PROJECT_WITH_REFLECT_ROOT/knowledge/<slug>.md` — **reference
+only**, the lightweight kind that piles up over time (reflect / meta-reflect promote learnings
+into these). Link it to a project with `/<project> use-knowledge <slug>` (one note serves many).
 
-If it's an **MCP** (e.g. `unity`): first actually wire it with
-`claude mcp add --scope user <name> -- <command…>` (or `--transport http <name> <url>`),
-confirming the command with the user, so `mcp__<name>__*` tools become available — THEN record it
-with `scripts/register-knowledge.sh <name> mcp "<the add command>"`. For a plain note or API setup,
-use kind `note` / `api`. Follow the skill's steps.
+For anything you **operate** (an HTTP/WS API, an MCP server, an ssh host, a serial device),
+register a **connection** instead — `register-api` / `register-mcp` / `register-machine` /
+`register-device` — those become skills under `connections/`. Follow the skill's steps.

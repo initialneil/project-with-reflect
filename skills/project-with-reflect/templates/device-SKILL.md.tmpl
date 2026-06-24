@@ -1,0 +1,30 @@
+---
+name: {{NAME}}
+description: "Operate the {{NAME}} device (USB/serial flash target) — flash, monitor, REPL, reconnect, and its learned quirks. Use when the user types /{{NAME}}, mentions the {{NAME}} device/board, or asks to flash / monitor / reconnect / reboot / send a command to it."
+---
+# {{NAME}} — device skill (project-with-reflect)
+
+Facts live in this folder's `{{NAME}}.md` frontmatter (board / port / toolchain / baud / flash /
+monitor) and `connection.json` (transport: serial). Flash & monitor are baked into `flash.sh` /
+`monitor.sh`.
+
+## Before acting
+1. Load `{{NAME}}.md` — the **facts** (board/port/toolchain) + any **learned quirks** in the
+   body (`## Quirks`). Apply known quirks (e.g. the GPIO0 download-mode dance) instead of
+   rediscovering them.
+2. **Confirm before anything destructive** — a reflash that wipes data, a reboot mid-write.
+3. Auto-log notable events to `log.md`: a flash that needed a quirk, a fix, a gotcha.
+
+## Actions
+- `flash` — run `flash.sh` (board/port/baud baked in). Log the result.
+- `monitor` — run `monitor.sh` (serial monitor on the port).
+- `reconnect wifi` / `repl "<code>"` / `reboot` — talk to the board over `connection.json.port`
+  using its toolchain (MicroPython → paste-mode REPL; Arduino/PlatformIO → the matching serial
+  command). Reconnect-wifi = push the wifi creds / re-run the connect routine over REPL.
+- `status` — print the facts (`{{NAME}}.md`).
+- `note "…"` — force a line into `log.md`.
+- `reflect` — fold `log.md` into the `## Quirks` section of `{{NAME}}.md` (lean, readable; facts
+  stay in frontmatter), then archive the log (`reflect.sh archive-entity {{DIR}}`).
+- `help` — this menu.
+
+Quirks live in `{{NAME}}.md` under `## Quirks`; reflect maintains them. No caps — keep it lean.

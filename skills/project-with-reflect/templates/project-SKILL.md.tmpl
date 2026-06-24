@@ -29,10 +29,11 @@ helpers at `~/.claude/skills/project-with-reflect/scripts/` for deterministic op
    then log it.
 4. **Surface, don't bury.** When work touches an area with a rule module or a
    registered eval, name it.
-5. **Know your hardware/hosts.** If `config.json` binds a `device` or `machine`, load
-   `$PROJECT_WITH_REFLECT_ROOT/devices/<device>/device.json` (board / port / toolchain /
-   flash + monitor commands) and/or the machine record (ssh alias / endpoint) *before* any
-   build / flash / deploy — never guess a port or an ssh target.
+5. **Know your connections.** For each name in `config.json.connections`, load
+   `$PROJECT_WITH_REFLECT_ROOT/connections/<name>/connection.json` (transport + facts: serial
+   port/board, ssh alias, API base/key-env, MCP tools) *before* any build / flash / deploy /
+   call — never guess a port, ssh target, or endpoint. Each connection is also its own skill
+   (`/<name>`).
 
 ## Working
 Auto-log to the active stream's `log.md` on: complex error + fix, PR / merge /
@@ -84,18 +85,18 @@ rebase, key finding. `note "…"` forces a log line.
   linked modules load when relevant (see the contract). Use after `/register-knowledge <k>`.
 - `note "…"` — force a log entry into the active stream.
 
-### Hardware / hosts (when bound)
-- `bind --device <d> | --machine <m> [--build "<cmd>"] [--unbind-device|--unbind-machine]`
-  — point this project at a registered device/machine, or save its build command
-  (`bind.sh {{PDIR}} …`). Register the entity first (`/register-device`, `/register-machine`).
-- `build` — build the app: run `config.json.build_cmd` if set; else derive it from the
-  toolchain + repo, run it, and offer to save it via `bind --build "<cmd>"`.
-- `flash` — flash the bound device by running
-  `$PROJECT_WITH_REFLECT_ROOT/devices/<device>/flash.sh` (board/port/baud baked in at
-  register-device). Bind a device first; auto-log the flash.
-- `monitor` — open the serial monitor via the bound device's `monitor.sh`.
-- A bound **machine** is reached over its ssh alias / endpoint (from the machine record) —
-  deploy / run-remote / fetch-logs use that, never a hard-coded host.
+### Connections (when bound)
+A project binds the connections it operates (a serial device, an ssh box, an API, an MCP). Each
+is also its own skill `/<name>`; from here you orchestrate them in project context.
+- `bind --connection <name> [--build "<cmd>"] [--unbind <name>]` — add/remove a connection in
+  `config.json.connections`, or save the build command (`bind.sh {{PDIR}} …`). `--device` /
+  `--machine` are accepted aliases. Register it first (`/register-device|machine|api|mcp`).
+- `build` — run `config.json.build_cmd` if set; else derive it from the toolchain + repo, run it,
+  and offer to save it via `bind --build "<cmd>"`.
+- `flash` / `monitor` — resolve the bound **serial** connection and run its
+  `$PROJECT_WITH_REFLECT_ROOT/connections/<name>/flash.sh` / `monitor.sh`. Auto-log the flash.
+- A bound **ssh** connection → deploy / run-remote / fetch-logs over its alias; **http/mcp** →
+  call / use per that connection's own skill. Never hard-code a host, port, or endpoint.
 
 Leanness: **no caps** — keep rules readable; split a long module into another
 topic; reflect makes bounded updates, not whole-doc rewrites.

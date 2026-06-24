@@ -9,7 +9,8 @@ PDIR="${1:?project_dir required}"; K="${2:?knowledge name required}"; MODE="${3:
 CFG="$PDIR/config.json"
 [ -f "$CFG" ] || { echo "no config.json at $PDIR (is this a registered project?)" >&2; exit 1; }
 
-if [ "$MODE" != "--unlink" ] && [ ! -d "$PWR_ROOT/knowledge/$K" ]; then
+# knowledge is either a flat note (knowledge/<k>.md) or an asset folder (knowledge/<k>/<k>.md)
+if [ "$MODE" != "--unlink" ] && [ ! -f "$PWR_ROOT/knowledge/$K.md" ] && [ ! -d "$PWR_ROOT/knowledge/$K" ]; then
   echo "warning: global knowledge '$K' not found in \$ROOT/knowledge — run /register-knowledge $K first." >&2
 fi
 

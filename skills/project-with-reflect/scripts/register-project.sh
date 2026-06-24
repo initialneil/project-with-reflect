@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Scaffold a project and generate its /<name> command (user scope).
-#   register-project.sh <name> <repo_path> <mode> <workstream_mode> [machine] [device]
+# Scaffold a project as a skill (user scope). Bind connections afterwards with bind.sh.
+#   register-project.sh <name> <repo_path> <mode> <workstream_mode>
 #     mode            = central | in-repo
 #     workstream_mode = worktree | in-repo
 set -euo pipefail
@@ -14,8 +14,6 @@ NAME="${1:?project name required}"
 REPO="${2:-}"
 MODE="${3:-central}"
 WSM="${4:-in-repo}"
-MACHINE="${5:-}"
-DEVICE="${6:-}"
 
 if [ "$MODE" = "in-repo" ]; then
   [ -n "$REPO" ] || { echo "in-repo mode needs a repo path (arg 2)" >&2; exit 1; }
@@ -27,15 +25,15 @@ else
   mkdir -p "$PDIR"
 fi
 
-mkdir -p "$PDIR"/rules "$PDIR"/workstreams/main "$PDIR"/evals "$PDIR"/tasks "$PDIR"/knowledge
+# NB: no per-project knowledge/ dir — knowledge is GLOBAL ($ROOT/knowledge/<k>); a project
+# only LINKS modules (config.json.knowledge) and surfaces them as wikilinks in the dashboard.
+mkdir -p "$PDIR"/rules "$PDIR"/workstreams/main "$PDIR"/evals "$PDIR"/tasks
 
-python3 - "$PDIR/config.json" "$NAME" "$REPO" "$MODE" "$WSM" "$MACHINE" "$DEVICE" <<'PY'
+python3 - "$PDIR/config.json" "$NAME" "$REPO" "$MODE" "$WSM" <<'PY'
 import json, sys
-path, name, repo, mode, wsm, machine, device = sys.argv[1:8]
+path, name, repo, mode, wsm = sys.argv[1:6]
 cfg = {"name": name, "repo": repo, "mode": mode, "workstream_mode": wsm,
-       "knowledge": [], "template_version": "0.2.0"}
-if machine: cfg["machine"] = machine
-if device:  cfg["device"]  = device
+       "knowledge": [], "connections": [], "template_version": "0.3.0"}
 json.dump(cfg, open(path, "w"), indent=2)
 PY
 

@@ -1,0 +1,25 @@
+---
+name: {{NAME}}
+description: "Use the {{NAME}} API (HTTP/WebSocket) — call its endpoints with the key from env, per its documented usage + learned quirks. Use when the user types /{{NAME}}, mentions the {{NAME}} API/service, or asks to call / query / transcribe / use it."
+---
+# {{NAME}} — API connection skill (project-with-reflect)
+
+Facts live in this folder's `{{NAME}}.md` frontmatter (`base_url`, `key_env`) and `connection.json`.
+**The key lives in `$<key_env>` (env/keychain) — never printed, logged, or written to disk.**
+
+## Before acting
+1. Load `{{NAME}}.md` — base URL, endpoints, usage, and learned quirks (`## Quirks`). Apply them.
+2. Read the key from the env var named by `key_env` at call time; if it's unset, tell the user to
+   set it — don't proceed with a blank key.
+3. Auto-log notable events to `log.md`: a working call recipe, an error + fix, a rate/cost gotcha.
+
+## Actions
+- `<action> [args]` — make the documented call (curl / SDK / WebSocket) to the right endpoint
+  from `{{NAME}}.md`, authenticating with `$<key_env>`. Return the result; **never echo the key**.
+- `status` — print the facts (`{{NAME}}.md`).
+- `note "…"` — force a line into `log.md`.
+- `reflect` — fold `log.md` into the `## Quirks` section of `{{NAME}}.md`, then archive
+  (`reflect.sh archive-entity {{DIR}}`).
+- `help` — this menu.
+
+Endpoints / rate limits / billing / gotchas live in `{{NAME}}.md`; reflect maintains them. Lean.

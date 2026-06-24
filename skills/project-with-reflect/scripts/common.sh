@@ -39,11 +39,25 @@ pwr_first_run_guard() {
 }
 
 pwr_ensure_root() {
-  mkdir -p "$PWR_ROOT"/projects "$PWR_ROOT"/machines "$PWR_ROOT"/devices \
+  # connections/ = everything you operate (ssh | serial | http | mcp); knowledge/ = plain-md only.
+  mkdir -p "$PWR_ROOT"/projects "$PWR_ROOT"/connections \
            "$PWR_ROOT"/knowledge "$PWR_ROOT"/memories "$PWR_ROOT"/agents \
            "$PWR_ROOT"/templates "$PWR_ROOT"/scripts
   [ -f "$PWR_ROOT/registry.json" ] || \
-    echo '{"projects":{},"machines":{},"devices":{},"knowledge":{},"agents":{}}' > "$PWR_ROOT/registry.json"
+    echo '{"projects":{},"connections":{},"knowledge":{},"agents":{}}' > "$PWR_ROOT/registry.json"
+}
+
+# pwr_install_skill <entity_dir> <name> <template_path>
+# Make an entity a real skill: SKILL.md (from template, if absent) + log.md, symlinked into
+# ~/.claude/skills/<name>, and attach <name>.md as the Obsidian folder note. Shared by every
+# connection transport (ssh/serial/http/mcp) and any other skill-entity.
+pwr_install_skill() {
+  local DIR="$1" NAME="$2" TPL="$3" HERE
+  HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  [ -f "$DIR/SKILL.md" ] || sed "s/{{NAME}}/$NAME/g; s|{{DIR}}|$DIR|g" "$TPL" > "$DIR/SKILL.md"
+  [ -f "$DIR/log.md" ]   || echo "# log" > "$DIR/log.md"
+  mkdir -p "$HOME/.claude/skills"; ln -sfn "$DIR" "$HOME/.claude/skills/$NAME"
+  bash "$HERE/obsidian-folder-note.sh" "$DIR" || true
 }
 
 # pwr_registry_put <category> <name> <json-object-string>

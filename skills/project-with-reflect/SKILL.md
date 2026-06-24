@@ -1,15 +1,16 @@
 ---
 name: project-with-reflect
 description: >-
-  Meta-skill that turns each of your projects, machines, and devices into its own
-  lightweight, self-improving skill. Work through /<project>; it auto-logs the
-  moments that matter; /<project>-reflect distills those logs into lean, readable
-  rules so the next session — yours or Claude's — starts smarter instead of
-  repeating mistakes. Use when the user types /project-with-reflect, /register-project,
-  /register-machine, /register-device, /register-knowledge, /register-agent, or
-  /meta-reflect, or asks to register / manage / reflect-on a project, machine, device,
-  or knowledge module, or wants per-project persistent memory + a log->reflect->improve loop.
-argument-hint: "[help | list | status | bootstrap | register-project | register-machine | register-device | register-knowledge | register-agent | meta-reflect]"
+  Meta-skill that turns each of your projects and connections (ssh hosts, serial devices,
+  HTTP APIs, MCP servers) into its own lightweight, self-improving skill. Work through
+  /<project> or /<connection>; it auto-logs the moments that matter; reflect distills those
+  logs into lean, readable rules so the next session — yours or Claude's — starts smarter
+  instead of repeating mistakes. Use when the user types /project-with-reflect, /register-project,
+  /register-machine, /register-device, /register-api, /register-mcp, /register-knowledge,
+  /register-agent, /update, or /meta-reflect, or asks to register / manage / reflect-on a project,
+  machine, device, API, MCP, or knowledge note, or wants per-project persistent memory + a
+  log->reflect->improve loop.
+argument-hint: "[help | list | status | bootstrap | register-project | register-machine | register-device | register-api | register-mcp | register-knowledge | update | register-agent | meta-reflect]"
 ---
 
 # project-with-reflect
@@ -26,7 +27,9 @@ readability + modularity (split a long rule module into another topic).
 
 ## The root
 `$PROJECT_WITH_REFLECT_ROOT` holds:
-`projects/ machines/ devices/ knowledge/ memories/ agents/ templates/ scripts/ registry.json`.
+`projects/ connections/ knowledge/ memories/ agents/ templates/ scripts/ registry.json`.
+**connections/** = everything you *operate* (ssh host · serial device · HTTP API · MCP server),
+each a skill with a `transport`. **knowledge/** = plain-md reference notes only.
 
 **First run is enforced by the scripts, not just remembered here.** Any `register-*`
 script exits `3` printing `PWR_FIRST_RUN` when no root is configured (no env var, no
@@ -50,7 +53,7 @@ On that signal:
 ## Actions (overall / meta)
 Bare `/project-with-reflect` → `help`.
 - **help** — this menu + how `/<name>` works + a pointer to each project's own `help`.
-- **list** — read `$ROOT/registry.json`: all projects, machines, devices, knowledge, agents.
+- **list** — read `$ROOT/registry.json`: all projects, connections, knowledge, agents.
 - **status** — roll-up across projects: active streams, which projects have unconsumed
   logs (need `reflect`), which streams are behind `base`, machine/device bindings.
 - **bootstrap `[path]`** — explicitly (re)configure the root: run the first-run path
@@ -71,45 +74,54 @@ Bare `/project-with-reflect` → `help`.
     sentence to your summary: the project's `<name>.md` is its Obsidian folder note —
     reload the folder-notes plugin (or restart Obsidian) to see it. Otherwise don't
     mention folder-notes at all.
-- **register-machine `<name>`** — for an existing host:
-  `SK/scripts/register-machine.sh <name> <ssh_alias> [repo] [endpoint] ssh` (ensure a
-  key-based `Host` alias in `~/.ssh/config`; never store passwords). For one you
-  don't have yet, run the **guided provision-and-pay** flow first (any provider the
-  user names): confirm resource + **cost estimate** + **billing account**, create via
-  the provider CLI, open the needed firewall port — **you guide, the user authorizes;
-  never hold billing creds; confirm cost before creating anything paid** — then record
-  with `kind cloud-vm|cloud-storage` + `endpoint`.
-- **register-device `<name>`** — derive board + serial port + toolchain **and the real
-  flash & monitor commands**, then
+**Connections** (`register-machine | -device | -api | -mcp`) all create a skill under
+`connections/<name>/` (folder note + `connection.json` + `SKILL.md` + `log.md`, symlinked to
+`~/.claude/skills/<name>`) that you operate via `/<name>` and that accrues learned quirks via
+`log.md` → `reflect` (see §Per-connection skills). They differ only by transport:
+- **register-machine `<name>`** (transport ssh) — for an existing host:
+  `SK/scripts/register-machine.sh <name> <ssh_alias> [repo] [endpoint] ssh` (key-based `Host`
+  alias in `~/.ssh/config`; never store passwords). For one you don't have yet, run the **guided
+  provision-and-pay** flow first (any provider): confirm resource + **cost estimate** + **billing
+  account**, create via the provider CLI, open the firewall port — **you guide, the user
+  authorizes; never hold billing creds; confirm cost before creating anything paid** — then record
+  with `kind cloud-vm|cloud-storage` + `endpoint`. `/<name> <cmd>` ⇒ `ssh <alias> <cmd>`.
+- **register-device `<name>`** (transport serial) — derive board + serial port + toolchain **and
+  the real flash & monitor commands**, then
   `SK/scripts/register-device.sh <name> <board> <port> [toolchain] [baud] [flash_cmd] [monitor_cmd]`.
-  Autodetect the port (`ls /dev/cu.* /dev/ttyACM* /dev/ttyUSB* 2>/dev/null`) and confirm the
-  board. **If the user says "per our practice in `<repo>`", read that repo** (its flash
-  scripts / build config / README) to derive the commands — but **adapt to *this* app's
-  toolchain**: a referenced repo may flash MicroPython while your firmware is C++/PlatformIO,
-  so take the hardware-access facts (port, baud, download-mode quirks) and pair them with the
-  build/flash command that fits *your* code, not theirs. The script bakes the commands into
-  runnable `flash.sh` / `monitor.sh`; a project then `bind`s the device and runs
-  `/<project> flash | monitor`. Flashed over USB/serial, not ssh.
-- **register-knowledge `<name>`** — a global module in `$ROOT/knowledge/<name>/`
-  (kind: `note` | `mcp` | `api`); projects opt in via `config.json.knowledge`.
-  - **MCP** (e.g. `unity`): *actually wire it first* —
-    `claude mcp add --scope user <name> -- <command…>` (or `--transport http <name> <url>`),
-    confirming the exact command with the user. Then
-    `SK/scripts/register-knowledge.sh <name> mcp "<the add command used>"` to record it
-    and write usage rules. Result: `mcp__<name>__*` tools become available in any
-    project that opts in, and the module's `<name>.md` tells Claude when/how to use them +
-    the re-add line for a new machine. (Knowledge is a folder exactly like `machines/` —
-    the difference is an MCP needs setup, not just prose.)
-  - **note / api**: `SK/scripts/register-knowledge.sh <name> [note|api] ["setup steps"]`.
-    API keys live in env/keychain — never on disk.
-  - The module's note is `knowledge/<name>/<name>.md` (matches the folder name), so in an
-    Obsidian vault with folder-notes it attaches as the folder note. register-knowledge runs
-    `obsidian-folder-note.sh` and prints a folder-notes line only when that applies — **only
-    if it did**, add one sentence to your summary (reload folder-notes to see it).
-  - **Link to projects:** a project opts in with `/<project> use-knowledge <name>` (the
-    knowledge analog of binding a machine; one module serves many projects). Linked
-    modules load when relevant.
+  Autodetect the port (`ls /dev/cu.* /dev/ttyACM* /dev/ttyUSB* 2>/dev/null`); confirm the board.
+  **If the user says "per our practice in `<repo>`", read that repo** to derive the commands — but
+  **adapt to *this* app's toolchain** (a referenced repo may flash MicroPython while your firmware
+  is C++/PlatformIO: take the hardware-access facts — port, baud, download-mode — and pair them
+  with the build/flash that fits *your* code). Bakes runnable `flash.sh`/`monitor.sh`.
+  `/<name> flash | monitor | reconnect wifi | repl`. Flashed over USB/serial, not ssh.
+- **register-api `<name>`** (transport http) — for an HTTP/WebSocket API:
+  `SK/scripts/register-api.sh <name> [base_url] [KEY_ENV_VAR] ["note"]`. `KEY_ENV_VAR` is the
+  **name** of the env var holding the key (a pointer, e.g. `SONIOX_API_KEY`) — **the key itself
+  lives in env/keychain, never on disk**. Then write the endpoints/usage into `<name>.md`.
+  `/<name> <action>` calls the API with the key from env. (soniox is this — an *operated* API, so
+  a connection, not knowledge.)
+- **register-mcp `<name>`** (transport mcp) — *wire it first* —
+  `claude mcp add --scope user <name> -- <command…>` (or `--transport http <name> <url>`),
+  confirming the command — then `SK/scripts/register-mcp.sh <name> "<the add command>" ["note"]`.
+  `mcp__<name>__*` tools become available; the skill records the re-add line + usage rules.
+- **register-knowledge `<slug>`** — a **plain-markdown reference note** (NOT a skill, NOT
+  operable): `SK/scripts/register-knowledge.sh <slug>` → a flat `$ROOT/knowledge/<slug>.md`. The
+  common, lightweight case that **piles up over time** (reflect/meta-reflect promote learnings
+  into these). Link to a project with `/<project> use-knowledge <slug>` (one note serves many
+  projects; the dashboard shows it as a `[[wikilink]]`; loads when relevant). For anything you
+  *operate* (API / MCP / host / device) use a **connection**, not knowledge.
 - **register-agent `<name>`** — `SK/scripts/register-agent.sh <name>`.
+- **update `<kind> <name>` `"<content>"`** (`kind` = `knowledge` | `connection`) — fold new
+  material into that entity's **note**, distilled into clean sections (e.g. `## Endpoints`,
+  `## Setup`, `## Usage`, `## Gotchas`): **merge + dedupe, don't blind-append**, keep it lean.
+  Resolve the note: knowledge `$ROOT/knowledge/<name>.md`; connection
+  `$ROOT/connections/<name>/<name>.md`. **Secrets never hit disk** — an API key or "let me edit"
+  leaves an env pointer (`<NAME>_API_KEY in env`), not the key. **Frontmatter facts are NOT edited
+  here** — to change ssh alias / port / flash cmd / base-url, **re-run the matching `register-*`**
+  (idempotent: refreshes the managed facts, keeps the body). Why no `update-*` family: only
+  **knowledge** truly needs a meta path (it's the one entity that isn't a skill); a **connection**
+  can be updated equivalently via its own `/<name>` (`note` / `reflect`), and **projects** use
+  `/<project> reflect | note`. If the target doesn't exist yet, `register-*` it first.
 - **meta-reflect** — improve THIS meta-skill (templates/scripts, the reflect
   heuristic) from patterns recurring across projects; surface promotion candidates.
 
@@ -117,17 +129,43 @@ Bare `/project-with-reflect` → `help`.
 When one prompt bundles several registrations + real work (e.g. *"register this project,
 register a device per repo X, build the firmware wiring to my service, and register
 Soniox"*), **sequence it and confirm each step** rather than firing everything at once:
-1. **Knowledge** the work needs → `register-knowledge` (e.g. Soniox as `api`; key stays in
-   env/keychain).
-2. **Device** → `register-device` (derive its real flash/monitor commands; read the
-   referenced practice repo if named).
-3. **Project** → `register-project`, then **`bind`** the device (and any machine).
-4. **Link** the knowledge → `/<project> use-knowledge <k>` (**registration ≠ linking** — a
-   module must be both registered *and* linked to load for a project).
-5. Then `build` / `flash` / `monitor` the app as normal work, auto-logging as you go.
-A device must be registered **before** a project can `bind` it; "my service" that lives in
-the repo (e.g. local Docker) is project code, not a separate machine — only `register-machine`
-for an ssh host / cloud VM.
+1. **Connections** the work operates → `register-api` / `-mcp` / `-machine` / `-device`
+   (Soniox is an *operated API* → `register-api`, key in env; the board → `register-device`,
+   deriving its flash/monitor from the referenced practice repo if named).
+2. **Project** → `register-project`, then **`bind`** the connections it uses
+   (`/<project> bind --connection <name>`).
+3. **Plain-md knowledge** the work references → `register-knowledge <slug>`, then
+   `/<project> use-knowledge <slug>` (**registration ≠ linking** — must be both).
+4. Then `build` / `flash` / `monitor` / call as normal work, auto-logging as you go.
+A connection must be registered **before** a project can `bind` it. "My service" that lives in
+the repo (e.g. local Docker) is project code, not a connection — only register a connection for
+something external you reach over ssh / serial / http / mcp.
+
+## Per-connection skills (`connections/<name>`)
+Every connection is a **real skill** (same mechanism as projects: its folder holds a
+self-contained `SKILL.md` + `log.md`, symlinked into `~/.claude/skills/<name>`). `/<name>
+<action>` works, Claude reaches for it by description, and each accrues **learned quirks** via its
+own `log.md` → `reflect` — the self-improving loop, applied to the thing you operate. Actions by
+transport:
+- **ssh** — `/<name> <cmd>` ⇒ `ssh <ssh_alias> <cmd>` (read-only runs free; **confirm
+  mutating/destructive**). Quirk e.g. "after reboot, `nvidia-smi -pl 300`".
+- **serial** — `/<name> flash | monitor | reconnect wifi | repl | reboot`. Quirk e.g. the GPIO0
+  download-mode dance.
+- **http** — `/<name> <action>` calls the API with the key from `$<key_env>` (never echo it).
+  Quirk e.g. "billed by socket wall-clock, not audio".
+- **mcp** — use its `mcp__<name>__*` tools per the note; `reconnect` re-runs the add command.
+- `reflect` folds `log.md` into the `## Quirks` section of `<name>.md`, then archives
+  (`SK/scripts/reflect.sh archive-entity <conn_dir>`). Facts stay in frontmatter.
+
+**At register time, seed `<name>.md`'s body with lean useful content** — a one-line what-it-is
+plus a `## Quirks` section pre-filled with the real gotchas you already know (the practice repo,
+the toolchain, your own knowledge: a board's download dance; a box's power-limit-after-reboot; an
+API's billing gotcha + endpoints). Real content, **not** an empty heading — `reflect` grows it.
+The script writes only the frontmatter facts + the heading; the body is yours.
+
+A project **`bind`s** the connections it operates (for `build/flash/monitor`/deploy in project
+context); the connection's own `/<name>` skill is for operating it directly. **Knowledge** stays
+linked into projects (plain-md reference, and there are many — not skills).
 
 ## Per-project `/<name>`
 Generated by register-project as a **real skill**: it symlinks the project's state dir
@@ -174,12 +212,20 @@ bootstrap/reflect fill the files with **real content** (actual decisions, real r
 **never leave a placeholder behind**. The one machine-owned section is the dashboard's **YAML
 frontmatter facts** (below), which renders as Obsidian's Properties panel.
 
+**Each project and connection folder carries a `<name>.md`** (facts in frontmatter) that
+attaches as its Obsidian **folder note**; `register-*` run `obsidian-folder-note.sh`. Only when a
+script prints a folder-notes line (i.e. the root is a vault with folder-notes) add one sentence to
+your summary — reload the folder-notes plugin to see it — otherwise don't mention folder-notes at
+all. (**Knowledge** is a flat plain-md file, not a folder, so it's a normal visible note, no
+folder note.) A project's dashboard surfaces its bound **connections** / linked **knowledge** as
+`[[wikilinks]]` so they're one click away.
+
 ## The dashboard `<name>.md`
-Two layers: **YAML frontmatter facts** (repo / mode / bound device + board/port / machine /
-linked knowledge / workstreams) that scripts regenerate from `config.json` + the entity
-records via `SK/scripts/gen-dashboard.sh <project_dir>` — called automatically by
-register-project, `bind`, and `use-knowledge`, so it's always current and shows in Obsidian's
-Properties panel — and the **narrative body** (what the project is, key decisions, next steps)
+Two layers: **YAML frontmatter facts** (repo / mode / bound connections / linked knowledge /
+workstreams) that scripts regenerate from `config.json` via `SK/scripts/gen-dashboard.sh
+<project_dir>` — called automatically by register-project, `bind`, and `use-knowledge`, so it's
+always current and shows in Obsidian's Properties panel — and the **narrative body** (what the
+project is, key decisions, next steps)
 that bootstrap/reflect write. The generator rewrites only its managed frontmatter keys:
 non-managed keys (`tags`, `aliases`, …) and the whole body are preserved. The model writes
 narrative; it doesn't hand-edit the frontmatter facts.

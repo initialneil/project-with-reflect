@@ -1,0 +1,24 @@
+---
+name: {{NAME}}
+description: "Use the {{NAME}} MCP server — its mcp__{{NAME}}__* tools, with the wiring line + usage rules + learned quirks. Use when the user types /{{NAME}}, mentions {{NAME}}, or needs its tools."
+---
+# {{NAME}} — MCP connection skill (project-with-reflect)
+
+Wired at user scope; its tools are `mcp__{{NAME}}__*` (available directly once wired). Facts live
+in this folder's `{{NAME}}.md` frontmatter (`add_command`) and `connection.json`.
+
+## Before acting
+1. Load `{{NAME}}.md` — the re-add line, usage rules, and learned quirks (`## Quirks`). Apply them.
+2. If the tools aren't available (new machine / dropped), re-wire: run the `add_command`, then
+   verify `claude mcp get {{NAME}}`.
+3. Auto-log notable events to `log.md`: a usage recipe, an auth/port gotcha.
+
+## Actions
+- Use the `mcp__{{NAME}}__*` tools per `{{NAME}}.md`'s usage rules (what to reach for; what not to).
+- `status` — print the facts (`{{NAME}}.md`). `reconnect` — re-run the `add_command`.
+- `note "…"` — force a line into `log.md`.
+- `reflect` — fold `log.md` into the `## Quirks` section of `{{NAME}}.md`, then archive
+  (`reflect.sh archive-entity {{DIR}}`).
+- `help` — this menu.
+
+Wiring + usage rules + gotchas live in `{{NAME}}.md`; reflect maintains them. Lean.

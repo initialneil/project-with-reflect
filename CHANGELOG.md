@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.0 — 2026-06-24
+
+- Connections model: unify machines + devices + APIs + MCPs into one connections/ folder, each a skill with a transport (ssh|serial|http|mcp) and the log->reflect->quirks loop. New register-api + register-mcp; register-machine/device now create connections; register-knowledge is plain-md notes only. Knowledge becomes pure reference (flat knowledge/<slug>.md); operable things are connections. Projects bind connections (config.json.connections; bind --connection, --device/--machine aliases). Entities install as real skills (/<name>) with facts in YAML frontmatter + a model-seeded body; added /update for editing knowledge/connection notes; shared helpers pwr_install_skill + _note.py. BREAKING: folder layout (machines//devices/ -> connections/), register-knowledge no longer takes api/mcp kinds.
+
 ## v0.4.1 — 2026-06-24
 
 - Vault files read as clean notes: knowledge note is now knowledge/<k>/<k>.md (attaches as an Obsidian folder note); dashboard facts (repo/mode/device/machine/build/knowledge/workstreams) are written as YAML frontmatter (Obsidian Properties) by new gen-dashboard.sh — stdlib-only YAML merge preserves tags + narrative, idempotent, migrates legacy comment blocks, wired into register-project/bind/use-knowledge; scaffolds are now minimal clean headings (no meta-instructions or comment cruft in user files — guidance lives in SKILL.md).

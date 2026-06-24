@@ -9,7 +9,7 @@
       "name": "project-with-reflect",
       "source": "./",
       "description": "A meta-skill that turns each project/machine/device into its own lightweight, self-improving skill: work through /<project>, auto-log key events, /<project>-reflect distills logs into lean readable rules. Closed log -> reflect -> improve loop.",
-      "version": "0.3.0"
+      "version": "0.3.1"
     }
   ]
 }

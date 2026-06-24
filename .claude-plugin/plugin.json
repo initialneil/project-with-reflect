@@ -1,6 +1,6 @@
 {
   "name": "project-with-reflect",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A meta-skill that turns each of your projects, machines, and devices into its own lightweight, self-improving skill. Work through /<project>; it auto-logs the moments that matter; /<project>-reflect distills those logs into lean, readable rules so the next session starts smarter. Closed log -> reflect -> improve loop, modeled on hermes-agent and kept readable via grounding-rules.",
   "author": {
     "name": "initialneil",

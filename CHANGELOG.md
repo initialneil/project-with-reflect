@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.1 — 2026-06-24
+
+- Projects register as real skills: register-project symlinks the state dir into ~/.claude/skills/<name>, so its SKILL.md is the loaded skill — /<name> works AND Claude reaches for it by a targeted description. Aliases stay commands; retired the project-command template.
+
 ## v0.3.0 — 2026-06-24
 
 - Discoverability + knowledge linking: argument-hint on every command/skill (tab-complete menus like /goal); new use-knowledge action (link a global knowledge module into a project — the knowledge analog of binding a machine, one module serves many projects).

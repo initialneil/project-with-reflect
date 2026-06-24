@@ -11,7 +11,7 @@ smarter instead of repeating mistakes.
 > Core loop: `work → auto-log key events → reflect (bounded update) → lean, readable rules → better next session`
 
 Modeled on the closed learning loop of [hermes-agent](https://github.com/nousresearch/hermes-agent);
-readability inspired by the `grounding-rules` skill. **No hard caps** — leanness
+readability inspired by [grounding-rules](https://github.com/initialneil/grounding-rules). Leanness
 comes from readability + modularity (split a long rule module into another topic).
 
 ## Why
@@ -104,9 +104,9 @@ workstream is a **reusable lane**, not one-shot.
 ```
 /register-machine gcs-server     # new? describe it — Claude guides provider setup + billing + firewall, confirms cost first
 /register-device cardputer-adv   # autodetect board + /dev/cu.usb*; writes device.json + flash/monitor
-/register-project iot ~/code/iot
-/iot bind --device cardputer-adv --server gcs-server
-/iot build && /iot flash && /iot monitor   # compile with the server endpoint baked in, flash over USB, watch it connect
+/register-project splattingavatar ~/code/splattingavatar
+/splattingavatar bind --device cardputer-adv --server gcs-server
+/splattingavatar build && /splattingavatar flash && /splattingavatar monitor   # compile with the server endpoint baked in, flash over USB, watch it connect
 ```
 
 ## Reflect = bounded update
@@ -114,7 +114,7 @@ workstream is a **reusable lane**, not one-shot.
 `reflect` folds new log entries into the right `rules/<topic>.md` + `decisions.md`,
 fixes wrong rules, **splits a module if it gets too long to read**, regenerates
 `status.md`, archives consumed logs, and reports what changed. `--reground` forces a
-full rewrite of one module. No caps; readability is the judge.
+full rewrite of one module. Readability is the judge.
 
 ## Releasing (maintainers)
 

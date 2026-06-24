@@ -24,11 +24,21 @@ readability + modularity (split a long rule module into another topic).
 > Run `SK/scripts/bootstrap.sh` once before anything else.
 
 ## The root
-`$PROJECT_WITH_REFLECT_ROOT` (default `~/.project-with-reflect`) holds:
+`$PROJECT_WITH_REFLECT_ROOT` holds:
 `projects/ machines/ devices/ knowledge/ memories/ agents/ templates/ scripts/ registry.json`.
-If the env var is unset, **AskUserQuestion**: default `~/.project-with-reflect` or a
-typed path; then `SK/scripts/bootstrap.sh <path>` creates it and persists the export
-to the right shell rc.
+
+**First run is enforced by the scripts, not just remembered here.** Any `register-*`
+script exits `3` printing `PWR_FIRST_RUN` when no root is configured (no env var, no
+pointer at `~/.config/project-with-reflect/root`, no legacy `~/.project-with-reflect`).
+On that signal:
+1. **AskUserQuestion** for the path. A **custom path is recommended** — a *synced,
+   human-readable* location such as an **Obsidian vault, iCloud, or Dropbox** folder
+   (e.g. `~/Obsidian Vault/project-with-reflect`) so your rules + knowledge sync across
+   machines and stay readable. Offer `~/.project-with-reflect` as the no-sync default.
+2. `SK/scripts/bootstrap.sh "<path>"` — creates the root, writes the pointer, persists
+   the export to your shell rc.
+3. **Re-run the original command with `PROJECT_WITH_REFLECT_ROOT="<path>"` prefixed**
+   (the rc export only affects future shells; the current one needs the prefix).
 
 ## Actions (overall / meta)
 Bare `/project-with-reflect` → `help`.

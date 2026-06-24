@@ -27,8 +27,10 @@ learning loop；可读性思路借鉴 [grounding-rules](https://github.com/initi
 /plugin install project-with-reflect@project-with-reflect
 ```
 
-首次运行会初始化 `$PROJECT_WITH_REFLECT_ROOT`（默认 `~/.project-with-reflect`），并把
-它写入你的 shell rc 持久化。
+首次运行会询问 `$PROJECT_WITH_REFLECT_ROOT` 放哪。**推荐用一个 custom、可同步、可读的
+路径** —— 比如 Obsidian vault / iCloud / Dropbox 文件夹（`~/Obsidian Vault/project-with-reflect`），
+这样你的 rules 和 knowledge 能跨机器同步、也方便阅读；`~/.project-with-reflect` 是不同步的
+默认值。选择会被保存（pointer + shell rc）。
 
 ## 结构 The model
 

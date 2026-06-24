@@ -3,7 +3,7 @@
 #   register-device.sh <name> <board> <port> [toolchain] [baud]
 #     toolchain = arduino-cli | platformio | esptool  (default arduino-cli)
 set -euo pipefail
-HERE="$(cd "$(dirname "$0")" && pwd)"; source "$HERE/common.sh"; pwr_ensure_root
+HERE="$(cd "$(dirname "$0")" && pwd)"; source "$HERE/common.sh"; pwr_first_run_guard; pwr_ensure_root
 NAME="${1:?device name required}"; BOARD="${2:-}"; PORT="${3:-}"
 TOOLCHAIN="${4:-arduino-cli}"; BAUD="${5:-115200}"
 DDIR="$PWR_ROOT/devices/$NAME"; mkdir -p "$DDIR"

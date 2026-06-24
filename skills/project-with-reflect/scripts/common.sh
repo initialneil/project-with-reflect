@@ -3,7 +3,37 @@
 # Deterministic file/registry ops only — judgment (reflect, rules) is the model's job.
 set -euo pipefail
 
-PWR_ROOT="${PROJECT_WITH_REFLECT_ROOT:-$HOME/.project-with-reflect}"
+# Root resolution order: explicit env > saved pointer > legacy default.
+# The pointer makes resolution robust even when the (non-interactive) shell never
+# sourced the rc export — bootstrap.sh writes it.
+PWR_POINTER="${XDG_CONFIG_HOME:-$HOME/.config}/project-with-reflect/root"
+if [ -n "${PROJECT_WITH_REFLECT_ROOT:-}" ]; then
+  PWR_ROOT="$PROJECT_WITH_REFLECT_ROOT"
+elif [ -f "$PWR_POINTER" ]; then
+  PWR_ROOT="$(cat "$PWR_POINTER")"
+else
+  PWR_ROOT="$HOME/.project-with-reflect"
+fi
+
+# A bash script can't AskUserQuestion, so on a genuine first run we REFUSE and
+# signal the model to prompt for a root path. Call this at the top of every entry
+# script BEFORE pwr_ensure_root. Exit 3 = "ask the user, then bootstrap + retry".
+pwr_first_run_guard() {
+  [ -n "${PROJECT_WITH_REFLECT_ROOT:-}" ] && return 0
+  [ -f "$PWR_POINTER" ] && return 0
+  [ -d "$HOME/.project-with-reflect" ] && return 0   # legacy install, no pointer
+  {
+    echo "PWR_FIRST_RUN: no project-with-reflect root configured."
+    echo "Ask the user where to keep it. A CUSTOM path is RECOMMENDED — a synced,"
+    echo "human-readable location like an Obsidian vault / iCloud / Dropbox folder"
+    echo "(e.g. \"~/Obsidian Vault/project-with-reflect\") so rules + knowledge sync"
+    echo "across machines and stay readable. Default fallback: ~/.project-with-reflect."
+    echo "Then run: bootstrap.sh \"<chosen-path>\"  and retry this command with"
+    echo "PROJECT_WITH_REFLECT_ROOT=\"<chosen-path>\" prefixed (the rc export only"
+    echo "affects future shells)."
+  } >&2
+  exit 3
+}
 
 pwr_ensure_root() {
   mkdir -p "$PWR_ROOT"/projects "$PWR_ROOT"/machines "$PWR_ROOT"/devices \

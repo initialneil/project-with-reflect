@@ -8,7 +8,7 @@
 #                      exact add command as <setup_note> to record it.
 #     api            — an external API/SDK setup (keys via env/keychain, never on disk).
 set -euo pipefail
-HERE="$(cd "$(dirname "$0")" && pwd)"; source "$HERE/common.sh"; pwr_ensure_root
+HERE="$(cd "$(dirname "$0")" && pwd)"; source "$HERE/common.sh"; pwr_first_run_guard; pwr_ensure_root
 NAME="${1:?knowledge name required}"; KIND="${2:-note}"; SETUP="${3:-}"
 KDIR="$PWR_ROOT/knowledge/$NAME"; mkdir -p "$KDIR"
 KFILE="$KDIR/knowledge.md"

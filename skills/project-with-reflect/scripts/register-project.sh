@@ -6,6 +6,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 source "$HERE/common.sh"
+pwr_first_run_guard
 pwr_ensure_root
 TPL="$HERE/../templates"
 

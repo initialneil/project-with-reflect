@@ -5,7 +5,7 @@
 # For a cloud server you don't have yet, the model runs the guided provision+pay
 # flow first (gcloud/etc., confirm cost + billing), then calls this to record it.
 set -euo pipefail
-HERE="$(cd "$(dirname "$0")" && pwd)"; source "$HERE/common.sh"; pwr_ensure_root
+HERE="$(cd "$(dirname "$0")" && pwd)"; source "$HERE/common.sh"; pwr_first_run_guard; pwr_ensure_root
 NAME="${1:?machine name required}"
 ALIAS="${2:-$1}"; REPO="${3:-}"; ENDPOINT="${4:-}"; KIND="${5:-ssh}"
 mkdir -p "$PWR_ROOT/machines/$NAME"

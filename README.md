@@ -29,8 +29,11 @@ before acting**.
 /plugin install project-with-reflect@project-with-reflect
 ```
 
-First run bootstraps `$PROJECT_WITH_REFLECT_ROOT` (default `~/.project-with-reflect`)
-and persists it to your shell rc.
+On first run it asks where to keep `$PROJECT_WITH_REFLECT_ROOT`. A **custom, synced,
+readable path is recommended** — e.g. an Obsidian vault / iCloud / Dropbox folder
+(`~/Obsidian Vault/project-with-reflect`) so your rules and knowledge sync across
+machines and stay easy to read; `~/.project-with-reflect` is the no-sync default. The
+choice is saved (pointer + shell rc).
 
 ## The model
 

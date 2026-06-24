@@ -22,6 +22,9 @@ monitor) and `connection.json` (transport: serial). Flash & monitor are baked in
   using its toolchain (MicroPython → paste-mode REPL; Arduino/PlatformIO → the matching serial
   command). Reconnect-wifi = push the wifi creds / re-run the connect routine over REPL.
 - `status` — print the facts (`{{NAME}}.md`).
+- `update "<content>"` — fold reference material into this note's body sections (`## Quirks`,
+  setup, wiring): merge + dedupe, lean — **don't blind-append**. Frontmatter facts aren't touched
+  here — re-run register-device to change board / port / flash / monitor.
 - `note "…"` — force a line into `log.md`.
 - `reflect` — fold `log.md` into the `## Quirks` section of `{{NAME}}.md` (lean, readable; facts
   stay in frontmatter), then archive the log (`reflect.sh archive-entity {{DIR}}`).

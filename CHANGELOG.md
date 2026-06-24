@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.1 — 2026-06-24
+
+- Connection skills gain a native 'update "<content>"' action (api/device/machine/mcp): fold reference material into the connection's own note body (merge+dedupe, secrets stay in env, frontmatter facts via re-register). So /<connection> update works skill-side, distinct from note (log line) and reflect (fold log into quirks); mirrors the meta 'update connection'.
+
 ## v1.0.0 — 2026-06-24
 
 - Connections model: unify machines + devices + APIs + MCPs into one connections/ folder, each a skill with a transport (ssh|serial|http|mcp) and the log->reflect->quirks loop. New register-api + register-mcp; register-machine/device now create connections; register-knowledge is plain-md notes only. Knowledge becomes pure reference (flat knowledge/<slug>.md); operable things are connections. Projects bind connections (config.json.connections; bind --connection, --device/--machine aliases). Entities install as real skills (/<name>) with facts in YAML frontmatter + a model-seeded body; added /update for editing knowledge/connection notes; shared helpers pwr_install_skill + _note.py. BREAKING: folder layout (machines//devices/ -> connections/), register-knowledge no longer takes api/mcp kinds.

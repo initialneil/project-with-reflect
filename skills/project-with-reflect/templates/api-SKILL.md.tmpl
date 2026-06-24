@@ -17,6 +17,10 @@ Facts live in this folder's `{{NAME}}.md` frontmatter (`base_url`, `key_env`) an
 - `<action> [args]` — make the documented call (curl / SDK / WebSocket) to the right endpoint
   from `{{NAME}}.md`, authenticating with `$<key_env>`. Return the result; **never echo the key**.
 - `status` — print the facts (`{{NAME}}.md`).
+- `update "<content>"` — fold reference material into this note's body sections (`## Endpoints`,
+  `## Setup`, `## Usage`, `## Gotchas`): merge + dedupe, lean — **don't blind-append**. **Secrets
+  stay in env** (an API key or "let me edit" → an env pointer, never the key). Frontmatter facts
+  aren't touched here — re-run register-api to change `base_url` / `key_env`.
 - `note "…"` — force a line into `log.md`.
 - `reflect` — fold `log.md` into the `## Quirks` section of `{{NAME}}.md`, then archive
   (`reflect.sh archive-entity {{DIR}}`).

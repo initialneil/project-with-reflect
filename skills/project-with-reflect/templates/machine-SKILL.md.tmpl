@@ -22,6 +22,9 @@ Facts live in this folder's `{{NAME}}.md` frontmatter (ssh_alias / kind / repo /
 - `status` — quick health (adapt to the box): `ssh <alias> 'uptime; nvidia-smi; df -h'`.
 - `logs [unit]` — tail a service/journal. `sync <src> <dst>` — rsync over the alias.
 - `reboot` — confirm first, then `ssh <alias> sudo reboot`.
+- `update "<content>"` — fold reference material into this note's body sections (`## Quirks`,
+  setup, mounts): merge + dedupe, lean — **don't blind-append**. **Secrets stay in env** (never
+  the key). Frontmatter facts aren't touched here — re-run register-machine for alias / endpoint.
 - `note "…"` — force a line into `log.md`.
 - `reflect` — fold `log.md` into the `## Quirks` section of `{{NAME}}.md`, then archive the log
   (`reflect.sh archive-entity {{DIR}}`).

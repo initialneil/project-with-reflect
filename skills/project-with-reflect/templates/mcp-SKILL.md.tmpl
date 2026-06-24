@@ -16,6 +16,9 @@ in this folder's `{{NAME}}.md` frontmatter (`add_command`) and `connection.json`
 ## Actions
 - Use the `mcp__{{NAME}}__*` tools per `{{NAME}}.md`'s usage rules (what to reach for; what not to).
 - `status` — print the facts (`{{NAME}}.md`). `reconnect` — re-run the `add_command`.
+- `update "<content>"` — fold reference material into this note's body sections (`## Usage`,
+  `## Gotchas`): merge + dedupe, lean — **don't blind-append**. Frontmatter facts aren't touched
+  here — re-run register-mcp to change the `add_command`.
 - `note "…"` — force a line into `log.md`.
 - `reflect` — fold `log.md` into the `## Quirks` section of `{{NAME}}.md`, then archive
   (`reflect.sh archive-entity {{DIR}}`).

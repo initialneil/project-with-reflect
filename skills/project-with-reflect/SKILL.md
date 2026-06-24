@@ -154,7 +154,9 @@ transport:
 - **http** — `/<name> <action>` calls the API with the key from `$<key_env>` (never echo it).
   Quirk e.g. "billed by socket wall-clock, not audio".
 - **mcp** — use its `mcp__<name>__*` tools per the note; `reconnect` re-runs the add command.
-- `reflect` folds `log.md` into the `## Quirks` section of `<name>.md`, then archives
+- Plus every connection has `update "<content>"` (fold reference material into its note's body —
+  the skill-native form of `update connection`), `note "…"`, `status`, and `reflect` — which
+  folds `log.md` into the `## Quirks` section of `<name>.md`, then archives
   (`SK/scripts/reflect.sh archive-entity <conn_dir>`). Facts stay in frontmatter.
 
 **At register time, seed `<name>.md`'s body with lean useful content** — a one-line what-it-is

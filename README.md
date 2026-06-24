@@ -72,6 +72,19 @@ projects/<name>/
 One ergonomic for everything: **register a handle → get `/<name>-<handle>`**
 (branch → workstream, eval → test case, task → runbook).
 
+## Bootstrap
+
+Two `bootstrap` actions get you from zero to a working setup:
+
+- **`/project-with-reflect bootstrap [path]`** — (re)configure the root: it asks where to
+  keep `$PROJECT_WITH_REFLECT_ROOT` (recommending a synced, readable path) and sets it up.
+  Use it to set up before registering, move the root, or repair a missing pointer.
+- **`/<name> bootstrap`** — *seed a freshly-registered project from what already exists.*
+  Claude reads the repo's docs (README, specs, CHANGELOG), skims the code, and uses the
+  current session, then does an initial reflect pass: writes the `rules/<topic>.md`
+  modules, populates `decisions.md` with choices already made, and writes the `<name>.md`
+  dashboard. So a project you register today starts full, not empty — distilled, not invented.
+
 ## The behavioral contract (what makes it work)
 
 Every generated `/<name>` makes Claude, **before acting**:

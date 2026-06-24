@@ -69,6 +69,17 @@ projects/<name>/
 统一的 ergonomic：**注册一个 handle → 得到 `/<name>-<handle>`**
 （branch → workstream，eval → test case，task → runbook）。
 
+## Bootstrap
+
+两个 `bootstrap` 帮你从零到可用：
+
+- **`/project-with-reflect bootstrap [path]`** —— （重新）配置 root：询问 `$PROJECT_WITH_REFLECT_ROOT`
+  放哪（推荐可同步、可读的路径）并建好。用于注册前的初始化、迁移 root、或修复丢失的 pointer。
+- **`/<name> bootstrap`** —— *用已有内容给一个刚注册的 project 灌入初始记忆。* Claude 读 repo 的文档
+  （README、specs、CHANGELOG）、浏览代码、并结合当前 session，做一次初始 reflect：写出
+  `rules/<topic>.md` 模块、把已做的决定填进 `decisions.md`、生成 `<name>.md` dashboard。这样今天注册的
+  project 一开始就是满的，而不是空的 —— 提炼，而非杜撰。
+
 ## Behavioral contract（让它真正有用的关键）
 
 每个生成的 `/<name>` 都会让 Claude 在**动手前**：

@@ -1,5 +1,6 @@
 ---
 description: "Register a project with project-with-reflect → generates /<name>"
+argument-hint: "<name> [path]"
 ---
 Run the **register-project** action of the `project-with-reflect` skill with arguments: $ARGUMENTS
 

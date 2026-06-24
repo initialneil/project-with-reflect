@@ -64,7 +64,7 @@ projects/<name>/
 
 **单个 project**（`/<name>`）：`bootstrap` · `status` · `list` · `help` · `reflect [--reground]` ·
 `streams` · `register-branch <b> --base <x>` · `<branch> [pr|rebase|reset]` ·
-`register-eval <e>` · `eval all` · `register-task <t>` · `note "…"`。
+`register-eval <e>` · `eval all` · `register-task <t>` · `use-knowledge <k>` · `note "…"`。
 
 统一的 ergonomic：**注册一个 handle → 得到 `/<name>-<handle>`**
 （branch → workstream，eval → test case，task → runbook）。

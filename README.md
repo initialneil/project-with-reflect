@@ -67,7 +67,7 @@ projects/<name>/
 
 **Per project** (`/<name>`): `bootstrap` · `status` · `list` · `help` · `reflect [--reground]` ·
 `streams` · `register-branch <b> --base <x>` · `<branch> [pr|rebase|reset]` ·
-`register-eval <e>` · `eval all` · `register-task <t>` · `note "…"`.
+`register-eval <e>` · `eval all` · `register-task <t>` · `use-knowledge <k>` · `note "…"`.
 
 One ergonomic for everything: **register a handle → get `/<name>-<handle>`**
 (branch → workstream, eval → test case, task → runbook).

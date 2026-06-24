@@ -1,5 +1,6 @@
 ---
 description: "Register a global, agent-usable knowledge module (note / MCP / API) — project-with-reflect"
+argument-hint: "<name> [note | mcp | api]"
 ---
 Run the **register-knowledge** action of the `project-with-reflect` skill with arguments: $ARGUMENTS
 

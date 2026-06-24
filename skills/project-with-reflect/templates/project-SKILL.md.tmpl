@@ -20,7 +20,8 @@ helpers at `~/.claude/skills/project-with-reflect/scripts/` for deterministic op
 
 ## Behavioral contract — every session, before acting
 1. **Load first, propose second.** Read `{{NAME}}.md` + `decisions.md` + the active
-   workstream, and the rule modules whose "load when…" matches the task.
+   workstream, the rule modules whose "load when…" matches the task, and any **linked
+   global knowledge** (`config.json.knowledge` → `$PROJECT_WITH_REFLECT_ROOT/knowledge/<k>`).
 2. **Check the ledger before proposing.** If an idea/experiment is already in
    `decisions.md`, say so and cite it — never re-propose blind.
 3. **Never improvise guarded state.** Datasets, training settings, branch/release
@@ -68,6 +69,11 @@ rebase, key finding. `note "…"` forces a log line.
   `/{{NAME}}-<e>` (`gen-command.sh {{NAME}} <e> eval {{PDIR}}`). `eval all` runs
   the whole suite as a pre-release gate.
 - `register-task <t>` — save a runbook `tasks/<t>.md`; generate `/{{NAME}}-<t>`.
+- `use-knowledge <k> [--unlink]` — link a global knowledge module
+  (`$PROJECT_WITH_REFLECT_ROOT/knowledge/<k>`) into this project — the knowledge analog
+  of binding a machine. Adds/removes `<k>` in `config.json.knowledge`
+  (`link-knowledge.sh {{PDIR}} <k> [--unlink]`). One module can serve many projects;
+  linked modules load when relevant (see the contract). Use after `/register-knowledge <k>`.
 - `note "…"` — force a log entry into the active stream.
 
 Leanness: **no caps** — keep rules readable; split a long module into another

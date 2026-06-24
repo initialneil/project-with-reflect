@@ -1,5 +1,6 @@
 ---
 description: "Register an ssh machine or provision+pay a cloud server (project-with-reflect)"
+argument-hint: "<name>"
 ---
 Run the **register-machine** action of the `project-with-reflect` skill with arguments: $ARGUMENTS
 

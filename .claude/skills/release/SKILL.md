@@ -6,6 +6,7 @@ description: >-
   scripts/publish.sh) then refresh the local install. Use when the user types
   /release in the project-with-reflect repo, or asks to release / publish / cut a
   new version. Maintainer-only — this project skill is NOT shipped to plugin consumers.
+argument-hint: "[patch | minor | major | X.Y.Z] [\"note\"]"
 ---
 
 # /release — ship a new project-with-reflect version

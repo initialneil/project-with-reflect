@@ -1,5 +1,6 @@
 ---
 description: "Register a hardware flash target (USB/serial) with project-with-reflect"
+argument-hint: "<name>"
 ---
 Run the **register-device** action of the `project-with-reflect` skill with arguments: $ARGUMENTS
 

@@ -24,17 +24,9 @@ before acting**.
 
 ## Install
 
-**As a plugin (marketplace):**
 ```
 /plugin marketplace add initialneil/project-with-reflect
 /plugin install project-with-reflect@project-with-reflect
-```
-
-**User-scope (symlink, live with the repo):**
-```bash
-git clone https://github.com/initialneil/project-with-reflect
-ln -sfn "$PWD/project-with-reflect/skills/project-with-reflect" ~/.claude/skills/project-with-reflect
-cp project-with-reflect/commands/*.md ~/.claude/commands/
 ```
 
 First run bootstraps `$PROJECT_WITH_REFLECT_ROOT` (default `~/.project-with-reflect`)
@@ -115,13 +107,6 @@ workstream is a **reusable lane**, not one-shot.
 fixes wrong rules, **splits a module if it gets too long to read**, regenerates
 `status.md`, archives consumed logs, and reports what changed. `--reground` forces a
 full rewrite of one module. Readability is the judge.
-
-## Releasing (maintainers)
-
-This repo ships an in-repo `/release` skill (`.claude/skills/release`). `/release
-[patch|minor|major] "note"` bumps the version, updates the CHANGELOG + manifests,
-tags, pushes, and cuts a GitHub release. Bump map: **major** = user-facing big change,
-**minor** = major fix, **patch** = minor fix (default).
 
 ## License
 

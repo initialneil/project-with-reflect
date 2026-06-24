@@ -53,9 +53,18 @@ Bare `/project-with-reflect` → `help`.
 - **register-device `<name>`** — autodetect board + serial port, then
   `SK/scripts/register-device.sh <name> <board> <port> [toolchain] [baud]`. A device is
   flashed over USB/serial, not ssh.
-- **register-knowledge `<name>`** — `SK/scripts/register-knowledge.sh <name>` →
-  a global module in `$ROOT/knowledge/<name>/`; projects opt in via
-  `config.json.knowledge`. May carry setup/config, not just prose.
+- **register-knowledge `<name>`** — a global module in `$ROOT/knowledge/<name>/`
+  (kind: `note` | `mcp` | `api`); projects opt in via `config.json.knowledge`.
+  - **MCP** (e.g. `unity`): *actually wire it first* —
+    `claude mcp add --scope user <name> -- <command…>` (or `--transport http <name> <url>`),
+    confirming the exact command with the user. Then
+    `SK/scripts/register-knowledge.sh <name> mcp "<the add command used>"` to record it
+    and write usage rules. Result: `mcp__<name>__*` tools become available in any
+    project that opts in, and `knowledge.md` tells Claude when/how to use them + the
+    re-add line for a new machine. (Knowledge is a folder exactly like `machines/` —
+    the difference is an MCP needs setup, not just prose.)
+  - **note / api**: `SK/scripts/register-knowledge.sh <name> [note|api] ["setup steps"]`.
+    API keys live in env/keychain — never on disk.
 - **register-agent `<name>`** — `SK/scripts/register-agent.sh <name>`.
 - **meta-reflect** — improve THIS meta-skill (templates/scripts, the reflect
   heuristic) from patterns recurring across projects; surface promotion candidates.

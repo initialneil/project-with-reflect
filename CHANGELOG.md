@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.0 — 2026-06-24
+
+- Device orchestration: register-device bakes real flash/monitor commands into runnable scripts (was a TODO stub); projects gain bind/build/flash/monitor handlers + a 'load the bound device/machine before build/flash/deploy' contract rule (binding was inert); meta-skill gains a Compound-requests sequencing guide (knowledge->device->project+bind->use-knowledge->build). New bind.sh; template_version 0.2.0.
+
 ## v0.3.1 — 2026-06-24
 
 - Projects register as real skills: register-project symlinks the state dir into ~/.claude/skills/<name>, so its SKILL.md is the loaded skill — /<name> works AND Claude reaches for it by a targeted description. Aliases stay commands; retired the project-command template.

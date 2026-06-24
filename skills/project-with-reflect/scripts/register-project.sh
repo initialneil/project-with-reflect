@@ -33,7 +33,7 @@ python3 - "$PDIR/config.json" "$NAME" "$REPO" "$MODE" "$WSM" "$MACHINE" "$DEVICE
 import json, sys
 path, name, repo, mode, wsm, machine, device = sys.argv[1:8]
 cfg = {"name": name, "repo": repo, "mode": mode, "workstream_mode": wsm,
-       "knowledge": [], "template_version": "0.1.0"}
+       "knowledge": [], "template_version": "0.2.0"}
 if machine: cfg["machine"] = machine
 if device:  cfg["device"]  = device
 json.dump(cfg, open(path, "w"), indent=2)

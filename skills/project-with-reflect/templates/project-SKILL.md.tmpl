@@ -29,6 +29,10 @@ helpers at `~/.claude/skills/project-with-reflect/scripts/` for deterministic op
    then log it.
 4. **Surface, don't bury.** When work touches an area with a rule module or a
    registered eval, name it.
+5. **Know your hardware/hosts.** If `config.json` binds a `device` or `machine`, load
+   `$PROJECT_WITH_REFLECT_ROOT/devices/<device>/device.json` (board / port / toolchain /
+   flash + monitor commands) and/or the machine record (ssh alias / endpoint) *before* any
+   build / flash / deploy — never guess a port or an ssh target.
 
 ## Working
 Auto-log to the active stream's `log.md` on: complex error + fix, PR / merge /
@@ -75,6 +79,19 @@ rebase, key finding. `note "…"` forces a log line.
   (`link-knowledge.sh {{PDIR}} <k> [--unlink]`). One module can serve many projects;
   linked modules load when relevant (see the contract). Use after `/register-knowledge <k>`.
 - `note "…"` — force a log entry into the active stream.
+
+### Hardware / hosts (when bound)
+- `bind --device <d> | --machine <m> [--build "<cmd>"] [--unbind-device|--unbind-machine]`
+  — point this project at a registered device/machine, or save its build command
+  (`bind.sh {{PDIR}} …`). Register the entity first (`/register-device`, `/register-machine`).
+- `build` — build the app: run `config.json.build_cmd` if set; else derive it from the
+  toolchain + repo, run it, and offer to save it via `bind --build "<cmd>"`.
+- `flash` — flash the bound device by running
+  `$PROJECT_WITH_REFLECT_ROOT/devices/<device>/flash.sh` (board/port/baud baked in at
+  register-device). Bind a device first; auto-log the flash.
+- `monitor` — open the serial monitor via the bound device's `monitor.sh`.
+- A bound **machine** is reached over its ssh alias / endpoint (from the machine record) —
+  deploy / run-remote / fetch-logs use that, never a hard-coded host.
 
 Leanness: **no caps** — keep rules readable; split a long module into another
 topic; reflect makes bounded updates, not whole-doc rewrites.

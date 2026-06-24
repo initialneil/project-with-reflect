@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.2 — 2026-06-24
+
+- reflect now flags real codebase-improvement items (recurrence/churn from the log) but never edits source by default — development is a separate step (direct/workstream), and reflect changes code only on explicit ask with a clear routine; directed reflect (reflect <target>) scopes to any code area or repo skill; new 'todo' action records a flagged-but-deferred or manually-parked item as a ## TODO checklist in the project dashboard (loaded every session, preserved across gen-dashboard)
+
 ## v0.5.1 — 2026-06-24
 
 - connections record a docs_url grounding pointer; per-skill reflect routing — log + reflect each finding at the skill it's about (project vs connection), with triage + a no-cascade nudge on /<project> reflect

@@ -8,7 +8,8 @@ State dir: `{{PDIR}}`
 - `rules/<topic>.md` — modular, readable rules (knowledge). Loaded on demand.
 - `workstreams/<branch>/` — `stream.json` (state) + `log.md` (history) per lane.
 - `decisions.md` — ideas tried / chosen / rejected (+ datasets, settings).
-- `{{NAME}}.md` — the human dashboard / folder note (regenerated on reflect).
+- `{{NAME}}.md` — the human dashboard / folder note (regenerated on reflect); also carries the
+  project's `## TODO` backlog (see the `todo` action).
 - `evals/<eval>/`, `tasks/<task>.md`, `config.json`.
 
 This skill is self-contained: it works even without the meta-skill installed
@@ -29,11 +30,15 @@ helpers at `~/.claude/skills/project-with-reflect/scripts/` for deterministic op
    then log it.
 4. **Surface, don't bury.** When work touches an area with a rule module or a
    registered eval, name it.
-5. **Know your connections.** For each name in `config.json.connections`, load
-   `$PROJECT_WITH_REFLECT_ROOT/connections/<name>/connection.json` (transport + facts: serial
-   port/board, ssh alias, API base/key-env, MCP tools) *before* any build / flash / deploy /
-   call — never guess a port, ssh target, or endpoint. Each connection is also its own skill
-   (`/<name>`).
+5. **Know your connections — operate them skill-native.** For each name in `config.json.connections`,
+   load `$PROJECT_WITH_REFLECT_ROOT/connections/<name>/connection.json` for the hard facts you need
+   to orchestrate (transport, serial port/board, ssh alias, API base/key-env, MCP tools — never
+   guess a port, ssh target, or endpoint). But to actually *operate* a connection (flash / monitor /
+   reconnect / call), go **through its own skill `/<name>`** — it natively loads + applies its learned
+   `## Quirks` (the gotchas + good practices `/<name> reflect` accrues), so this project inherits
+   every other project's experience with that connection instead of rediscovering it. Don't
+   re-implement a connection's behavior in the project or hand-read its quirk file — delegate to its
+   skill, the single place those quirks live and are applied.
 
 ## Working
 Auto-log key events — **to the skill the finding is about**, so knowledge lands where it's reusable:
@@ -59,7 +64,20 @@ Auto-log key events — **to the skill the finding is about**, so knowledge land
 - `list` — handles: workstreams (+ lineage / behind-base), evals, tasks, rule
   modules, global knowledge used (`config.json.knowledge`).
 - `help` — this menu.
-- `reflect [--reground]` — **triage first:** any new stream-log entry that's really about a bound
+- `reflect [<target>] [--reground]` — **directed reflect (with a `<target>`):** point reflect at any
+  target — a **code area** (`lib/auth`, "the dio retry logic"), a **repo skill** (`/e2e-iphone` — just
+  code that's team-shared), or a **rule module / knowledge area** — and it gathers the log entries
+  about it and turns the logged experience into the right change *there*:
+  - **code (incl. a repo skill)** → reflect **flags a concrete dev item** from the log (what to
+    change, where, why — a fix, a guard, a preventive rule, a small refactor) and records it.
+    **Reflect does NOT edit the source itself** — development is a separate, deliberate activity. It
+    proceeds only when you **explicitly ask** *and* the **dev routine is clear** (which lane — direct,
+    or a workstream/worktree); the edit then runs through that lane (diff, commit/PR). A repo skill is
+    just part of the codebase; its edit ships in the repo, so the whole team gets it.
+  - **rule / knowledge** → fold into `rules/`/`decisions.md` as usual.
+  It distills the *logged experience* about the target, not a fresh codebase audit — if little is
+  logged, say so and offer a code-review pass instead. Then archive the consumed entries.
+  **Plain `reflect` (no target):** triage first — any new stream-log entry that's really about a bound
   connection (a device/API quirk, not this app) → move it to that connection's `log.md` (it reflects
   into that connection's quirks via `/<name> reflect`), don't fold it into project rules. Then fold
   the remaining entries into the right `rules/<topic>.md` + `decisions.md` (**bounded update**: add
@@ -67,8 +85,17 @@ Auto-log key events — **to the skill the finding is about**, so knowledge land
   refresh the dashboard frontmatter facts (`gen-dashboard.sh {{PDIR}}`) and the `{{NAME}}.md` narrative
   body, then archive consumed logs (`reflect.sh archive {{PDIR}} <stream>`). Reflect stays **per-skill
   — no cascade**: end by listing bound connections that have unreflected `log.md` lines and suggesting
-  `/<name> reflect` for each. Report what changed. `--reground` =
-  full grounding-rules-style rewrite of one module.
+  `/<name> reflect` for each. **Surface code/design flags (don't audit the source, don't fix
+  silently):** reflect distills the *log*, not the codebase — so flag what the log reveals: a module
+  churned repeatedly, a workaround piled on a workaround, **the same failure recurring across runs
+  (retried, never prevented)**, a "fix later". For each, **record a concrete code-development item**
+  (todo / idea / task — what to change, where, why; often a preventive rule or a reordered procedure,
+  not another retry). **Reflect stops there — it flags, it does not edit the source.** The development
+  is a separate activity you drive when ready: **direct**, a **workstream/worktree**, or **parked via
+  `todo`** (a `## TODO` line in `{{NAME}}.md`, loaded every session so it resurfaces; a *repeatable*
+  procedure → `register-task`). Reflect makes the change itself **only if you explicitly ask and the
+  dev routine is clear**.
+  Report what changed. `--reground` = full grounding-rules-style rewrite of one module.
 - `streams` — list `workstreams/*/stream.json`; flag any behind their `base`.
 - `register-branch <b> --base <x> [--track-only]` — make `workstreams/<b>/` per
   `config.workstream_mode` (worktree → `git worktree add`; in-repo → `git checkout
@@ -93,6 +120,13 @@ Auto-log key events — **to the skill the finding is about**, so knowledge land
   (`link-knowledge.sh {{PDIR}} <k> [--unlink]`). One module can serve many projects;
   linked modules load when relevant (see the contract). Use after `/register-knowledge <k>`.
 - `note "…"` — force a log entry into the active stream.
+- `todo ["<item>"] | done "<match>"` — the project's lightweight backlog of pending dev items, kept as
+  a checklist under `## TODO` in `{{NAME}}.md` (the dashboard — loaded every session, so open items
+  resurface and you can be offered them next time). `todo "<item>"` appends `- [ ] <item> — <date>`;
+  bare `todo` lists the open items; `todo done "<match>"` ticks it (`- [x]`). This is where reflect
+  records a flagged change you **accept but defer**, and where you **manually park** work for later.
+  `todo` only *tracks* — doing the item is normal development (direct, or a workstream/worktree).
+  Keep the section; reflect maintains it, never clobbers it.
 
 ### Connections (when bound)
 A project binds the connections it operates (a serial device, an ssh box, an API, an MCP). Each
@@ -102,10 +136,27 @@ is also its own skill `/<name>`; from here you orchestrate them in project conte
   `--machine` are accepted aliases. Register it first (`/register-device|machine|api|mcp`).
 - `build` — run `config.json.build_cmd` if set; else derive it from the toolchain + repo, run it,
   and offer to save it via `bind --build "<cmd>"`.
-- `flash` / `monitor` — resolve the bound **serial** connection and run its
+- `flash` / `monitor` — operate the bound **serial** connection **through its skill** (`/<name> flash`
+  / `/<name> monitor`): it applies the device's quirks first, then runs its baked
   `$PROJECT_WITH_REFLECT_ROOT/connections/<name>/flash.sh` / `monitor.sh`. Auto-log the flash.
-- A bound **ssh** connection → deploy / run-remote / fetch-logs over its alias; **http/mcp** →
-  call / use per that connection's own skill. Never hard-code a host, port, or endpoint.
+- A bound **ssh** connection → operate via `/<name>` (deploy / run-remote / fetch-logs over its
+  alias); **http/mcp** → call / use via `/<name>`. Never hard-code a host, port, or endpoint, and
+  don't bypass a connection's skill — that's where its learned quirks get applied.
+
+### Where a lesson lands
+A lesson from the log can take two forms, and reflect routes by **what kind of lesson it is + who
+needs it**:
+- **A code-development item** — the fix belongs in the source: a `lib/` module, a config, or a
+  **repo skill** (`.claude/commands|skills/…`, a team-shared doc like `/e2e-iphone` — just part of the
+  codebase). reflect **flags and records** it; **it does not make the change itself** — the
+  **development follows** as a separate step you drive (direct, or a workstream/worktree), and only on
+  your explicit go-ahead with a clear routine. A repo-skill edit ships in the repo, so the whole team
+  gets it.
+- **Durable knowledge** — so it isn't relearned. A project **rule** (`rules/`, your per-dev knowledge
+  in the PWR root) or a **connection's quirks** (cross-project device/API knowledge).
+
+Often a lesson is both: a flagged code change *and* a recorded invariant. A repo skill is just the
+case where the "code" is itself a shared skill doc — nothing special beyond living in `.claude/`.
 
 Leanness: **no caps** — keep rules readable; split a long module into another
 topic; reflect makes bounded updates, not whole-doc rewrites.

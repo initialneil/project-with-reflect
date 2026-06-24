@@ -169,9 +169,12 @@ the toolchain, your own knowledge: a board's download dance; a box's power-limit
 API's billing gotcha + endpoints). Real content, **not** an empty heading — `reflect` grows it.
 The script writes only the frontmatter facts + the heading; the body is yours.
 
-A project **`bind`s** the connections it operates (for `build/flash/monitor`/deploy in project
-context); the connection's own `/<name>` skill is for operating it directly. **Knowledge** stays
-linked into projects (plain-md reference, and there are many — not skills).
+A project **`bind`s** the connections it operates, but **operates them skill-native**: project-context
+`build/flash/monitor`/deploy/call delegates to the connection's own `/<name>` skill, which loads +
+applies its learned quirks (one place, no drift). The project reads `connection.json` only for the
+hard facts it needs to orchestrate (port, alias, endpoint) — it never hand-reads the connection's
+quirk file. **Knowledge** stays linked into projects (plain-md reference, and there are many — not
+skills).
 
 **One home per finding — log + reflect at the skill it's *about*, not the one you typed.** When you
 operate a bound connection inside a `/<project>` session, the *active* skill (project) isn't always
@@ -244,7 +247,9 @@ always current and shows in Obsidian's Properties panel — and the **narrative 
 project is, key decisions, next steps)
 that bootstrap/reflect write. The generator rewrites only its managed frontmatter keys:
 non-managed keys (`tags`, `aliases`, …) and the whole body are preserved. The model writes
-narrative; it doesn't hand-edit the frontmatter facts.
+narrative; it doesn't hand-edit the frontmatter facts. The body also holds the project's **`## TODO`
+backlog** (the `todo` action) — pending dev items flagged by reflect or parked by the user; it's body,
+so `gen-dashboard.sh` preserves it across regenerations.
 
 ## Reflect = bounded update
 Fold new facts into rules/decisions, fix wrong ones, **split a module if it gets too
@@ -252,6 +257,27 @@ long to read**, refresh the dashboard facts (`SK/scripts/gen-dashboard.sh <proje
 update the narrative around that block, then archive consumed logs
 (`SK/scripts/reflect.sh archive <project_dir> <stream>`). No caps; readability is the
 judge. `reflect --reground` does a full grounding-rules-style rewrite of one module.
+
+Reflect distills the **log** (what happened), **not the source** — it does not audit the codebase
+for smells. It *does* **surface flags the log reveals** — a module churned repeatedly, a workaround
+on a workaround, or **the same failure recurring across runs (retried, never prevented)** — and, for
+each, asks the user to **fix now** (often a preventive rule or a reordered procedure, not another
+retry), **track** it (one-off → a line in `decisions.md`, which loads every session so it resurfaces;
+repeatable procedure → `register-task`, which becomes a `/<project>-<task>` runbook command), or
+**drop** it. Surfacing the lesson is in scope; performing a codebase audit is a separate code-review
+pass, not reflect.
+
+**Reflect flags dev work; it does not do it.** Beyond folding the log into knowledge, reflect
+**surfaces concrete code-development items** (todo / idea / task — what to change, where, why) from the
+logged experience, for any part of the codebase — a `lib/` module, a config, or a **repo skill** like
+`/e2e-iphone` (a repo skill is just team-shared code). **Reflect flags and records; it never edits the
+source by default.** The development is a separate, deliberate activity the user drives — **direct**,
+a **workstream/worktree**, or **parked via the project's `todo` action** (a `## TODO` checklist in the
+dashboard `<name>.md`, loaded every session so it resurfaces) — and reflect makes the change itself
+**only when the user explicitly asks and the dev routine is clear**. `/<project> reflect <target>`
+scopes the flagging to a target; it's log-bounded, not a whole-codebase audit. Durable *knowledge*
+lessons still route to one of three homes by who needs it: a **repo skill** (team, via git), a project
+**rule** (per-dev, PWR root), a **connection's quirks** (cross-project).
 
 ## Security
 ssh uses keys + `~/.ssh/config` aliases; no passwords on disk. Provisioning: guide,

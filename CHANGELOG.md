@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.2 — 2026-06-24
+
+- First-run root prompt now enforced by the scripts (exit 3 / PWR_FIRST_RUN) + pointer-based resolution; recommend a synced custom root (Obsidian/iCloud/Dropbox)
+
 ## v0.1.1 — 2026-06-24
 
 - MCP-aware register-knowledge (note|mcp|api) — wires the server via 'claude mcp add'; README polish (grounding-rules link, splattingavatar example)

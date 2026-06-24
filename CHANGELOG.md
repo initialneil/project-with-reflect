@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.1 — 2026-06-24
+
+- Obsidian folder-notes integration: register-project re-attaches a project's <name>.md as its folder note when the root is in an Obsidian vault (clears stale detached records; never alters the .md). Mentioned only in the post-register summary for Obsidian users.
+
 ## v0.2.0 — 2026-06-24
 
 - Add bootstrap — meta: configure/repair the root; project: seed a freshly-registered project from repo docs + the current session. Rename per-project dashboard status.md -> <name>.md (folder note). Documented in README.

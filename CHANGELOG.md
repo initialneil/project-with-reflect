@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.3 — 2026-06-25
+
+- work on <lane> offers to cd the session into the lane's workstream folder (asks first; on yes the Bash cwd persists so planning/scratch files land in the lane, not ~); remote code stays on the host over ssh. Local code-dir cd deferred
+
 ## v0.6.2 — 2026-06-25
 
 - Natural-language-first commands: softened the intimidating argument-hints (register-api/mcp/branch, log-and-reflect, update) so users describe intent in plain language while Claude fills the flags; register-project is NL-first and auto-registers a remote host; README Actions notes that flags are Claude's interface, not user syntax

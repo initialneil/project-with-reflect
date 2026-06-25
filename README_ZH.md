@@ -54,8 +54,9 @@ prompt、向 Claude 一遍遍解释同一个项目的来龙去脉？
 ```
 如果 gpubox 还不是 connection，Claude 会先把它注册成 ssh connection（key-based，磁盘上不存密码），
 把两个 repo 记为 root 并 bind 上 host。然后 `/myapp bootstrap` 通过 ssh 从这些 repo seed 出
-rules + decisions。之后你在本地（同步的 lane 目录）跑 Claude；`/myapp` 通过 `/gpubox` 在 host 上
-build / test，而 planning / 工作文件都留在 vault 里，绝不弄乱服务器或你的 `~`。
+rules + decisions。之后在任意位置开一个 session，说 **`/myapp work on <lane>`** —— 它会先征求你同意
+再切进那条 lane 的目录，于是 planning / 工作文件都留在 vault 里（绝不弄乱服务器或你的 `~`），
+同时 `/myapp` 通过 `/gpubox` 在 host 上 build / test。
 
 也能把设备 / 服务变成 skill——`/register-device`、`/register-api`、`/register-mcp`、
 `/register-machine`；project `bind` 之后可直接 build / flash / 调用（见下文）。

@@ -55,8 +55,9 @@ flag syntax to remember:
 ```
 Claude registers `gpubox` as an ssh connection if it isn't one yet (key-based, no passwords on disk),
 records both repos as roots, and binds the host. Then `/myapp bootstrap` seeds rules + decisions from
-them over ssh. You run Claude from your synced lane dir; `/myapp` builds/tests on the host through
-`/gpubox`, and your planning + working files stay in the vault, never littering the server or your `~`.
+them over ssh. Open a session anywhere and say **`/myapp work on <lane>`** — it asks before switching
+into that lane's folder, so your planning + working files stay in the vault (never littering the server
+or your `~`), while `/myapp` builds/tests on the host through `/gpubox`.
 
 You can also turn devices and services into skills — `/register-device`, `/register-api`,
 `/register-mcp`, `/register-machine` — and `bind` them to a project to `build` / `flash` / call

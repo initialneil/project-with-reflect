@@ -16,6 +16,16 @@ This skill is self-contained: it works even without the meta-skill installed
 (in-repo projects stay portable). When the meta-skill IS installed, prefer its
 helpers at `~/.claude/skills/project-with-reflect/scripts/` for deterministic ops.
 
+**Codebase roots.** `config.json` carries `location` (`local` | `remote`) and `roots[]` (the working
+dirs — a project can span several, e.g. an app repo + a sibling dataset repo; if `roots` is absent the
+single `repo` is the only root). For a **remote** project the code lives on `host_connection` (an ssh
+connection): operate it **through `/<host_connection>`** (run / build / test over its alias — rule 5),
+and remember **your cwd here (the vault lane) is not the repo's working dir** — each root `path` is a
+dir *on the host*. Never assume a local checkout; load `roots` for the real paths. Version lanes on a
+remote project are normally `register-branch … --track-only` (lineage only) — the `worktree` / `in-repo`
+git realizations assume a local checkout. (Local single-root projects: `roots` is just the one repo,
+`location: local` — nothing extra to think about.)
+
 ## Rule index
 <!-- one line per rule module: `topic — load when …`. reflect maintains this list. -->
 
@@ -58,7 +68,10 @@ the finding is about**, so knowledge lands where it's reusable:
 ## Subcommands
 - `bootstrap` — **seed this project from existing material** (run right after
   registering an existing project). Read the repo's docs (README, specs, CHANGELOG,
-  design notes), skim the codebase, and use the current conversation/session, then
+  design notes) across **every root** in `config.json.roots`, skim the codebase, and use the
+  current conversation/session, then — **for a remote project (`location: remote`) read those over the
+  host connection** (`/<host_connection> 'cat <root>/README.md'`, `… git -C <root> log --oneline`,
+  `ls <root>`), never assuming local files — then
   do an initial reflect-style pass: write the `rules/<topic>.md` modules + their
   index, populate `decisions.md` with the key choices already made, and write the
   `{{NAME}}.md` **narrative body** (the YAML frontmatter facts auto-generate — run

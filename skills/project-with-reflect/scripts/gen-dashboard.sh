@@ -23,11 +23,23 @@ def q(s):  # safe double-quoted YAML scalar (valid YAML, handles spaces/punct/un
     return json.dumps(str(s), ensure_ascii=False)
 
 # --- build the managed (PWR-owned) frontmatter keys ------------------------------------
-MANAGED = {"repo", "mode", "workstream_mode", "connections", "build",
-           "knowledge", "workstreams", "device", "machine"}  # device/machine: drop legacy blocks
+MANAGED = {"repo", "mode", "workstream_mode", "connections", "build", "location", "host",
+           "roots", "knowledge", "workstreams", "device", "machine"}  # device/machine: drop legacy blocks
 m = [f"repo: {q(cfg.get('repo') or '—')}",
      f"mode: {cfg.get('mode','?')}",
      f"workstream_mode: {cfg.get('workstream_mode','?')}"]
+loc = cfg.get("location", "local")
+m.append(f"location: {loc}")
+host = cfg.get("host_connection")
+if host: m.append(f'host: "[[{host}]]"')   # the ssh connection that hosts a remote project's code
+# roots: list when a project spans >1 repo or lives remote (otherwise `repo` already says it)
+roots = cfg.get("roots", [])
+if len(roots) > 1 or loc == "remote":
+    m.append("roots:")
+    for r in roots:
+        label = r.get("path", "?")
+        if r.get("role"): label += " (%s)" % r["role"]
+        m.append("  - " + q(label))
 # bound connections + linked knowledge link to their own notes — quoted so the bare [[..]]
 # isn't read as a YAML flow sequence. (Connections live in $ROOT/connections/<c>, knowledge in
 # $ROOT/knowledge/<k> — clickable from here, detail lives there.)

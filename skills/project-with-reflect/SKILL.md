@@ -73,11 +73,14 @@ Bare `/project-with-reflect` → `help`.
   `SK/scripts/bootstrap.sh "<path>"`. Use to set up before registering, move the root,
   or repair a missing pointer / rc export.
 - **register-project `<name> [path]`** — AskUserQuestion for **mode** (central |
-  in-repo), **workstream_mode** (worktree | in-repo), optional **machine/device**
-  binding, and **import existing docs?**. Then
-  `SK/scripts/register-project.sh <name> <path> <mode> <workstream_mode> [machine] [device]`.
-  Generates `/<name>`. If "import", read the named docs and distill into
-  `rules/<topic>.md` (confirm what you cut). See §SSOT below for mode trade-offs.
+  in-repo), **workstream_mode** (worktree | in-repo), **local or remote** (remote → the
+  ssh connection that hosts the code; mode is then central), **extra roots** (a project can
+  span repos — app + dataset), optional **machine/device** binding, and **import existing
+  docs?**. Then `SK/scripts/register-project.sh <name> <primary-path> <mode> <workstream_mode>`
+  plus `--remote <connection>` (remote project) and a repeatable `--root <path>[:role]` per
+  extra root. The script writes `location` / `host_connection` / `roots[]` into `config.json`
+  and auto-binds the host. Generates `/<name>`. If "import", run `/<name> bootstrap` (it reads
+  every root, over the host connection if remote). See §SSOT below for mode trade-offs.
   - **Obsidian folder-notes (mention only in the post-register summary):**
     register-project runs `SK/scripts/obsidian-folder-note.sh <project_dir>` — it is
     silent unless the root is in an Obsidian vault with folder-notes, where it clears any

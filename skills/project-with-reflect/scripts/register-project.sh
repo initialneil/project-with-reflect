@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
 # Scaffold a project as a skill (user scope). Bind connections afterwards with bind.sh.
-#   register-project.sh <name> <repo_path> <mode> <workstream_mode>
-#     mode            = central | in-repo
-#     workstream_mode = worktree | in-repo
+#   register-project.sh <name> <repo_path> [mode] [workstream_mode] \
+#                       [--remote <connection>] [--root <path>[:role]]...
+#     mode            = central | in-repo   (default central)
+#     workstream_mode = worktree | in-repo  (default in-repo)
+#
+# <repo_path> is the PRIMARY root. A project can span several repos — add more with
+# repeatable --root <path>[:role] (e.g. an app repo + a sibling dataset repo).
+# For a REMOTE project (the code lives on a host, no local checkout) pass
+# --remote <connection> — an ssh connection registered with register-machine. The roots
+# are then paths ON that host, mode is forced to central, and the host is auto-bound.
+# Positionals and flags may be given in any order.
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 source "$HERE/common.sh"
@@ -10,10 +18,30 @@ pwr_first_run_guard
 pwr_ensure_root
 TPL="$HERE/../templates"
 
-NAME="${1:?project name required}"
-REPO="${2:-}"
-MODE="${3:-central}"
-WSM="${4:-in-repo}"
+REMOTE=""; ROOTS=(); POS=()
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --remote) REMOTE="${2:?--remote needs a connection name}"; shift 2;;
+    --root)   ROOTS+=("${2:?--root needs a path}"); shift 2;;
+    --*) echo "unknown flag: $1" >&2; exit 1;;
+    *) POS+=("$1"); shift;;
+  esac
+done
+NAME="${POS[0]:?project name required}"
+REPO="${POS[1]:-}"
+MODE="${POS[2]:-central}"
+WSM="${POS[3]:-in-repo}"
+
+LOCATION="local"
+if [ -n "$REMOTE" ]; then
+  LOCATION="remote"
+  [ -e "$PWR_ROOT/connections/$REMOTE" ] || \
+    echo "  ! host connection '$REMOTE' not registered yet (register-machine $REMOTE first)." >&2
+  if [ "$MODE" = "in-repo" ]; then
+    echo "  remote project → forcing central mode (no local checkout to live inside)." >&2
+    MODE="central"
+  fi
+fi
 
 if [ "$MODE" = "in-repo" ]; then
   [ -n "$REPO" ] || { echo "in-repo mode needs a repo path (arg 2)" >&2; exit 1; }
@@ -29,11 +57,33 @@ fi
 # only LINKS modules (config.json.knowledge) and surfaces them as wikilinks in the dashboard.
 mkdir -p "$PDIR"/rules "$PDIR"/workstreams/main "$PDIR"/evals "$PDIR"/tasks
 
-python3 - "$PDIR/config.json" "$NAME" "$REPO" "$MODE" "$WSM" <<'PY'
-import json, sys
-path, name, repo, mode, wsm = sys.argv[1:6]
-cfg = {"name": name, "repo": repo, "mode": mode, "workstream_mode": wsm,
-       "knowledge": [], "connections": [], "template_version": "0.3.0"}
+python3 - "$PDIR/config.json" "$NAME" "$REPO" "$MODE" "$WSM" "$LOCATION" "$REMOTE" \
+         ${ROOTS[@]+"${ROOTS[@]}"} <<'PY'
+import json, re, sys
+args = sys.argv[1:]
+path, name, repo, mode, wsm, location, remote = args[:7]
+extra = args[7:]
+
+def split_role(s, default="secondary"):
+    # a trailing ":word" (no slash) is a role label; otherwise the whole string is a path
+    m = re.match(r'^(.*):([a-z][a-z0-9_-]*)$', s)
+    if m:
+        return m.group(1), m.group(2)
+    return s, default
+
+roots = []
+if repo:
+    roots.append({"path": repo, "role": "primary"})
+for r in extra:
+    p, role = split_role(r)
+    roots.append({"path": p, "role": role})
+
+cfg = {"name": name, "location": location}
+if remote:
+    cfg["host_connection"] = remote
+cfg.update({"repo": repo, "roots": roots, "mode": mode, "workstream_mode": wsm,
+            "knowledge": [], "connections": ([remote] if remote else []),
+            "template_version": "0.6.0"})
 json.dump(cfg, open(path, "w"), indent=2)
 PY
 
@@ -58,11 +108,16 @@ rm -f "$HOME/.claude/commands/$NAME.md"
 mkdir -p "$HOME/.claude/skills"
 ln -sfn "$PDIR" "$HOME/.claude/skills/$NAME"
 
-pwr_registry_put projects "$NAME" "{\"dir\":\"$PDIR\",\"repo\":\"$REPO\",\"mode\":\"$MODE\",\"workstream_mode\":\"$WSM\"}"
+pwr_registry_put projects "$NAME" "{\"dir\":\"$PDIR\",\"repo\":\"$REPO\",\"location\":\"$LOCATION\",\"host_connection\":\"$REMOTE\",\"mode\":\"$MODE\",\"workstream_mode\":\"$WSM\"}"
 
 # If the project lives inside an Obsidian vault with the folder-notes plugin, make sure
 # <name>/<name>.md attaches as the folder note (no-ops otherwise).
 bash "$HERE/obsidian-folder-note.sh" "$PDIR" || true
 
-echo "Registered project '$NAME' ($MODE / $WSM) at $PDIR — installed as a skill (~/.claude/skills/$NAME)."
+if [ "$LOCATION" = "remote" ]; then
+  echo "Registered REMOTE project '$NAME' on host '$REMOTE' (central / $WSM) at $PDIR — installed as a skill."
+  echo "Code lives on the host; operate it via /$REMOTE. ${#ROOTS[@]} extra root(s) recorded."
+else
+  echo "Registered project '$NAME' ($MODE / $WSM) at $PDIR — installed as a skill (~/.claude/skills/$NAME)."
+fi
 echo "Use /$NAME (or just mention $NAME) to work on it. Run /reload-plugins to load it this session."

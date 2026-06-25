@@ -46,6 +46,19 @@ prompt、向 Claude 一遍遍解释同一个项目的来龙去脉？
 # （≡ /myapp reflect —— reflect 本来就会先 capture）
 ```
 
+**远程 / 多 repo 的 project** —— 当代码在服务器上（本地没有 checkout）、而且可能横跨多个 repo 时，
+先注册 host，再把 project 注册*在它上面*：
+
+```
+# 注册这台机器（key-based Host 写在 ~/.ssh/config；磁盘上不存密码）
+/register-machine dreams
+# 一个代码在远端、横跨两个 repo（app + 数据集）的 project
+/register-project holisticavatar /srv/HolisticAvatarV1 --remote dreams --root /srv/HolisticTrack:dataset
+/holisticavatar bootstrap     # 通过 ssh 读两个 repo，seed 出 rules + decisions
+```
+你在本地（同步的 lane 目录）跑 Claude；`/holisticavatar` 通过 `/dreams` 在 host 上 build / test，
+而 planning / 工作文件都留在 vault 里，绝不弄乱服务器或你的 `~`。
+
 也能把设备 / 服务变成 skill——`/register-device`、`/register-api`、`/register-mcp`、
 `/register-machine`；project `bind` 之后可直接 build / flash / 调用（见下文）。
 

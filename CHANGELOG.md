@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.0 — 2026-06-25
+
+- First-class remote projects (--remote <host>) and multi-root projects (--root <path>:role): config.json gains location/host_connection/roots[], dashboard surfaces them, project skill operates remote code via the host connection + remote-aware bootstrap
+
 ## v0.5.5 — 2026-06-25
 
 - add top-level /log-and-reflect command — a cwd-resolved alias that runs the current project's capture-first reflect from anywhere in the repo (no /<project> prefix); note the alias in the project reflect handler; README quick-start now shows the workstream lane (register-branch) + /log-and-reflect

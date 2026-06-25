@@ -46,6 +46,19 @@ All of it **Obsidian-friendly** (rules / knowledge / dashboard are clean, readab
 # (≡ /myapp reflect — "reflect" already captures the session first)
 ```
 
+**Remote / multi-repo project** — when the code lives on a server (no local checkout) and may span
+several repos, register the host first, then the project *on* it:
+
+```
+# register the box (key-based Host in ~/.ssh/config; no passwords on disk)
+/register-machine dreams
+# a project whose code is remote and spans two repos (app + dataset)
+/register-project holisticavatar /srv/HolisticAvatarV1 --remote dreams --root /srv/HolisticTrack:dataset
+/holisticavatar bootstrap     # seeds rules + decisions from both repos, read over ssh
+```
+You run Claude from your synced lane dir; `/holisticavatar` builds/tests on the host through `/dreams`,
+and your planning + working files stay in the vault, never littering the server or your `~`.
+
 You can also turn devices and services into skills — `/register-device`, `/register-api`,
 `/register-mcp`, `/register-machine` — and `bind` them to a project to `build` / `flash` / call
 directly (see below).

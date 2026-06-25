@@ -5,13 +5,21 @@
 你是否同时管理多个项目？是否要记住好几台机器、服务的连接方式？是否厌烦了反复写大段重复的
 prompt、向 Claude 一遍遍解释同一个项目的来龙去脉？
 
-它帮你把每个 **project** 管起来——worktree、log、reflect、沉淀出**长期知识库**；也帮你管起
-**服务器 / 设备 / API / MCP**，每个都成为可直接调用的 `/<name>` skill；而且全程 **Obsidian 友好**
-（rules / 知识 / dashboard 都是干净可读的 Markdown）。
+它帮你把每个 **project** 管起来——worktree、log、reflect、沉淀出**长期知识库**；也帮你管理一切你
+要**操作的东西**（connection），每个都成为可直接调用的 `/<name>` skill：
+
+- **服务器** —— ssh 部署 / 看日志 / 跑命令
+- **训练机** —— GPU 机器：跑训练 / `nvidia-smi`，记住它的 quirks（如重启后 `nvidia-smi -pl 300`）
+- **设备 device** —— USB / 串口烧录目标（开发板…）：flash / monitor / REPL
+- **API** —— HTTP / WebSocket 服务（只把 key 的环境变量**名字**落盘，绝不存 key 本身）
+- **MCP** —— MCP server，直接用它的 `mcp__<name>__*` tools
+- ……等
+
+而且全程 **Obsidian 友好**（rules / 知识 / dashboard 都是干净可读的 Markdown）。
 
 **核心逻辑：**
 
-- **万物皆 skill** —— project，以及每个 connection（ssh host / serial device / HTTP API / MCP），注册后都得到自己的 `/<name>`。
+- **万物皆 skill** —— project 和上面每个 connection，注册后都得到自己的 `/<name>`。
 - **工作时自动 log** —— commit、决定、关键发现、error + 修复，随手记进当前 stream。
 - **`reflect` 蒸馏自己** —— 先 capture 这次 session，再把 log 提炼成**精简、可读的 rules**，下次自动加载。
 - **动手前先加载** —— Claude 先读已有 rules / decisions / 知识，不再重复解释、重复犯错。
@@ -116,8 +124,8 @@ http/mcp `<call>` —— 外加 `status` · `note "…"` · `update "…"` · `r
 2. **提议前先查 ledger** —— 如果它已在 `decisions.md` 里，引用它，绝不盲目重复提议。
 3. **绝不擅自改 guarded state** —— dataset、训练 settings、branch/release 约定都是 invariants。
 4. **主动 surface** 相关的 rules 和已注册的 evals。
-5. **了解你的 connections** —— 通过 connection 自己的 `/<name>` skill 去操作它（会自动套用它学到的
-   quirks）；`connection.json` 提供硬事实，绝不靠猜 port / host / endpoint。
+5. **了解你的 connections**（服务器 / 训练机 / 设备 / API / MCP）—— 通过 connection 自己的 `/<name>`
+   skill 去操作它（会自动套用它学到的 quirks）；`connection.json` 提供硬事实，绝不靠猜 port / host / endpoint。
 
 正是这个 contract，让记录 log 变成**更少**的重复劳动，而不是更多的文件。
 

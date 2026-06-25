@@ -6,12 +6,20 @@ Juggling several projects at once? Need to remember how to connect to a handful 
 services? Tired of rewriting the same long prompts and re-explaining the same project to Claude?
 
 It manages each **project** for you — worktrees, logs, reflect, a growing **long-term knowledge
-base** — and your **servers / devices / APIs / MCP servers** too, each becoming a callable `/<name>`
-skill; all of it **Obsidian-friendly** (rules / knowledge / dashboard are clean, readable Markdown).
+base** — and everything you **operate** (a *connection*), each becoming a callable `/<name>` skill:
+
+- **Servers** — ssh in to deploy / tail logs / run commands.
+- **Training boxes** — GPU machines: run training / `nvidia-smi`, with their quirks remembered (e.g. `nvidia-smi -pl 300` after a reboot).
+- **Devices** — USB/serial flash targets (dev boards…): flash / monitor / REPL.
+- **APIs** — HTTP/WebSocket services (only the key's env-var *name* on disk, never the key).
+- **MCP servers** — used directly via their `mcp__<name>__*` tools.
+- …and more.
+
+All of it **Obsidian-friendly** (rules / knowledge / dashboard are clean, readable Markdown).
 
 **The core idea:**
 
-- **Everything is a skill** — a project, and each connection (ssh host / serial device / HTTP API / MCP), gets its own `/<name>` once registered.
+- **Everything is a skill** — a project, and each connection above, gets its own `/<name>` once registered.
 - **Auto-logs as you work** — commits, decisions, key findings, an error + its fix, jotted to the active stream.
 - **`reflect` distills itself** — captures the session, then folds the log into **lean, readable rules** it loads next time.
 - **Loads before acting** — Claude reads existing rules / decisions / knowledge first, so it stops re-explaining and repeating mistakes.
@@ -120,8 +128,9 @@ Every generated `/<name>` makes Claude, **before acting**:
 2. **Check the ledger before proposing** — if it's in `decisions.md`, cite it; never re-propose blind.
 3. **Never improvise guarded state** — datasets, settings, branch/release conventions are invariants.
 4. **Surface** relevant rules and registered evals.
-5. **Know your connections** — operate a bound connection through its own `/<name>` skill (which
-   applies its learned quirks); load `connection.json` for the hard facts, never guess a port / host / endpoint.
+5. **Know your connections** (servers / training boxes / devices / APIs / MCP) — operate a bound
+   connection through its own `/<name>` skill (which applies its learned quirks); load
+   `connection.json` for the hard facts, never guess a port / host / endpoint.
 
 That contract is what turns logging into *less* repeated work, not just more files.
 

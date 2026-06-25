@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.3 — 2026-06-25
+
+- reflect is now log-and-reflect (captures the session before folding, so plain 'reflect' replaces 'log and reflect'); richer auto-log triggers (commit / decision / long-task-done, logged as they happen); two non-blocking auto-log hooks — PostToolUse on git commit + PreCompact flush, gated to registered projects via registry.json; README/README_ZH restructured with a merged intro + Quick start
+
 ## v0.5.2 — 2026-06-24
 
 - reflect now flags real codebase-improvement items (recurrence/churn from the log) but never edits source by default — development is a separate step (direct/workstream), and reflect changes code only on explicit ask with a clear routine; directed reflect (reflect <target>) scopes to any code area or repo skill; new 'todo' action records a flagged-but-deferred or manually-parked item as a ## TODO checklist in the project dashboard (loaded every session, preserved across gen-dashboard)

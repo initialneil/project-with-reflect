@@ -1,33 +1,43 @@
 # project-with-reflect
 
-A **meta-skill for Claude Code** that turns each of your projects, machines, and
-devices into its own lightweight, **self-improving** skill.
+A **meta-skill for Claude Code**: turn each of your projects and **connections** (ssh hosts,
+serial devices, HTTP APIs, MCP servers) into its own `/<name>` skill — lightweight,
+**self-improving**, and remembered across sessions.
 
-You work through `/<project>`; it **auto-logs the moments that matter** (a gnarly
-error and its fix, a PR, a key finding); `/<project>-reflect` distills those logs
-into **lean, readable rules** so the next session — yours or Claude's — starts
-smarter instead of repeating mistakes.
+**The idea.** You manage many projects; each one you register becomes a `/<name>` skill. As you
+work it **auto-logs the moments that matter** (an error + its fix, a commit, a decision, a key
+finding); to close a session you run **`/<project> reflect`**, which **captures the session, then
+distills** it into **lean, readable rules** it loads next time. So the things you'd otherwise forget
+across many projects and machines — which experiment was tried, which dataset is canonical, which
+branch rebases onto which, where the eval cases live — stay on disk, and Claude **loads and checks
+them before acting** instead of repeating mistakes.
 
-> Core loop: `work → auto-log key events → reflect (bounded update) → lean, readable rules → better next session`
+> Core loop: `work (auto-logs key moments) → /<project> reflect (capture + distill, bounded) → lean readable rules → better next session`
 
-Modeled on the closed learning loop of [hermes-agent](https://github.com/nousresearch/hermes-agent);
-readability inspired by [grounding-rules](https://github.com/initialneil/grounding-rules). Leanness
-comes from readability + modularity (split a long rule module into another topic).
+> Modeled on [hermes-agent](https://github.com/nousresearch/hermes-agent)'s closed learning loop; readability inspired by [grounding-rules](https://github.com/initialneil/grounding-rules). Leanness = readability + modularity (split a long rule module into another topic).
 
-## Why
-
-Running many projects across many machines means you (and Claude) forget: which
-experiment was already tried, which dataset is canonical, which branch rebases onto
-which, where the eval cases live. `project-with-reflect` keeps that memory **on disk,
-per project, lean and readable**, and — crucially — makes Claude **load and check it
-before acting**.
-
-## Install
+## Quick start
 
 ```
+# 1. install (in Claude Code)
 /plugin marketplace add initialneil/project-with-reflect
 /plugin install project-with-reflect@project-with-reflect
+
+# 2. register a project → generates the /myapp skill
+/register-project myapp ~/code/myapp
+
+# 3. work through it — key moments auto-log
+/myapp ...
+
+# 4. close the session: capture + distill into rules
+/myapp reflect
 ```
+
+You can also turn devices and services into skills — `/register-device`, `/register-api`,
+`/register-mcp`, `/register-machine` — and `bind` them to a project to `build` / `flash` / call
+directly (see below).
+
+## First run: choosing the root
 
 On first run it asks where to keep `$PROJECT_WITH_REFLECT_ROOT`. A **custom, synced,
 readable path is recommended** — your Obsidian vault or a cloud file-sync folder
@@ -120,10 +130,13 @@ workstream is a **reusable lane**, not one-shot.
 
 ## Reflect = bounded update
 
-`reflect` folds new log entries into the right `rules/<topic>.md` + `decisions.md`,
-fixes wrong rules, **splits a module if it gets too long to read**, regenerates
-`<name>.md`, archives consumed logs, and reports what changed. `--reground` forces a
-full rewrite of one module. Readability is the judge.
+`reflect` is **log-and-reflect**: it first **captures the session** (appends this conversation's
+key events that aren't logged yet — to the active stream's log, or a connection's log if the finding
+is about a device/API), **then** folds new entries into the right `rules/<topic>.md` + `decisions.md`,
+fixes wrong rules, **splits a module if it gets too long to read**, regenerates `<name>.md`, archives
+consumed logs, and reports what changed. So one `/<project> reflect` is the whole end-of-session
+habit — no separate "log" step. `--reground` forces a full rewrite of one module. Readability is the
+judge.
 
 ## License
 

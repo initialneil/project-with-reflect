@@ -41,9 +41,14 @@ helpers at `~/.claude/skills/project-with-reflect/scripts/` for deterministic op
    skill, the single place those quirks live and are applied.
 
 ## Working
-Auto-log key events — **to the skill the finding is about**, so knowledge lands where it's reusable:
-- **Project finding** (this app's code / build / architecture / a decision) → the active stream's
-  `log.md`. Triggers: complex error + fix, PR / merge / rebase, key finding. `note "…"` forces a line.
+Auto-log key events **as they happen** — not batched at session end (a long session loses the early
+details; `reflect`'s end-of-session capture is the **backstop**, not the plan) — and **to the skill
+the finding is about**, so knowledge lands where it's reusable:
+- **Project finding** → the active stream's `log.md`. Triggers: a **commit** (one line: what it
+  accomplished + why, not the diff), **PR / merge / rebase**, a **decision** made (what + why —
+  reflect promotes it to `decisions.md`), a **long task finished** (a build / migration / refactor
+  that took real effort — outcome + any gotcha), a **complex error + its fix**, a **key finding**.
+  `note "…"` forces a line.
 - **Connection finding** (a device / host / API quirk or workaround *any* project binding it would
   hit — a flash boot-mode dance, an endpoint gotcha, "serial silent ≠ crash") → that connection's
   log via `/<name> note "…"`. Test: *would the next project that binds this connection need it?* →
@@ -64,7 +69,12 @@ Auto-log key events — **to the skill the finding is about**, so knowledge land
 - `list` — handles: workstreams (+ lineage / behind-base), evals, tasks, rule
   modules, global knowledge used (`config.json.knowledge`).
 - `help` — this menu.
-- `reflect [<target>] [--reground]` — **directed reflect (with a `<target>`):** point reflect at any
+- `reflect [<target>] [--reground]` — **`reflect` is log-and-reflect: it captures the session first,
+  then distills** — so you just type `reflect`, never "log and reflect". **Capture:** before folding,
+  append this conversation's key events that aren't in the log yet to the right home (project finding →
+  the active stream's `log.md`; connection finding → that connection's log — see *Working*), at the
+  auto-log bar (key events, not a verbose dump; idempotent — already-logged events are skipped).
+  **Directed reflect (with a `<target>`):** point reflect at any
   target — a **code area** (`lib/auth`, "the dio retry logic"), a **repo skill** (`/e2e-iphone` — just
   code that's team-shared), or a **rule module / knowledge area** — and it gathers the log entries
   about it and turns the logged experience into the right change *there*:

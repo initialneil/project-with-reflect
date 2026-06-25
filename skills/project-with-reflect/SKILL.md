@@ -11,13 +11,25 @@ description: >-
   machine, device, API, MCP, or knowledge note, or wants per-project persistent memory + a
   log->reflect->improve loop.
 argument-hint: "[help | list | status | bootstrap | register-project | register-machine | register-device | register-api | register-mcp | register-knowledge | update | register-agent | meta-reflect]"
+hooks:
+  PostToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "SH=\"${CLAUDE_SKILL_DIR:-$HOME/.claude/skills/project-with-reflect}/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.claude/skills/project-with-reflect/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] && sh \"$SH\" --context=posttool; exit 0"
+  PreCompact:
+    - matcher: "*"
+      hooks:
+        - type: command
+          command: "SH=\"${CLAUDE_SKILL_DIR:-$HOME/.claude/skills/project-with-reflect}/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.claude/skills/project-with-reflect/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] && sh \"$SH\" --context=precompact; exit 0"
 ---
 
 # project-with-reflect
 
 A meta-skill that **continuously generates and updates per-project sub-skills**.
-Core loop: `work → auto-log key events → reflect (bounded update) → lean, readable
-rules → better next session`. Modeled on hermes-agent's closed learning loop;
+Core loop: `work (auto-logs key moments) → reflect = capture the session + distill (bounded) → lean,
+readable rules → better next session`. (Plain `reflect` logs-and-reflects in one step — no need to
+say "log and reflect".) Modeled on hermes-agent's closed learning loop;
 readability inspired by grounding-rules. **No hard caps** — leanness comes from
 readability + modularity (split a long rule module into another topic).
 
@@ -251,7 +263,22 @@ narrative; it doesn't hand-edit the frontmatter facts. The body also holds the p
 backlog** (the `todo` action) — pending dev items flagged by reflect or parked by the user; it's body,
 so `gen-dashboard.sh` preserves it across regenerations.
 
+## Auto-log hooks (reliability)
+Logging is mostly behavioral, and the model drifts — so two non-blocking META-skill hooks
+(`SK/scripts/hook-autolog.sh`, declared in this SKILL's frontmatter) nudge the harness, not the
+model's memory: **PostToolUse(Bash)** fires on a `git commit` inside a registered project (gated via
+`registry.json` → repo match — silent everywhere else) and reminds you to log what the commit
+accomplished; **PreCompact** reminds you to flush un-logged events to the active stream before context
+is compacted (detail lost to a compaction can't be recovered at reflect time). Both always exit 0 —
+they never block a tool or a compaction. They cover the *mechanical* checkpoints; decisions /
+long-tasks / findings stay behavioral triggers (see a project's `Working`), and `reflect`'s
+capture-first is the end-of-session backstop.
+
 ## Reflect = bounded update
+`reflect` is **log-and-reflect**: it **captures the session first** (appends this conversation's
+key events not yet in the log to the right home — stream log for project findings, the connection's
+log for connection findings — at the auto-log bar, idempotent), **then** folds. So plain `reflect`
+does both; users never need to type "log and reflect".
 Fold new facts into rules/decisions, fix wrong ones, **split a module if it gets too
 long to read**, refresh the dashboard facts (`SK/scripts/gen-dashboard.sh <project_dir>`) and
 update the narrative around that block, then archive consumed logs

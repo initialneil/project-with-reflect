@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.1 — 2026-06-25
+
+- register-branch auto-degrades worktree/in-repo lanes to tracked on remote projects (no local checkout to run git in), with a host-branch hint; README quick-start uses generic placeholders
+
 ## v0.6.0 — 2026-06-25
 
 - First-class remote projects (--remote <host>) and multi-root projects (--root <path>:role): config.json gains location/host_connection/roots[], dashboard surfaces them, project skill operates remote code via the host connection + remote-aware bootstrap

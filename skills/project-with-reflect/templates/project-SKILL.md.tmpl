@@ -22,8 +22,9 @@ single `repo` is the only root). For a **remote** project the code lives on `hos
 connection): operate it **through `/<host_connection>`** (run / build / test over its alias — rule 5),
 and remember **your cwd here (the vault lane) is not the repo's working dir** — each root `path` is a
 dir *on the host*. Never assume a local checkout; load `roots` for the real paths. Version lanes on a
-remote project are normally `register-branch … --track-only` (lineage only) — the `worktree` / `in-repo`
-git realizations assume a local checkout. (Local single-root projects: `roots` is just the one repo,
+remote project are **lineage-only automatically** — `register-branch` degrades a `worktree` / `in-repo`
+lane to `tracked` (those git realizations need a local checkout); make a real branch on the host
+yourself if you want one. (Local single-root projects: `roots` is just the one repo,
 `location: local` — nothing extra to think about.)
 
 ## Rule index

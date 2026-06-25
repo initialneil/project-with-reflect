@@ -51,12 +51,12 @@ several repos, register the host first, then the project *on* it:
 
 ```
 # register the box (key-based Host in ~/.ssh/config; no passwords on disk)
-/register-machine dreams
+/register-machine gpubox
 # a project whose code is remote and spans two repos (app + dataset)
-/register-project holisticavatar /srv/HolisticAvatarV1 --remote dreams --root /srv/HolisticTrack:dataset
-/holisticavatar bootstrap     # seeds rules + decisions from both repos, read over ssh
+/register-project myapp /srv/myapp --remote gpubox --root /srv/dataset:dataset
+/myapp bootstrap              # seeds rules + decisions from both repos, read over ssh
 ```
-You run Claude from your synced lane dir; `/holisticavatar` builds/tests on the host through `/dreams`,
+You run Claude from your synced lane dir; `/myapp` builds/tests on the host through `/gpubox`,
 and your planning + working files stay in the vault, never littering the server or your `~`.
 
 You can also turn devices and services into skills — `/register-device`, `/register-api`,

@@ -32,6 +32,8 @@ CFG="$PDIR/config.json"
 NAME="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['name'])" "$CFG")"
 REPO="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1])).get('repo') or '')" "$CFG")"
 WSM="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1])).get('workstream_mode') or 'in-repo')" "$CFG")"
+LOC="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1])).get('location') or 'local')" "$CFG")"
+HOST="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1])).get('host_connection') or '')" "$CFG")"
 
 WS="$PDIR/workstreams/$BR"
 SJ="$WS/stream.json"
@@ -57,6 +59,14 @@ fi
 # ---- New lane: validate up front ----
 [ -n "$BASE" ] || { echo "--base <b> required for a new lane" >&2; exit 2; }
 PRINTO="${PRINTO:-$BASE}"
+# Remote project: no local checkout to run git in, so a lane is lineage-only. Auto-degrade a
+# would-be local-git realization (worktree / in-repo) to tracked, with a notice — the user creates
+# the actual branch on the host themselves if they want one.
+if [ "$LOC" = "remote" ] && [ "$TRACK_ONLY" != "1" ] && { [ "$WSM" = "worktree" ] || [ "$WSM" = "in-repo" ]; }; then
+  echo "  remote project ($NAME) — recording lineage only (no local git). To make a real branch on" >&2
+  echo "  the host: /${HOST:-<host>} 'git -C <root> checkout -b $BR origin/$BASE'." >&2
+  TRACK_ONLY=1
+fi
 if [ "$TRACK_ONLY" != "1" ] && [ "$WSM" = "worktree" ] && [ -z "$WT_PATH" ]; then
   echo "PWR_NEED_WORKTREE_PATH: '$NAME' is workstream_mode=worktree — pick a clean directory for the" >&2
   echo "  '$BR' worktree (NOT a sibling-clutter dir, NOT under .claude/ — e.g. ~/worktrees/$NAME/$BR)," >&2

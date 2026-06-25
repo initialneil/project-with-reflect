@@ -51,12 +51,12 @@ prompt、向 Claude 一遍遍解释同一个项目的来龙去脉？
 
 ```
 # 注册这台机器（key-based Host 写在 ~/.ssh/config；磁盘上不存密码）
-/register-machine dreams
+/register-machine gpubox
 # 一个代码在远端、横跨两个 repo（app + 数据集）的 project
-/register-project holisticavatar /srv/HolisticAvatarV1 --remote dreams --root /srv/HolisticTrack:dataset
-/holisticavatar bootstrap     # 通过 ssh 读两个 repo，seed 出 rules + decisions
+/register-project myapp /srv/myapp --remote gpubox --root /srv/dataset:dataset
+/myapp bootstrap              # 通过 ssh 读两个 repo，seed 出 rules + decisions
 ```
-你在本地（同步的 lane 目录）跑 Claude；`/holisticavatar` 通过 `/dreams` 在 host 上 build / test，
+你在本地（同步的 lane 目录）跑 Claude；`/myapp` 通过 `/gpubox` 在 host 上 build / test，
 而 planning / 工作文件都留在 vault 里，绝不弄乱服务器或你的 `~`。
 
 也能把设备 / 服务变成 skill——`/register-device`、`/register-api`、`/register-mcp`、

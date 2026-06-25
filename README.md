@@ -1,20 +1,22 @@
 # project-with-reflect
 
-A **meta-skill for Claude Code**: turn each of your projects and **connections** (ssh hosts,
-serial devices, HTTP APIs, MCP servers) into its own `/<name>` skill — lightweight,
-**self-improving**, and remembered across sessions.
+A **self-distilling** meta-skill for Claude Code.
 
-**The idea.** You manage many projects; each one you register becomes a `/<name>` skill. As you
-work it **auto-logs the moments that matter** (an error + its fix, a commit, a decision, a key
-finding); to close a session you run **`/<project> reflect`**, which **captures the session, then
-distills** it into **lean, readable rules** it loads next time. So the things you'd otherwise forget
-across many projects and machines — which experiment was tried, which dataset is canonical, which
-branch rebases onto which, where the eval cases live — stay on disk, and Claude **loads and checks
-them before acting** instead of repeating mistakes.
+Juggling several projects at once? Need to remember how to connect to a handful of machines and
+services? Tired of rewriting the same long prompts and re-explaining the same project to Claude?
 
-> Core loop: `work (auto-logs key moments) → /<project> reflect (capture + distill, bounded) → lean readable rules → better next session`
+It manages each **project** for you — worktrees, logs, reflect, a growing **long-term knowledge
+base** — and your **servers / devices / APIs / MCP servers** too, each becoming a callable `/<name>`
+skill; all of it **Obsidian-friendly** (rules / knowledge / dashboard are clean, readable Markdown).
 
-> Modeled on [hermes-agent](https://github.com/nousresearch/hermes-agent)'s closed learning loop; readability inspired by [grounding-rules](https://github.com/initialneil/grounding-rules). Leanness = readability + modularity (split a long rule module into another topic).
+**The core idea:**
+
+- **Everything is a skill** — a project, and each connection (ssh host / serial device / HTTP API / MCP), gets its own `/<name>` once registered.
+- **Auto-logs as you work** — commits, decisions, key findings, an error + its fix, jotted to the active stream.
+- **`reflect` distills itself** — captures the session, then folds the log into **lean, readable rules** it loads next time.
+- **Loads before acting** — Claude reads existing rules / decisions / knowledge first, so it stops re-explaining and repeating mistakes.
+
+> **Core loop:** `work (auto-log) → /<project> reflect (capture + distill) → lean readable rules → better next session`
 
 ## Quick start
 
@@ -29,8 +31,9 @@ them before acting** instead of repeating mistakes.
 # 3. work through it — key moments auto-log
 /myapp ...
 
-# 4. close the session: capture + distill into rules
+# 4. close the session: capture this session + distill into rules
 /myapp reflect
+/myapp log and reflect    # same thing — reflect already captures first
 ```
 
 You can also turn devices and services into skills — `/register-device`, `/register-api`,
@@ -137,6 +140,15 @@ fixes wrong rules, **splits a module if it gets too long to read**, regenerates 
 consumed logs, and reports what changed. So one `/<project> reflect` is the whole end-of-session
 habit — no separate "log" step. `--reground` forces a full rewrite of one module. Readability is the
 judge.
+
+## Acknowledgements
+
+Inspired by my dear friend Zhaolong WANG from Tsinghua.
+
+Built on ideas from:
+- [hermes-agent](https://github.com/nousresearch/hermes-agent) — the closed learning loop.
+- [grounding-rules](https://github.com/initialneil/grounding-rules) — lean, readable rules.
+- [planning-with-files](https://github.com/othmanadi/planning-with-files) — hook-driven, on-disk working memory.
 
 ## License
 

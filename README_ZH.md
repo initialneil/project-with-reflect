@@ -169,7 +169,7 @@ compaction 前 flush）+ reflect 的 capture-first 兜底，让 log 始终是新
 
 ## 致谢 Acknowledgements
 
-灵感来自我亲爱的朋友、清华的 Zhaolong WANG。
+Inspired by my dear friend Zhaolong WANG from Tsinghua.
 
 并借鉴了这些项目的思路：
 - [hermes-agent](https://github.com/nousresearch/hermes-agent) —— closed learning loop。

@@ -35,8 +35,8 @@ prompt、向 Claude 一遍遍解释同一个项目的来龙去脉？
 # 2. 注册一个 project → 生成 /myapp skill
 /register-project myapp ~/code/myapp
 
-# 3. 开一条 workstream lane —— worktree / branch / 仅追踪，按 project 的 mode
-/register-branch my-feature --base main     # → 生成 /myapp-my-feature
+# 3. 开一条 workstream lane —— 直接说它基于哪条（worktree / branch / 仅追踪，按 project 的 mode）
+/register-branch my-feature 基于 main        # → 生成 /myapp-my-feature
 
 # 4. 照常开发；关键时刻自动 log
 /myapp-my-feature …                          # （或直接 /myapp 用主 lane）
@@ -46,18 +46,16 @@ prompt、向 Claude 一遍遍解释同一个项目的来龙去脉？
 # （≡ /myapp reflect —— reflect 本来就会先 capture）
 ```
 
-**远程 / 多 repo 的 project** —— 当代码在服务器上（本地没有 checkout）、而且可能横跨多个 repo 时，
-先注册 host，再把 project 注册*在它上面*：
+**远程 / 多 repo 的 project** —— 代码在服务器上（本地没有 checkout）、还可能横跨多个 repo？直接
+**用大白话描述**就行 —— Claude 会替你注册 host、记录各个 root，不用记任何 flag 语法：
 
 ```
-# 注册这台机器（key-based Host 写在 ~/.ssh/config；磁盘上不存密码）
-/register-machine gpubox
-# 一个代码在远端、横跨两个 repo（app + 数据集）的 project
-/register-project myapp /srv/myapp --remote gpubox --root /srv/dataset:dataset
-/myapp bootstrap              # 通过 ssh 读两个 repo，seed 出 rules + decisions
+/register-project myapp —— 它在 gpubox 服务器的 /srv/myapp，另外还用到 /srv/dataset 这个数据集 repo
 ```
-你在本地（同步的 lane 目录）跑 Claude；`/myapp` 通过 `/gpubox` 在 host 上 build / test，
-而 planning / 工作文件都留在 vault 里，绝不弄乱服务器或你的 `~`。
+如果 gpubox 还不是 connection，Claude 会先把它注册成 ssh connection（key-based，磁盘上不存密码），
+把两个 repo 记为 root 并 bind 上 host。然后 `/myapp bootstrap` 通过 ssh 从这些 repo seed 出
+rules + decisions。之后你在本地（同步的 lane 目录）跑 Claude；`/myapp` 通过 `/gpubox` 在 host 上
+build / test，而 planning / 工作文件都留在 vault 里，绝不弄乱服务器或你的 `~`。
 
 也能把设备 / 服务变成 skill——`/register-device`、`/register-api`、`/register-mcp`、
 `/register-machine`；project `bind` 之后可直接 build / flash / 调用（见下文）。
@@ -104,6 +102,9 @@ connections/<name>/
 ```
 
 ## 命令 Actions
+
+> 你用**大白话**说要做什么 —— 下面的名字和 flag 是 Claude 替你填的，不用背（比如「开一条 v081，
+> 基于 v080，只追踪」「Soniox 这个 API，key 在 `SONIOX_API_KEY`」）。
 
 **总体**（`/project-with-reflect`，无参数 → `help`）：`help` · `list` · `status` ·
 `register-project` · `register-machine` · `register-device` · `register-api` · `register-mcp` ·

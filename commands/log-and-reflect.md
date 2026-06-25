@@ -1,6 +1,6 @@
 ---
 description: "Log + reflect the current project — capture this session, distill to lean rules (project-with-reflect)"
-argument-hint: "[<target> | --reground]   (optional)"
+argument-hint: "[what to reflect on]   (optional — natural language ok)"
 ---
 Run the **reflect** action of the current project's `project-with-reflect` skill with arguments: $ARGUMENTS
 

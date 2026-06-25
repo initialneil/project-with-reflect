@@ -35,8 +35,8 @@ All of it **Obsidian-friendly** (rules / knowledge / dashboard are clean, readab
 # 2. register a project → generates the /myapp skill
 /register-project myapp ~/code/myapp
 
-# 3. spin a workstream lane — worktree / branch / tracked, per the project's mode
-/register-branch my-feature --base main     # → generates /myapp-my-feature
+# 3. spin a workstream lane — just say what it's based on (worktree / branch / tracked, per the mode)
+/register-branch my-feature based on main   # → generates /myapp-my-feature
 
 # 4. work through it — key moments auto-log
 /myapp-my-feature ...                        # (or just /myapp for the main lane)
@@ -46,18 +46,17 @@ All of it **Obsidian-friendly** (rules / knowledge / dashboard are clean, readab
 # (≡ /myapp reflect — "reflect" already captures the session first)
 ```
 
-**Remote / multi-repo project** — when the code lives on a server (no local checkout) and may span
-several repos, register the host first, then the project *on* it:
+**Remote / multi-repo project** — code on a server (no local checkout), maybe spanning repos? Just
+**describe it in plain language** — Claude registers the host and records the roots for you; there's no
+flag syntax to remember:
 
 ```
-# register the box (key-based Host in ~/.ssh/config; no passwords on disk)
-/register-machine gpubox
-# a project whose code is remote and spans two repos (app + dataset)
-/register-project myapp /srv/myapp --remote gpubox --root /srv/dataset:dataset
-/myapp bootstrap              # seeds rules + decisions from both repos, read over ssh
+/register-project myapp — it's on the gpubox server at /srv/myapp, and also uses the dataset repo at /srv/dataset
 ```
-You run Claude from your synced lane dir; `/myapp` builds/tests on the host through `/gpubox`,
-and your planning + working files stay in the vault, never littering the server or your `~`.
+Claude registers `gpubox` as an ssh connection if it isn't one yet (key-based, no passwords on disk),
+records both repos as roots, and binds the host. Then `/myapp bootstrap` seeds rules + decisions from
+them over ssh. You run Claude from your synced lane dir; `/myapp` builds/tests on the host through
+`/gpubox`, and your planning + working files stay in the vault, never littering the server or your `~`.
 
 You can also turn devices and services into skills — `/register-device`, `/register-api`,
 `/register-mcp`, `/register-machine` — and `bind` them to a project to `build` / `flash` / call
@@ -106,6 +105,10 @@ connections/<name>/
 ```
 
 ## Actions
+
+> You describe what you want in **plain language** — the names and flags below are what Claude fills in
+> for you, not syntax to memorize (e.g. "a lane v081 based on v080, just track it"; "the Soniox API, key
+> in `SONIOX_API_KEY`").
 
 **Overall** (`/project-with-reflect`, bare → `help`): `help` · `list` · `status` ·
 `register-project` · `register-machine` · `register-device` · `register-api` · `register-mcp` ·

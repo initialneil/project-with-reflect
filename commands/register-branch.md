@@ -1,6 +1,6 @@
 ---
 description: "Register/refresh a project workstream (lane) — project-with-reflect"
-argument-hint: "<branch> [--base <b>] [--track-only] [--path <dir>]  (natural language ok)"
+argument-hint: "<branch> based on <base>  — e.g. \"v081 based on v080, just track\""
 ---
 Run the **register-branch** action of the `project-with-reflect` skill with arguments: $ARGUMENTS
 

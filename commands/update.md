@@ -1,6 +1,6 @@
 ---
 description: "Update an entity's note — fold new content into a knowledge or connection note (project-with-reflect)"
-argument-hint: "knowledge | connection <name> \"<content>\""
+argument-hint: "<name>  — \"<what to add>\"  (a knowledge note or connection)"
 ---
 Run the **update** action of the `project-with-reflect` skill with arguments: $ARGUMENTS
 

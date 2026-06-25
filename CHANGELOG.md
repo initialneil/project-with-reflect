@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.2 — 2026-06-25
+
+- Natural-language-first commands: softened the intimidating argument-hints (register-api/mcp/branch, log-and-reflect, update) so users describe intent in plain language while Claude fills the flags; register-project is NL-first and auto-registers a remote host; README Actions notes that flags are Claude's interface, not user syntax
+
 ## v0.6.1 — 2026-06-25
 
 - register-branch auto-degrades worktree/in-repo lanes to tracked on remote projects (no local checkout to run git in), with a host-branch hint; README quick-start uses generic placeholders

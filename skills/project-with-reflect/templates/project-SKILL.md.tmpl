@@ -107,11 +107,15 @@ the finding is about**, so knowledge lands where it's reusable:
   dev routine is clear**.
   Report what changed. `--reground` = full grounding-rules-style rewrite of one module.
 - `streams` — list `workstreams/*/stream.json`; flag any behind their `base`.
-- `register-branch <b> --base <x> [--track-only]` — make `workstreams/<b>/` per
-  `config.workstream_mode` (worktree → `git worktree add`; in-repo → `git checkout
-  -b`; logical → no branch), set `base`/`pr_into`, then generate the
-  `/{{NAME}}-<b>` alias (`gen-command.sh {{NAME}} <b> branch {{PDIR}}`).
-  `--track-only` records lineage only (e.g. an integration branch you rebase onto).
+- `register-branch <b> --base <x> [--pr-into <y>] [--track-only] [--path <dir>]` — run
+  `register-branch.sh {{PDIR}} <b> …` (deterministic git + `stream.json`; you just translate the
+  intent into flags — "v081 based on v080, just track" → `v081 --base v080 --track-only`).
+  `--track-only` records **lineage only, no git** (a version / integration branch you rebase onto);
+  otherwise the lane is realized per `config.workstream_mode`: **worktree** → `git worktree add`
+  (needs `--path`; the script refuses with `PWR_NEED_WORKTREE_PATH` if absent → ask the user for a
+  clean dir, not sibling-clutter / not under `.claude/`), **in-repo** → `git checkout -b` (HEAD
+  switches, ready to work), **logical** → no git. **Re-registering an existing lane** updates its
+  `base`/`pr_into` only — cycle / log / git untouched. The script generates the `/{{NAME}}-<b>` alias.
 - `<branch>` — switch to that workstream (load its log + base + rules).
   - `pr` — rebase onto `base`; if `base` is behind ITS base
     (`git rev-list --count origin/<base>..origin/<base's base>` > 0) warn + offer

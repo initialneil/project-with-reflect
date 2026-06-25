@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.4 — 2026-06-25
+
+- register-branch is now a deterministic script (register-branch.sh) instead of behavioral-only: track-only → lineage; per workstream_mode → git worktree add (needs --path, refuses cleanly otherwise) / git checkout -b / logical; idempotent re-register preserves cycle+log+git; new top-level /register-branch command resolves the project from cwd→registry (or asks), so natural language like 'v081 based on v080, just track' works without a /<project> prefix
+
 ## v0.5.3 — 2026-06-25
 
 - reflect is now log-and-reflect (captures the session before folding, so plain 'reflect' replaces 'log and reflect'); richer auto-log triggers (commit / decision / long-task-done, logged as they happen); two non-blocking auto-log hooks — PostToolUse on git commit + PreCompact flush, gated to registered projects via registry.json; README/README_ZH restructured with a merged intro + Quick start

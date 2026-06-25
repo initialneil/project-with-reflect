@@ -132,14 +132,19 @@ the finding is about**, so knowledge lands where it's reusable:
   switches, ready to work), **logical** → no git. **Re-registering an existing lane** updates its
   `base`/`pr_into` only — cycle / log / git untouched. The script generates the `/{{NAME}}-<b>` alias.
 - `<branch>` (or "work on `<branch>`") — switch to that workstream: load its `log.md` + `base` + rules,
-  and **offer to `cd` the session into the lane's workstream folder** `{{PDIR}}/workstreams/<branch>/` —
-  **ask first; `cd` only on a yes.** Once there, the Bash cwd persists, so plan / scratch /
-  planning-with-files files land in the lane (not in `~`), and cwd→registry stays resolved. For a
-  **remote** project the code stays on the host — operate it via `/<host_connection>` over ssh; this
-  lane folder is just the working-memory home. After the switch, if planning-with-files is active, point
-  its plan at this dir so its files live with the lane — `reflect` then folds them into the log → rules.
-  *(For a local project, `cd`-ing into the actual code dir / worktree is a separate behavior, deferred
-  to a later revisit — for now the workstream-folder switch is the one uniform `cd`.)*
+  then decide the **working dir** (the Bash cwd persists across calls, so wherever you land is where
+  plan / scratch / planning-with-files files go). **Ask the user — `cd` only on their choice:**
+  - **Remote project** → ask: switch into the lane's **workstream folder**
+    `{{PDIR}}/workstreams/<branch>/` *(recommended — keeps planning + working files in the vault, off
+    the host and out of `~`)* **or stay**. The code stays on the host either way — operate it via
+    `/<host_connection>` over ssh.
+  - **Local project** → the **code dir** is the lane's `worktree_path` (worktree mode) else the repo.
+    - If the session is **already inside the code dir** → **do nothing** (no prompt — you're where you
+      should be).
+    - Otherwise ask, three ways: switch to the **code dir** *(recommended)* / the **workstream folder**
+      `{{PDIR}}/workstreams/<branch>/` / **stay**.
+  After any switch, if planning-with-files is active, point its plan at the new dir so its files live
+  there — `reflect` then folds them into the log → rules.
   - `pr` — rebase onto `base`; if `base` is behind ITS base
     (`git rev-list --count origin/<base>..origin/<base's base>` > 0) warn + offer
     to rebase the integration branch first; then `gh pr create --base <pr_into>`;

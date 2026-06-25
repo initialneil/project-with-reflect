@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.4 — 2026-06-25
+
+- work on <lane> switch is a user choice: remote project asks workstream-folder (recommended) or stay; local project does nothing if already in the code dir, else asks code-dir (recommended) / workstream-folder / stay
+
 ## v0.6.3 — 2026-06-25
 
 - work on <lane> offers to cd the session into the lane's workstream folder (asks first; on yes the Bash cwd persists so planning/scratch files land in the lane, not ~); remote code stays on the host over ssh. Local code-dir cd deferred

@@ -13,7 +13,6 @@ base** — and everything you **operate** (a *connection*), each becoming a call
 - **Devices** — USB/serial flash targets (dev boards…): flash / monitor / REPL.
 - **APIs** — HTTP/WebSocket services (only the key's env-var *name* on disk, never the key).
 - **MCP servers** — used directly via their `mcp__<name>__*` tools.
-- …and more.
 
 All of it **Obsidian-friendly** (rules / knowledge / dashboard are clean, readable Markdown).
 

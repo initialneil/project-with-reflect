@@ -13,7 +13,6 @@ prompt、向 Claude 一遍遍解释同一个项目的来龙去脉？
 - **设备 device** —— USB / 串口烧录目标（开发板…）：flash / monitor / REPL
 - **API** —— HTTP / WebSocket 服务（只把 key 的环境变量**名字**落盘，绝不存 key 本身）
 - **MCP** —— MCP server，直接用它的 `mcp__<name>__*` tools
-- ……等
 
 而且全程 **Obsidian 友好**（rules / 知识 / dashboard 都是干净可读的 Markdown）。
 

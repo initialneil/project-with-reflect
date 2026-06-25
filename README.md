@@ -35,12 +35,15 @@ All of it **Obsidian-friendly** (rules / knowledge / dashboard are clean, readab
 # 2. register a project → generates the /myapp skill
 /register-project myapp ~/code/myapp
 
-# 3. work through it — key moments auto-log
-/myapp ...
+# 3. spin a workstream lane — worktree / branch / tracked, per the project's mode
+/register-branch my-feature --base main     # → generates /myapp-my-feature
 
-# 4. close the session: capture this session + distill into rules
-/myapp reflect
-/myapp log and reflect    # same thing — reflect already captures first
+# 4. work through it — key moments auto-log
+/myapp-my-feature ...                        # (or just /myapp for the main lane)
+
+# 5. close the session: capture it + distill into lean rules
+/log-and-reflect          # from anywhere in the repo — resolves the project from your cwd
+# (≡ /myapp reflect — "reflect" already captures the session first)
 ```
 
 You can also turn devices and services into skills — `/register-device`, `/register-api`,
@@ -165,8 +168,9 @@ key events that aren't logged yet — to the active stream's log, or a connectio
 is about a device/API), **then** folds new entries into the right `rules/<topic>.md` + `decisions.md`,
 fixes wrong rules, **splits a module if it gets too long to read**, regenerates `<name>.md`, archives
 consumed logs, and reports what changed. So one `/<project> reflect` is the whole end-of-session
-habit — no separate "log" step. `--reground` forces a full rewrite of one module. Readability is the
-judge.
+habit — no separate "log" step. Run it as `/<project> reflect`, or **`/log-and-reflect`** from
+anywhere in the repo (it resolves the project from your cwd). `--reground` forces a full rewrite of
+one module. Readability is the judge.
 
 `reflect` also **flags codebase-improvement items** it spots in the log (a recurring failure, a
 churned module) — you fix them as real dev, or park them with `todo`; it never edits source on its

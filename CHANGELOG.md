@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.5 — 2026-06-25
+
+- add top-level /log-and-reflect command — a cwd-resolved alias that runs the current project's capture-first reflect from anywhere in the repo (no /<project> prefix); note the alias in the project reflect handler; README quick-start now shows the workstream lane (register-branch) + /log-and-reflect
+
 ## v0.5.4 — 2026-06-25
 
 - register-branch is now a deterministic script (register-branch.sh) instead of behavioral-only: track-only → lineage; per workstream_mode → git worktree add (needs --path, refuses cleanly otherwise) / git checkout -b / logical; idempotent re-register preserves cycle+log+git; new top-level /register-branch command resolves the project from cwd→registry (or asks), so natural language like 'v081 based on v080, just track' works without a /<project> prefix

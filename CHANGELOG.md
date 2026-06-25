@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.0 — 2026-06-26
+
+- Renamed rules -> lessons: a flat, general per-project store of every kind (rules, conclusions, experiment/baseline records, reviews, references); accumulating records are append-only so numbers survive host pruning. New 'record' action (+ top-level /record): persist a durable thing now, flexible router by kind, proactive, follows the format of the lesson it continues. Removed project mode:in-repo — state is always central (pwf is personal memory; team-shared knowledge is native code); kept workstream_mode:in-repo. Builds on v0.6.x remote+multi-root projects, NL-first commands, and the work-on-lane cd decision
+
 ## v0.6.4 — 2026-06-25
 
 - work on <lane> switch is a user choice: remote project asks workstream-folder (recommended) or stay; local project does nothing if already in the code dir, else asks code-dir (recommended) / workstream-folder / stay

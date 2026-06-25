@@ -23,10 +23,11 @@ def q(s):  # safe double-quoted YAML scalar (valid YAML, handles spaces/punct/un
     return json.dumps(str(s), ensure_ascii=False)
 
 # --- build the managed (PWR-owned) frontmatter keys ------------------------------------
+# "mode" stays in MANAGED (so a stale `mode:` line from the removed in-repo era gets stripped)
+# but is no longer emitted — project state is always central now.
 MANAGED = {"repo", "mode", "workstream_mode", "connections", "build", "location", "host",
-           "roots", "knowledge", "workstreams", "device", "machine"}  # device/machine: drop legacy blocks
+           "roots", "knowledge", "workstreams", "device", "machine"}  # device/machine/mode: drop legacy
 m = [f"repo: {q(cfg.get('repo') or '—')}",
-     f"mode: {cfg.get('mode','?')}",
      f"workstream_mode: {cfg.get('workstream_mode','?')}"]
 loc = cfg.get("location", "local")
 m.append(f"location: {loc}")
@@ -82,7 +83,7 @@ if not any(re.match(r'^tags:', l) for l in kept):   # seed tags once; preserved 
 
 if not body.strip():   # brand-new dashboard: starter body, no boilerplate callout
     body = (f"# {name}\n\n## System\n"
-            f"_Run `/{name} bootstrap` to seed rules + decisions and write this narrative "
+            f"_Run `/{name} bootstrap` to seed lessons + decisions and write this narrative "
             f"from the repo docs + session._\n")
 
 out = "---\n" + "\n".join(kept + m) + "\n---\n\n" + body.lstrip("\n")

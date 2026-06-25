@@ -1,25 +1,35 @@
 ---
 name: {{NAME}}
-description: "Work on the {{NAME}} project — its persistent rules + decisions + workstreams. Use when the user types /{{NAME}}, mentions the {{NAME}} project, or is working in its repo: load that context before acting, auto-log key events, and reflect logs into lean, readable rules."
+description: "Work on the {{NAME}} project — its persistent lessons + decisions + workstreams. Use when the user types /{{NAME}}, mentions the {{NAME}} project, or is working in its repo: load that context before acting, auto-log key events, and reflect logs into lean, readable lessons."
 ---
 # {{NAME}} — project skill (project-with-reflect)
 
 State dir: `{{PDIR}}`
-- `rules/<topic>.md` — modular, readable rules (knowledge). Loaded on demand.
+- `lessons/` — the project's **persistent knowledge of every kind**, as **flat, descriptively-named
+  md files** (no imposed subfolders): practices & must-follow rules (`writing-rules.md`), settled
+  conclusions, taxonomies, **experiment / baseline records** (`experiment-GUAVA.md`,
+  `experiment-baseline.md`), research reports, a review format (`review-format.md`), reference/resource
+  notes (a useful paper, a URL), and whatever else accrues. The model names + splits them wisely (split a
+  long one; readability rules). A lesson's **update style follows its nature**, which the model infers:
+  - most are **distilled** — bounded-updated (add facts, fix wrong ones), loaded on demand.
+  - some **accumulate** — an experiment-run log, a running results table: **append-only**, so the history
+    (and numbers that host outputs later prune) is never lost or rewritten.
+  `reflect` archives only the working `log.md` — **never a lesson**. See the `record` action for how new
+  findings land here and **follow the format of the lesson they continue**.
 - `workstreams/<branch>/` — `stream.json` (state) + `log.md` (history) per lane.
 - `decisions.md` — ideas tried / chosen / rejected (+ datasets, settings).
 - `{{NAME}}.md` — the human dashboard / folder note (regenerated on reflect); also carries the
   project's `## TODO` backlog (see the `todo` action).
 - `evals/<eval>/`, `tasks/<task>.md`, `config.json`.
 
-This skill is self-contained: it works even without the meta-skill installed
-(in-repo projects stay portable). When the meta-skill IS installed, prefer its
-helpers at `~/.claude/skills/project-with-reflect/scripts/` for deterministic ops.
+This skill is self-contained: its `SKILL.md` works even without the meta-skill installed. When the
+meta-skill IS installed, prefer its helpers at `~/.claude/skills/project-with-reflect/scripts/` for
+deterministic ops.
 
 **Codebase roots.** `config.json` carries `location` (`local` | `remote`) and `roots[]` (the working
 dirs — a project can span several, e.g. an app repo + a sibling dataset repo; if `roots` is absent the
 single `repo` is the only root). For a **remote** project the code lives on `host_connection` (an ssh
-connection): operate it **through `/<host_connection>`** (run / build / test over its alias — rule 5),
+connection): operate it **through `/<host_connection>`** (run / build / test over its alias — contract rule 5),
 and remember **your cwd here (the vault lane) is not the repo's working dir** — each root `path` is a
 dir *on the host*. Never assume a local checkout; load `roots` for the real paths. Version lanes on a
 remote project are **lineage-only automatically** — `register-branch` degrades a `worktree` / `in-repo`
@@ -27,19 +37,21 @@ lane to `tracked` (those git realizations need a local checkout); make a real br
 yourself if you want one. (Local single-root projects: `roots` is just the one repo,
 `location: local` — nothing extra to think about.)
 
-## Rule index
-<!-- one line per rule module: `topic — load when …`. reflect maintains this list. -->
+## Lessons index
+<!-- one line per distilled lesson module: `topic — load when …`. reflect maintains this list.
+     Append-only record lessons (e.g. `experiment-*.md`) need not be indexed here. -->
 
 ## Behavioral contract — every session, before acting
 1. **Load first, propose second.** Read `{{NAME}}.md` + `decisions.md` + the active
-   workstream, the rule modules whose "load when…" matches the task, and any **linked
-   global knowledge** (`config.json.knowledge` → `$PROJECT_WITH_REFLECT_ROOT/knowledge/<k>`).
+   workstream, the lesson modules whose "load when…" matches the task, the relevant **experiment
+   records** when revisiting past runs/results, and any **linked global knowledge**
+   (`config.json.knowledge` → `$PROJECT_WITH_REFLECT_ROOT/knowledge/<k>`).
 2. **Check the ledger before proposing.** If an idea/experiment is already in
-   `decisions.md`, say so and cite it — never re-propose blind.
+   `decisions.md` or an experiment record, say so and cite it — never re-propose or re-derive blind.
 3. **Never improvise guarded state.** Datasets, training settings, branch/release
-   conventions live in `rules/` as invariants — change only with explicit sign-off,
+   conventions live in `lessons/` as invariants — change only with explicit sign-off,
    then log it.
-4. **Surface, don't bury.** When work touches an area with a rule module or a
+4. **Surface, don't bury.** When work touches an area with a lesson module or a
    registered eval, name it.
 5. **Know your connections — operate them skill-native.** For each name in `config.json.connections`,
    load `$PROJECT_WITH_REFLECT_ROOT/connections/<name>/connection.json` for the hard facts you need
@@ -58,13 +70,22 @@ the finding is about**, so knowledge lands where it's reusable:
 - **Project finding** → the active stream's `log.md`. Triggers: a **commit** (one line: what it
   accomplished + why, not the diff), **PR / merge / rebase**, a **decision** made (what + why —
   reflect promotes it to `decisions.md`), a **long task finished** (a build / migration / refactor
-  that took real effort — outcome + any gotcha), a **complex error + its fix**, a **key finding**.
-  `note "…"` forces a line.
+  that took real effort — outcome + any gotcha), an **experiment run + its result** (config → metric →
+  verdict — reflect promotes it to an experiment record), a **complex error + its fix**, a **key
+  finding**. `note "…"` forces a line.
 - **Connection finding** (a device / host / API quirk or workaround *any* project binding it would
   hit — a flash boot-mode dance, an endpoint gotcha, "serial silent ≠ crash") → that connection's
   log via `/<name> note "…"`. Test: *would the next project that binds this connection need it?* →
   connection's log; *only true for this app?* → stream log. Device/API knowledge thus stays with the
-  device/API (reusable across projects), not buried in one project's rules.
+  device/API (reusable across projects), not buried in one project's lessons.
+
+**Record durable results the moment they land — proactively, don't wait for `reflect`.** A *log* line is
+ephemeral working memory (consumed at reflect). But a **durable, reusable result** — a measured
+**baseline / benchmark**, a **settled conclusion** ("X beats Y", "λ=0 is visually bad"), an **experiment
+verdict**, a hard-won **recipe / config** — is painful to re-derive and easy to lose, so it belongs in
+**permanent memory now**. When you produce one, **`record` it** (append to the right experiment record /
+distilled lesson) and say where it landed — don't just log it and hope reflect catches it. (Example: a
+"GUAVA baseline on omni = PSNR 26.43 / …" result → `record` → `lessons/experiment-GUAVA.md` immediately.)
 
 ## Subcommands
 - `bootstrap` — **seed this project from existing material** (run right after
@@ -73,15 +94,16 @@ the finding is about**, so knowledge lands where it's reusable:
   current conversation/session, then — **for a remote project (`location: remote`) read those over the
   host connection** (`/<host_connection> 'cat <root>/README.md'`, `… git -C <root> log --oneline`,
   `ls <root>`), never assuming local files — then
-  do an initial reflect-style pass: write the `rules/<topic>.md` modules + their
-  index, populate `decisions.md` with the key choices already made, and write the
-  `{{NAME}}.md` **narrative body** (the YAML frontmatter facts auto-generate — run
+  do an initial reflect-style pass: write the `lessons/<topic>.md` distilled modules + their index,
+  capture any **past experiment results** that already exist (configs, run logs, metric tables) into
+  a flat `lessons/experiment-<name>.md` record so they persist, populate `decisions.md` with the key choices already made,
+  and write the `{{NAME}}.md` **narrative body** (the YAML frontmatter facts auto-generate — run
   `gen-dashboard.sh {{PDIR}}` to refresh them; you write the prose below). Confirm
   what you captured — distill, don't invent. **Replace any scaffold placeholder with real
   content; never leave boilerplate behind.**
 - `status` — print `{{NAME}}.md`.
-- `list` — handles: workstreams (+ lineage / behind-base), evals, tasks, rule
-  modules, global knowledge used (`config.json.knowledge`).
+- `list` — handles: workstreams (+ lineage / behind-base), evals, tasks, lesson
+  modules + experiment records, global knowledge used (`config.json.knowledge`).
 - `help` — this menu.
 - `reflect [<target>] [--reground]` — **`reflect` is log-and-reflect: it captures the session first,
   then distills** (aliases: `log-and-reflect`, and the top-level `/log-and-reflect` which resolves the
@@ -91,36 +113,46 @@ the finding is about**, so knowledge lands where it's reusable:
   auto-log bar (key events, not a verbose dump; idempotent — already-logged events are skipped).
   **Directed reflect (with a `<target>`):** point reflect at any
   target — a **code area** (`lib/auth`, "the dio retry logic"), a **repo skill** (`/e2e-iphone` — just
-  code that's team-shared), or a **rule module / knowledge area** — and it gathers the log entries
+  code that's team-shared), or a **lesson module / knowledge area** — and it gathers the log entries
   about it and turns the logged experience into the right change *there*:
   - **code (incl. a repo skill)** → reflect **flags a concrete dev item** from the log (what to
-    change, where, why — a fix, a guard, a preventive rule, a small refactor) and records it.
+    change, where, why — a fix, a guard, a preventive lesson, a small refactor) and records it.
     **Reflect does NOT edit the source itself** — development is a separate, deliberate activity. It
     proceeds only when you **explicitly ask** *and* the **dev routine is clear** (which lane — direct,
     or a workstream/worktree); the edit then runs through that lane (diff, commit/PR). A repo skill is
     just part of the codebase; its edit ships in the repo, so the whole team gets it.
-  - **rule / knowledge** → fold into `rules/`/`decisions.md` as usual.
+  - **lesson / knowledge** → fold into `lessons/`/`decisions.md` as usual.
   It distills the *logged experience* about the target, not a fresh codebase audit — if little is
   logged, say so and offer a code-review pass instead. Then archive the consumed entries.
   **Plain `reflect` (no target):** triage first — any new stream-log entry that's really about a bound
   connection (a device/API quirk, not this app) → move it to that connection's `log.md` (it reflects
-  into that connection's quirks via `/<name> reflect`), don't fold it into project rules. Then fold
-  the remaining entries into the right `rules/<topic>.md` + `decisions.md` (**bounded update**: add
-  facts, fix wrong ones; **split a module** into another topic if it gets too long to read — no caps),
-  refresh the dashboard frontmatter facts (`gen-dashboard.sh {{PDIR}}`) and the `{{NAME}}.md` narrative
-  body, then archive consumed logs (`reflect.sh archive {{PDIR}} <stream>`). Reflect stays **per-skill
-  — no cascade**: end by listing bound connections that have unreflected `log.md` lines and suggesting
+  into that connection's quirks via `/<name> reflect`), don't fold it into project lessons. Then route
+  the remaining entries by **kind**:
+  - **Accumulating records** (an experiment run + its config + metric + verdict; any running results
+    table) → **append to the relevant record lesson** (`lessons/experiment-<name>.md`, flat — create if
+    needed), **matching that lesson's established format** (same sections/columns/artifacts — see the
+    `record` action). **Append-only: never rewrite, consume, or archive these** — they are the permanent
+    record so numbers survive after host eval dirs get pruned. A settled *conclusion* drawn from them also
+    goes to `decisions.md` (and a distilled lesson if it's a practice).
+  - **Everything else** → fold into the right `lessons/<topic>.md` distilled lesson + `decisions.md`
+    (**bounded update**: add facts, fix wrong ones; **split a module** into another topic if it gets
+    too long to read — no caps).
+  Then refresh the dashboard frontmatter facts (`gen-dashboard.sh {{PDIR}}`) and the `{{NAME}}.md`
+  narrative body, then archive consumed **logs** (`reflect.sh archive {{PDIR}} <stream>` — this archives
+  the working `log.md` only, never the experiment records or lessons). Reflect stays **per-skill — no
+  cascade**: end by listing bound connections that have unreflected `log.md` lines and suggesting
   `/<name> reflect` for each. **Surface code/design flags (don't audit the source, don't fix
   silently):** reflect distills the *log*, not the codebase — so flag what the log reveals: a module
   churned repeatedly, a workaround piled on a workaround, **the same failure recurring across runs
   (retried, never prevented)**, a "fix later". For each, **record a concrete code-development item**
-  (todo / idea / task — what to change, where, why; often a preventive rule or a reordered procedure,
+  (todo / idea / task — what to change, where, why; often a preventive lesson or a reordered procedure,
   not another retry). **Reflect stops there — it flags, it does not edit the source.** The development
   is a separate activity you drive when ready: **direct**, a **workstream/worktree**, or **parked via
   `todo`** (a `## TODO` line in `{{NAME}}.md`, loaded every session so it resurfaces; a *repeatable*
   procedure → `register-task`). Reflect makes the change itself **only if you explicitly ask and the
   dev routine is clear**.
-  Report what changed. `--reground` = full grounding-rules-style rewrite of one module.
+  Report what changed. `--reground` = full grounding-rules-style rewrite of one distilled module
+  (never an experiment record — those are append-only).
 - `streams` — list `workstreams/*/stream.json`; flag any behind their `base`.
 - `register-branch <b> --base <x> [--pr-into <y>] [--track-only] [--path <dir>]` — run
   `register-branch.sh {{PDIR}} <b> …` (deterministic git + `stream.json`; you just translate the
@@ -131,7 +163,7 @@ the finding is about**, so knowledge lands where it's reusable:
   clean dir, not sibling-clutter / not under `.claude/`), **in-repo** → `git checkout -b` (HEAD
   switches, ready to work), **logical** → no git. **Re-registering an existing lane** updates its
   `base`/`pr_into` only — cycle / log / git untouched. The script generates the `/{{NAME}}-<b>` alias.
-- `<branch>` (or "work on `<branch>`") — switch to that workstream: load its `log.md` + `base` + rules,
+- `<branch>` (or "work on `<branch>`") — switch to that workstream: load its `log.md` + `base` + lessons,
   then decide the **working dir** (the Bash cwd persists across calls, so wherever you land is where
   plan / scratch / planning-with-files files go). **Ask the user — `cd` only on their choice:**
   - **Remote project** → ask: switch into the lane's **workstream folder**
@@ -144,7 +176,7 @@ the finding is about**, so knowledge lands where it's reusable:
     - Otherwise ask, three ways: switch to the **code dir** *(recommended)* / the **workstream folder**
       `{{PDIR}}/workstreams/<branch>/` / **stay**.
   After any switch, if planning-with-files is active, point its plan at the new dir so its files live
-  there — `reflect` then folds them into the log → rules.
+  there — `reflect` then folds them into the log → lessons.
   - `pr` — rebase onto `base`; if `base` is behind ITS base
     (`git rev-list --count origin/<base>..origin/<base's base>` > 0) warn + offer
     to rebase the integration branch first; then `gh pr create --base <pr_into>`;
@@ -161,7 +193,38 @@ the finding is about**, so knowledge lands where it's reusable:
   of binding a machine. Adds/removes `<k>` in `config.json.knowledge`
   (`link-knowledge.sh {{PDIR}} <k> [--unlink]`). One module can serve many projects;
   linked modules load when relevant (see the contract). Use after `/register-knowledge <k>`.
-- `note "…"` — force a log entry into the active stream.
+- `note "…"` — force an **ephemeral** log line into the active stream (working memory, consumed at
+  reflect). For a **durable** finding use `record` instead.
+- `record ["<what>"]` — **persist a durable thing into permanent memory NOW, in its right home**
+  (not the ephemeral log — that's `note`; not the end-of-session sweep — that's `reflect`). **Flexible** —
+  it's not experiment-specific: you (or the user — "record this as a rule", "record this website") infer
+  or name the **kind**, then put it in the right **flat `lessons/<descriptive>.md`**:
+  - **a result / benchmark / eval report** → its record file (`lessons/experiment-GUAVA.md`,
+    `lessons/experiment-baseline.md`) — these **accumulate** (append the new run; don't rewrite history).
+  - **a rule / must-follow practice / invariant / settled conclusion** → a distilled lesson
+    (`lessons/<topic>.md`, bounded update) + a line in `decisions.md` if it's a decision.
+  - **a reference / resource / link** (a URL, a paper, a doc) → a notes lesson (`lessons/resources.md`);
+    if broadly reusable across projects, offer the global `$PROJECT_WITH_REFLECT_ROOT/knowledge/<k>`
+    (`/register-knowledge` + `use-knowledge`) instead.
+  - **a research report / review / etc.** → its own lesson (`lessons/<name>.md`).
+  - **anything else durable** → the closest fitting lesson; ask only if genuinely ambiguous.
+
+  **Follow the format of the lesson you're continuing — for *any* kind, not just experiments.** When the
+  thing you're recording **relates to or extends an existing lesson**, open it and **match its established
+  structure** (its sections, columns, ordering, the way it embeds artifacts), then add the new entry — so
+  the lesson stays uniform and comparable over time: an experiment record's runs line up cell-for-cell
+  (same axes / metrics / sub-targets, e.g. front/side/back × PSNR/SSIM/LPIPS × body/face/hand, grids
+  embedded `![[…png]]` with frame key + metrics); a review follows the review format; new entries obey the
+  writing rules. **The format is set by precedent + the user's tuning** — the first entry of a kind
+  establishes the shape (propose it; the user refines), and later entries follow it; if the user tunes the
+  format, new entries follow the latest (don't retro-edit an append-only record — note a format bump). If
+  an artifact (a grid/image) matters, copy it into the vault and embed it so it survives host pruning.
+
+  Bare `record` captures the latest durable thing from this session. Unlike `reflect`, `record` is
+  **surgical and immediate** (one thing → its home; archives nothing, runs no session sweep). **Be
+  proactive** for results/conclusions (the moment you produce a baseline / benchmark / "X beats Y",
+  record it and say where it landed); references/rules the user usually points you at. The user can
+  always force or redirect: "record `<X>` as a `<kind>` in `<where>`".
 - `todo ["<item>"] | done "<match>"` — the project's lightweight backlog of pending dev items, kept as
   a checklist under `## TODO` in `{{NAME}}.md` (the dashboard — loaded every session, so open items
   resurface and you can be offered them next time). `todo "<item>"` appends `- [ ] <item> — <date>`;
@@ -186,28 +249,32 @@ is also its own skill `/<name>`; from here you orchestrate them in project conte
   don't bypass a connection's skill — that's where its learned quirks get applied.
 
 ### Where a lesson lands
-A lesson from the log can take two forms, and reflect routes by **what kind of lesson it is + who
-needs it**:
+A lesson from the log can take several forms, and reflect routes by **what kind it is + who needs it**:
 - **A code-development item** — the fix belongs in the source: a `lib/` module, a config, or a
   **repo skill** (`.claude/commands|skills/…`, a team-shared doc like `/e2e-iphone` — just part of the
   codebase). reflect **flags and records** it; **it does not make the change itself** — the
   **development follows** as a separate step you drive (direct, or a workstream/worktree), and only on
   your explicit go-ahead with a clear routine. A repo-skill edit ships in the repo, so the whole team
   gets it.
-- **Durable knowledge** — so it isn't relearned. A project **rule** (`rules/`, your per-dev knowledge
-  in the PWR root) or a **connection's quirks** (cross-project device/API knowledge).
+- **Durable knowledge** — so it isn't relearned. A project **lesson** (`lessons/`, your per-dev
+  knowledge in the PWR root) or a **connection's quirks** (cross-project device/API knowledge).
+- **An experiment result** — a run's config + metric + verdict → an **append-only record lesson**
+  (`lessons/experiment-<name>.md`), so the number survives even after the host output is pruned.
 
-Often a lesson is both: a flagged code change *and* a recorded invariant. A repo skill is just the
-case where the "code" is itself a shared skill doc — nothing special beyond living in `.claude/`.
+Often a lesson is several at once: a flagged code change, a recorded invariant, *and* a result row. A
+repo skill is just the case where the "code" is itself a shared skill doc — nothing special beyond
+living in `.claude/`.
 
-Leanness: **no caps** — keep rules readable; split a long module into another
-topic; reflect makes bounded updates, not whole-doc rewrites.
+Leanness: **no caps** — keep distilled lessons readable; split a long module into another topic;
+reflect makes bounded updates to them, not whole-doc rewrites. **Experiment records are the exception:
+append-only and allowed to grow** — keep them readable by splitting across files (per version/sweep),
+never by deleting history.
 
-Notes carry **content, not boilerplate**: clean headings, real decisions/rules — no
+Notes carry **content, not boilerplate**: clean headings, real decisions/lessons — no
 meta-instructions and no comment cruft in the files (that guidance lives in this skill).
 Don't keep scaffold placeholders — replace them with real content.
 
-Note style: when the root is an **Obsidian vault**, write `rules/` + `decisions.md` +
+Note style: when the root is an **Obsidian vault**, write `lessons/` + `decisions.md` +
 the `{{NAME}}.md` dashboard in clean Obsidian Flavored Markdown — light frontmatter
 `tags`, one `> [!note]` callout per note, `[[wikilinks]]` between these notes, and
 **always backtick `<placeholders>`** (a bare `<x>` breaks rendering). Stay lean; don't

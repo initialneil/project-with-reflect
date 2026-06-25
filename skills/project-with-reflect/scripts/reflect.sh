@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Deterministic part of reflect: archive a log AFTER the model has distilled it into
-# rules/quirks. (The distillation itself is the model's job per SKILL.md.)
+# lessons/quirks. (The distillation itself is the model's job per SKILL.md.)
+# NB: only the working log.md is archived — never the append-only lessons/experiments records.
 #   reflect.sh archive <project_dir> [stream]   — project workstream log (stream default: main)
 #   reflect.sh archive-entity <entity_dir>      — flat log.md (devices/machines)
 set -euo pipefail

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Shared helpers for project-with-reflect. Source me: `source common.sh`.
-# Deterministic file/registry ops only — judgment (reflect, rules) is the model's job.
+# Deterministic file/registry ops only — judgment (reflect, lessons) is the model's job.
 set -euo pipefail
 
 # Root resolution order: explicit env > saved pointer > legacy default.

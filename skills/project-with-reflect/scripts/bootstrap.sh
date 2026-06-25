@@ -2,7 +2,7 @@
 # Configure $PROJECT_WITH_REFLECT_ROOT: create it, save a pointer, persist the export.
 #   bootstrap.sh [root-path]
 # A CUSTOM path is recommended — a synced, human-readable location like an Obsidian
-# vault / iCloud / Dropbox folder — so rules + knowledge sync across machines and
+# vault / iCloud / Dropbox folder — so lessons + knowledge sync across machines and
 # stay readable. With no arg it falls back to ~/.project-with-reflect.
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"

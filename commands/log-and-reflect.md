@@ -1,5 +1,5 @@
 ---
-description: "Log + reflect the current project — capture this session, distill to lean rules (project-with-reflect)"
+description: "Log + reflect the current project — capture this session, distill to lean lessons (project-with-reflect)"
 argument-hint: "[what to reflect on]   (optional — natural language ok)"
 ---
 Run the **reflect** action of the current project's `project-with-reflect` skill with arguments: $ARGUMENTS
@@ -11,7 +11,8 @@ guess. (Same cwd→registry match the auto-log hook and `/register-branch` use.)
 
 `reflect` is already *log-and-reflect*: it **captures this session first** (appends key events not yet in
 the log — to the active stream, or a connection's log if the finding is about a device/API), **then**
-distills into lean `rules` + `decisions`, refreshes the dashboard, surfaces code-improvement flags, and
+distills into lean `lessons` + `decisions` (run results → append-only `lessons/experiment-*.md`), refreshes
+the dashboard, surfaces code-improvement flags, and
 archives consumed logs. This command is just the muscle-memory name for it, callable from anywhere in the
 repo without a `/<project>` prefix. Any `$ARGUMENTS` pass through: a `<target>` → directed reflect on a
 code area / repo skill; `--reground` → full rewrite of one module.

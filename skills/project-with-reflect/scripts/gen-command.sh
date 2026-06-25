@@ -23,6 +23,6 @@ Run the **$KIND** handle \`$H\` for project **$P** (project-with-reflect).
 
 Project state dir: \`$PDIR\`. Follow \`$PDIR/SKILL.md\` for the \`$KIND\` workflow,
 acting on handle \`$H\`. Honor the behavioral contract (load status + decisions +
-relevant rules first; check before proposing).
+relevant lessons first; check before proposing).
 EOF
 echo "Generated /$P-$H"

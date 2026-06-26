@@ -245,7 +245,9 @@ smart brief (Where / Recap / TODO / Workstreams / flags), not a dashboard dump �
 its repo docs + the current session (initial reflect pass → lessons + decisions +
 `<name>.md`). Workstreams are reusable lanes of work (`reset` recycles a merged one); the
 version lineage is the chain of `base` pointers, and `pr` checks the target is current
-before merging.
+before merging. **A worktree-mode workstream has exactly ONE worktree, reused across all its PR cycles —
+never improvise extra `git worktree add`s per task/PR (that litters `.claude/worktrees/`); a separate
+worktree means a new registered workstream or an explicit user OK.**
 
 **Discoverability convention:** every generated command — `/<name>` and each
 `/<name>-<handle>` alias — ships with an `argument-hint` frontmatter line (like `/goal`'s

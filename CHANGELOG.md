@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.10 — 2026-06-26
+
+- Two fixes. (1) One worktree per workstream — never improvise: a worktree-mode workstream has exactly one worktree, reused across all PR cycles; make PR branches with git checkout -b inside it, reset recycles the same dir, rebase/sync update it. Never git worktree add ad-hoc per task/PR (that littered .claude/worktrees/ with orphans); a separate worktree = a new registered workstream or an explicit user OK; checked into a tracked/logical workstream (no worktree) -> work in the base repo, don't conjure one. (2) Evals are folder notes: an eval is evals/<e>/<e>.md (case spec, named for the folder) + input files as siblings, not a generic case.md — same folder-note convention as lessons-with-artifacts.
+
 ## v0.7.9 — 2026-06-26
 
 - Detached remote jobs are now tracked by their owner and reconciled so none leak on the box. Ownership: a job launched for a workstream is tracked in that workstream's folder note under ## Jobs (job/host/session/log/started/status); a job launched with only a machine active goes to the machine's <name>.md ## Running jobs ledger. Machine status + new /<machine> jobs action, and project status/checkin, reconcile the ledger against ground truth (ssh tmux ls — also catches untracked/leaked sessions), flag finished/dead, and offer reattach/tail/mark-done(record result)/kill+clean. Avoids forgotten GPU/compute runs.

@@ -25,7 +25,8 @@ State dir: `{{PDIR}}`
 - `decisions.md` — ideas tried / chosen / rejected (+ datasets, settings).
 - `{{NAME}}.md` — the human dashboard / folder note (regenerated on reflect); also carries the
   project's `## TODO` backlog (see the `todo` action).
-- `evals/<eval>/`, `tasks/<task>.md`, `config.json`.
+- `evals/<eval>/` — each eval is a **folder note** `<eval>/<eval>.md` (the case spec) + its input files
+  (images / fixtures) as siblings. `tasks/<task>.md`, `config.json`.
 
 This skill is self-contained: its `SKILL.md` works even without the meta-skill installed. When the
 meta-skill IS installed, prefer its helpers at `~/.claude/skills/project-with-reflect/scripts/` for
@@ -235,9 +236,19 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   `origin/<base>` on a new branch `<b>`; **in-repo** → `git checkout -b` (HEAD switches, ready to work),
   **logical** → no git. **Re-registering an existing workstream** updates its `base`/`pr_into` only — cycle /
   log / git untouched. The script generates the `/{{NAME}}-<b>` alias.
+
+  **One worktree per workstream — reuse it, NEVER improvise.** A worktree-mode workstream has **exactly one**
+  worktree (its `worktree_path`); **all its dev / fixes / PRs happen in that single dir**, across many
+  PR cycles. **Never `git worktree add` ad-hoc** for a task, a feature branch, or a PR — that litters
+  `.claude/worktrees/` with orphaned trees (the failure that motivated this rule). Need a PR branch?
+  `git checkout -b` **inside the existing worktree**, PR it, merge, then **`reset`** recycles that same
+  worktree onto the latest `base` — you keep using the one dir. A *genuinely* separate worktree is a **new
+  registered workstream** (`register-workstream`) or needs an **explicit user OK** — never spun up silently.
+  Checked into a `tracked` / `logical` workstream (no worktree)? Work in the **base repo** or ask to register
+  a worktree-workstream — do **not** conjure a worktree.
 - `<workstream>` (or "work on `<workstream>`") — **checkin to that workstream** (load its `log.md` + `base` + lessons,
   run the working-dir decision, recap — the full behavior is the `checkin` action above), then the workstream
-  subcommands:
+  subcommands (all operate on its **one** worktree — never create another):
   - `pr` — open the PR, **verifying the lineage is current first — it always asks before any rebase**
     (the workstream *tracks* its `base`):
     1. **Lane behind its base?** `git rev-list --count HEAD..origin/<base>` > 0 → `origin/<base>` has moved
@@ -248,12 +259,16 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
        (`<base>`) onto its parent first, so you don't PR onto a stale target. (Walks the `base` chain.)
     Then `gh pr create --base <pr_into>`; log the PR + check. A merged stream is **reusable**: `reset`
     recycles it.
-  - `rebase` — `git rebase origin/<base>` (after confirming, per above).
-  - `reset` — after a merged PR, fast-forward the workstream onto latest `origin/<base>`;
-    bump `cycle` in `stream.json`.
-- `register-eval <e> [path]` — copy the case into `evals/<e>/`; generate
-  `/{{NAME}}-<e>` (`gen-command.sh {{NAME}} <e> eval {{PDIR}}`). `eval all` runs
-  the whole suite as a pre-release gate.
+  - `rebase` / `sync` — bring the **one** worktree up to date with `origin/<base>` (`git -C <worktree_path>
+    fetch` + rebase/ff), after confirming. Reuse the dir — never re-add a worktree.
+  - `reset` — after a merged PR, **recycle the same worktree**: `git -C <worktree_path>` fast-forward onto
+    latest `origin/<base>` and bump `cycle` in `stream.json`. **Never** create a new worktree for the next
+    cycle — the workstream's one dir is reused.
+- `register-eval <e> [path]` — set up `evals/<e>/` as a **folder note**: the case spec is
+  `evals/<e>/<e>.md` (named for the folder, **not** a generic `case.md`) with its input files (images,
+  fixtures) as **siblings** in `evals/<e>/` — same folder-note convention as a lesson with artifacts, so
+  it renders cleanly in Obsidian. Then generate `/{{NAME}}-<e>` (`gen-command.sh {{NAME}} <e> eval
+  {{PDIR}}`). `eval all` runs the whole suite as a pre-release gate.
 - `register-task <t>` — save a runbook `tasks/<t>.md`; generate `/{{NAME}}-<t>`.
 - `use-knowledge <k> [--unlink]` — link a global knowledge module
   (`$PROJECT_WITH_REFLECT_ROOT/knowledge/<k>`) into this project — the knowledge analog

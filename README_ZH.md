@@ -128,19 +128,49 @@ connections/<name>/
 > 你用**大白话**说要做什么 —— 下面的名字和 flag 是 Claude 替你填的，不用背（比如「开一条 v081，
 > 基于 v080，只追踪」「Soniox 这个 API，key 在 `SONIOX_API_KEY`」）。
 
-**总体**（`/project-with-reflect`，无参数 → `help`）：`status [<name>]` · `checkin [<name>]` · `help` ·
-`list` · `register-project` · `register-machine` · `register-device` · `register-api` · `register-mcp` ·
-`register-knowledge` · `register-agent` · `update` · `meta-reflect`。
+**总体**（`/project-with-reflect`）：
 
-**单个 project**（`/<name>`）：`checkin [<workstream>]` · `status` · `bootstrap` · `list` · `help` ·
-`reflect [<target>] [--reground]` · `record "…"` · `note "…"` · `todo` · `bind --connection <c> [--build "…"]` ·
-`build` · `flash` · `monitor` · `streams` · `register-workstream <b> --base <x>` ·
-`<workstream> [pr|rebase|reset]` · `register-eval <e>` · `eval all` · `register-task <t>` ·
-`use-knowledge <k>`。（`checkin` = 入口：加载 + cwd 决策 + 自动 `status`；`status` = 智能简报，非 dump。）
+```
+/project-with-reflect           # 无参 → help；另有：status [<name>] · checkin [<name>] · list · update · meta-reflect
+/register-project   <name>
+/register-machine   <name>      # ssh 服务器 / cloud VM
+/register-device    <name>      # USB / serial 烧录目标
+/register-api       <name>      # http endpoint + key-env
+/register-mcp       <name>      # mcp server + 它的 tools
+/register-knowledge <name>      # 跨 project 可复用的 recipe
+/register-agent     <name>
+```
 
-**单个 connection**（`/<name>`，按 transport）：`checkin`（验证可达 + 应用 quirks + 自动 `status`）·
-`status`（智能简报）· ssh `<cmd>` · serial `flash | monitor | reconnect wifi | repl` ·
-http/mcp `<call>` —— 外加 `note "…"` · `update "…"` · `reflect`（把 log 折叠进 `## Quirks`）。
+**单个 project**（`/<name>`）：
+
+```
+/<name>                           # 无参 → checkin（加载 + cwd 决策 + 自动 status）
+/<name> status                    # 智能简报：在哪 · recap · todo · workstreams（非 dump）
+/<name> checkin [<workstream>]    # 入口；无参 → project 主目录
+/<name> record "…"                # 立刻沉淀一条 durable lesson
+/<name> note "…"                  # 临时 log 一行
+/<name> reflect [<target>] [--reground]
+/<name> todo                      # backlog
+/<name> bind --connection <c> [--build "…"]
+/<name> build | flash | monitor   # 通过绑定的 device / server
+/<name> register-workstream <b> --base <x>
+/<name>-<b> [pr | rebase | reset] # 这条 workstream 自己的命令
+/<name> register-eval <e>  ·  eval all
+/<name> register-task <t>
+/<name> use-knowledge <k>
+/<name> bootstrap | streams | list | help
+```
+
+**单个 connection**（`/<name>`，按 transport）：
+
+```
+/<name> checkin                   # 验证可达 + 应用 quirks + 自动 status
+/<name> status                    # 智能简报
+/<name> <cmd>                      # ssh：在 host 上跑命令
+/<name> flash | monitor | reconnect wifi | repl   # serial
+/<name> <call>                     # http / mcp
+/<name> note "…" · update "…" · reflect           # reflect 把 log 折叠进 ## Quirks
+```
 
 统一的 ergonomic：**注册一个 handle → 得到 `/<name>-<handle>`**
 （一条 workstream、一个 eval test case、或一个 task runbook）。

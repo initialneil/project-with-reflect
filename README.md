@@ -135,20 +135,49 @@ connections/<name>/
 > for you, not syntax to memorize (e.g. "a workstream v081 based on v080, just track it"; "the Soniox API, key
 > in `SONIOX_API_KEY`").
 
-**Overall** (`/project-with-reflect`, bare → `help`): `status [<name>]` · `checkin [<name>]` · `help` ·
-`list` · `register-project` · `register-machine` · `register-device` · `register-api` · `register-mcp` ·
-`register-knowledge` · `register-agent` · `update` · `meta-reflect`.
+**Overall** (`/project-with-reflect`):
 
-**Per project** (`/<name>`): `checkin [<workstream>]` · `status` · `bootstrap` · `list` · `help` ·
-`reflect [<target>] [--reground]` · `record "…"` · `note "…"` · `todo` · `bind --connection <c> [--build "…"]` ·
-`build` · `flash` · `monitor` · `streams` · `register-workstream <b> --base <x>` ·
-`<workstream> [pr|rebase|reset]` · `register-eval <e>` · `eval all` · `register-task <t>` ·
-`use-knowledge <k>`. (`checkin` = front door: load + cwd-decision + auto-`status`; `status` = smart
-brief, not a dump.)
+```
+/project-with-reflect           # bare → help; also: status [<name>] · checkin [<name>] · list · update · meta-reflect
+/register-project   <name>
+/register-machine   <name>      # ssh server / cloud VM
+/register-device    <name>      # USB / serial flash target
+/register-api       <name>      # http endpoint + key-env
+/register-mcp       <name>      # mcp server + its tools
+/register-knowledge <name>      # cross-project reusable recipe
+/register-agent     <name>
+```
 
-**Per connection** (`/<name>`, by transport): `checkin` (verify reachable + apply quirks + auto-`status`) ·
-`status` (smart brief) · ssh `<cmd>` · serial `flash | monitor | reconnect wifi | repl` ·
-http/mcp `<call>` — plus `note "…"` · `update "…"` · `reflect` (folds its log into `## Quirks`).
+**Per project** (`/<name>`):
+
+```
+/<name>                           # bare → checkin (load + cwd-decision + auto-status)
+/<name> status                    # smart brief: where · recap · todo · workstreams (not a dump)
+/<name> checkin [<workstream>]    # front door; bare → project home
+/<name> record "…"                # persist a durable lesson NOW
+/<name> note "…"                  # ephemeral log line
+/<name> reflect [<target>] [--reground]
+/<name> todo                      # backlog
+/<name> bind --connection <c> [--build "…"]
+/<name> build | flash | monitor   # via a bound device / server
+/<name> register-workstream <b> --base <x>
+/<name>-<b> [pr | rebase | reset] # the workstream's own command
+/<name> register-eval <e>  ·  eval all
+/<name> register-task <t>
+/<name> use-knowledge <k>
+/<name> bootstrap | streams | list | help
+```
+
+**Per connection** (`/<name>`, by transport):
+
+```
+/<name> checkin                   # verify reachable + apply quirks + auto-status
+/<name> status                    # smart brief
+/<name> <cmd>                      # ssh: run a command on the host
+/<name> flash | monitor | reconnect wifi | repl   # serial
+/<name> <call>                     # http / mcp
+/<name> note "…" · update "…" · reflect           # reflect folds its log → ## Quirks
+```
 
 One ergonomic for everything: **register a handle → get `/<name>-<handle>`**
 (a workstream, an eval test case, or a task runbook).

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.3 — 2026-06-26
+
+- register-branch: success message now ends with an explicit 'Next -> /<name>-<branch> checkin' for every lane kind (worktree/branch/tracked/logical), so the named checkin action is suggested rather than the bare alias.
+
 ## v0.7.2 — 2026-06-26
 
 - register-branch: worktree lanes now default to <repo>/.claude/worktrees/<branch> (auto-created, forked from origin/<base>, kept out of git via local .git/info/exclude) — no more required --path / PWR_NEED_WORKTREE_PATH hard-stop; --path still overrides. pr now walks the base chain and always asks before any rebase: if origin/<base> moved since fork, ask to rebase before PR; if <base> is itself a tracked lane whose parent moved (stale), ask to rebase the integration branch onto its parent first, so you never PR onto a stale target.

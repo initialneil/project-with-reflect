@@ -118,9 +118,11 @@ json.dump({"branch": br, "base": base, "pr_into": printo, "kind": kind,
 PY
 
 bash "$HERE/gen-command.sh" "$NAME" "$BR" branch "$PDIR" >/dev/null
+# Next step is always: check into the lane (loads log+base+lessons, runs the cwd decision, recaps).
+NEXT="Next → /$NAME-$BR checkin   (picks up the lane: load log+base+lessons, handle the working dir, recap)"
 case "$KIND" in
-  tracked)  echo "Registered '$BR' (tracked: lineage on $BASE, no git). /$NAME-$BR ready." ;;
-  branch)   echo "Registered '$BR' (in-repo branch off $BASE; HEAD switched — ready to work). /$NAME-$BR ready." ;;
-  worktree) echo "Registered '$BR' (worktree off $BASE). → ready: cd $WORKTREE_PATH   |  /$NAME-$BR ready." ;;
-  logical)  echo "Registered '$BR' (logical lane on $BASE; same working tree). /$NAME-$BR ready." ;;
+  tracked)  echo "Registered '$BR' (tracked: lineage on $BASE, no git)."; echo "$NEXT" ;;
+  branch)   echo "Registered '$BR' (in-repo branch off $BASE; HEAD switched)."; echo "$NEXT" ;;
+  worktree) echo "Registered '$BR' (worktree off $BASE at $WORKTREE_PATH)."; echo "$NEXT" ;;
+  logical)  echo "Registered '$BR' (logical lane on $BASE; same working tree)."; echo "$NEXT" ;;
 esac

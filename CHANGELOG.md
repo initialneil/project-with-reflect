@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.8 — 2026-06-26
+
+- Setting a goal is now auto-recorded: when the user sets a goal for the active workstream (built-in /goal, or stated in prose), the project records it verbatim to a per-workstream goal-log folder note (workstreams/<ws>/<ws>.md) as '### <date>' + a fenced goal block, newest-first (prepended; recent on top), append-only. It's behavioral, not an OS hook — the built-in /goal can't be reliably hooked (no slash-command hook event; it doesn't dependably reach UserPromptSubmit), so the active project records it like the other auto-log triggers. Distinct from log.md's granular events; reflect summarizes against the latest goal.
+
 ## v0.7.7 — 2026-06-26
 
 - Renamed /register-branch -> /register-workstream (clean removal, no alias) and unified the casual synonym 'lane' -> 'workstream' everywhere (SKILL, template, scripts, commands, READMEs; gen-command handle kind branch -> workstream). 'workstream' is the structural noun (workstreams/ folder, workstream_mode config) so zero on-disk migration. Literal git 'branch' kept where it's real git (a worktree/in-repo workstream is realized as a git branch). Also fixed the register command doc to the current .claude/worktrees default path.

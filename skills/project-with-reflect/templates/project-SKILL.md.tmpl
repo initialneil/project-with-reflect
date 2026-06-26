@@ -10,7 +10,10 @@ State dir: `{{PDIR}}`
   conclusions, taxonomies, **experiment / baseline records** (`experiment-GUAVA.md`,
   `experiment-baseline.md`), research reports, a review format (`review-format.md`), reference/resource
   notes (a useful paper, a URL), and whatever else accrues. The model names + splits them wisely (split a
-  long one; readability rules). A lesson's **update style follows its nature**, which the model infers:
+  long one; readability rules). **Exception — a lesson with artifacts is a folder note:** when a lesson
+  embeds images/files it becomes `lessons/<name>/<name>.md` with its artifacts as siblings in
+  `lessons/<name>/` (e.g. `lessons/experiment-GUAVA/experiment-GUAVA.md` + its `*.png`) — **never scatter
+  a lesson's images flat in `lessons/`**. A lesson's **update style follows its nature**, which the model infers:
   - most are **distilled** — bounded-updated (add facts, fix wrong ones), loaded on demand.
   - some **accumulate** — an experiment-run log, a running results table: **append-only**, so the history
     (and numbers that host outputs later prune) is never lost or rewritten.
@@ -258,8 +261,15 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   embedded `![[…png]]` with frame key + metrics); a review follows the review format; new entries obey the
   writing rules. **The format is set by precedent + the user's tuning** — the first entry of a kind
   establishes the shape (propose it; the user refines), and later entries follow it; if the user tunes the
-  format, new entries follow the latest (don't retro-edit an append-only record — note a format bump). If
-  an artifact (a grid/image) matters, copy it into the vault and embed it so it survives host pruning.
+  format, new entries follow the latest (don't retro-edit an append-only record — note a format bump).
+
+  **A lesson with artifacts is a *folder note*, never scattered files.** The moment a lesson needs to embed
+  images/files, it becomes `lessons/<name>/<name>.md` (an Obsidian folder note) with its artifacts as
+  **siblings in `lessons/<name>/`**, embedded by name (`![[<file>.png]]` resolves to the sibling). Copy the
+  host artifact (a grid/image) into that folder so it survives host pruning — **never dump images directly
+  in `lessons/`** (that scatters them across the tree). A text-only lesson stays a flat `lessons/<name>.md`;
+  promote it to a folder the first time it gains an artifact (move the `.md` to `lessons/<name>/<name>.md`,
+  put the files beside it). Same rule for `record`, `reflect`, and `bootstrap`.
 
   Bare `record` captures the latest durable thing from this session. Unlike `reflect`, `record` is
   **surgical and immediate** (one thing → its home; archives nothing, runs no session sweep). **Be
@@ -324,4 +334,6 @@ Note style: when the root is an **Obsidian vault**, write `lessons/` + `decision
 the `{{NAME}}.md` dashboard in clean Obsidian Flavored Markdown — light frontmatter
 `tags`, one `> [!note]` callout per note, `[[wikilinks]]` between these notes, and
 **always backtick `<placeholders>`** (a bare `<x>` breaks rendering). Stay lean; don't
-over-format. Otherwise plain Markdown.
+over-format. **Any note with embedded images/files is a folder note** —
+`<name>/<name>.md` with the files as siblings, embedded `![[<file>]]` — never scatter
+attachments across the parent folder. Otherwise plain Markdown.

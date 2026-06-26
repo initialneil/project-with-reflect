@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.5 — 2026-06-26
+
+- A lesson with embedded images/files is now a folder note — lessons/<name>/<name>.md with its artifacts as siblings in lessons/<name>/ (embedded ![[<file>]]), never images scattered flat in lessons/. A text-only lesson stays a flat lessons/<name>.md and is promoted to a folder the first time it gains an artifact. Applies to record, reflect, and bootstrap; added to the State-dir lessons description, the format block, and the Obsidian note-style section.
+
 ## v0.7.4 — 2026-06-26
 
 - reflect/record now route durable knowledge by SCOPE, not just kind: a generalizable practice/recipe/pattern other projects would reuse (e.g. an in-repo /release skill, a CI setup, a review format) is proactively offered for promotion to global knowledge/ (/register-knowledge + use-knowledge) instead of being locked in one project's lessons. Directed reflect on a repo skill offers the same. Pick the widest scope that fits. Added to record, reflect, and 'Where a lesson lands' in the project template + meta SKILL routing.

@@ -350,8 +350,10 @@ embedding) before adding the entry, so it stays uniform and comparable (experime
 cell-for-cell; reviews follow the review format; entries obey the writing rules). Format is set by
 **precedent + the user's tuning**: the first entry of a kind establishes the shape (propose → user
 refines), later entries follow it; tuning the format applies to **new** entries (don't retro-edit an
-append-only record). Embedded artifacts (grids/images) get copied into the vault so they survive host
-pruning. This is native skill behavior, not a special format file.
+append-only record). **A lesson with embedded artifacts is a folder note** — `lessons/<name>/<name>.md`
+with its images/files as siblings in `lessons/<name>/` (copied off the host so they survive pruning),
+embedded `![[<file>]]`; **never scatter a lesson's images flat in `lessons/`**. This is native skill
+behavior, not a special format file.
 
 Reflect distills the **log** (what happened), **not the source** — it does not audit the codebase
 for smells. It *does* **surface flags the log reveals** — a module churned repeatedly, a workaround

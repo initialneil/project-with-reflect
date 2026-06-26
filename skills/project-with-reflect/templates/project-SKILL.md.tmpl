@@ -104,26 +104,33 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   `gen-dashboard.sh {{PDIR}}` to refresh them; you write the prose below). Confirm
   what you captured — distill, don't invent. **Replace any scaffold placeholder with real
   content; never leave boilerplate behind.**
-- `checkin [<lane>]` (≡ "work on `<lane>`") — **pick up this project and get ready.** The entry point
-  for a working session: (1) **load** the behavioral-contract context — `{{NAME}}.md` + `decisions.md`
-  + the active (or named `<lane>`) stream's `log.md` + `base`, the lesson modules matching what you're
-  about to do, and bound-connection facts; (2) **handle the working dir** (the Bash cwd persists across
-  calls, so wherever you land is where plan / scratch / planning-with-files files go) — **ask the user;
-  `cd` only on their choice:**
-  - **Remote project** → ask: switch into the lane's **workstream folder** `{{PDIR}}/workstreams/<lane>/`
-    *(recommended — keeps planning + working files in the vault, off the host and out of `~`)* **or
-    stay**. The code stays on the host either way — operate it via `/<host_connection>` over ssh.
-  - **Local project** → the **code dir** is the lane's `worktree_path` (worktree mode) else the repo.
-    Already inside the code dir → **do nothing** (no prompt — you're where you should be). Otherwise ask:
-    **code dir** *(recommended)* / the **workstream folder** `{{PDIR}}/workstreams/<lane>/` / **stay**.
+- `checkin [<lane>]` (≡ "work on `<lane>`") — **pick up the project (or a lane) and get ready.** The entry
+  point for a working session: (1) **load** the behavioral-contract context — `{{NAME}}.md` + `decisions.md`
+  + (for a lane) its `log.md` + `base`, the lesson modules matching the task, and bound-connection facts;
+  (2) **handle the working dir** (the Bash cwd persists across calls, so where you land is where plan /
+  scratch / planning-with-files files go) — **ask the user; `cd` only on their choice.** Two cases — and
+  **bare `checkin` is project-level, NOT auto-resume a lane:**
+  - **Bare `checkin` (no lane) → the project at its HOME.** Do **not** silently enter the "active" feature
+    lane. **List the lanes** (mark the active one) so the user can **resume one** (`checkin <lane>`) or
+    **branch a new one** (`register-branch`). Working dir:
+    - **Local** → offer the **main repo / base checkout** (`<repo>` — where you branch new lanes from and do
+      project-wide work) *(recommended)* / **a specific lane's** worktree / **stay**.
+    - **Remote** → offer the vault **state dir** / a lane's **workstream folder** / **stay**; code is on the
+      host (operate via `/<host_connection>`).
+  - **`checkin <lane>`** (or the `/{{NAME}}-<lane>` alias) → that **lane**:
+    - **Local** → its **code dir** = `worktree_path` (worktree mode) else `<repo>`. Already inside it →
+      **do nothing** (no prompt). Else ask: **code dir** *(recommended)* / the lane's **workstream folder**
+      `{{PDIR}}/workstreams/<lane>/` / **the main repo (base)** / **stay**.
+    - **Remote** → the lane's **workstream folder** `{{PDIR}}/workstreams/<lane>/` *(recommended)* / **stay**.
+  **Always offer the base/main repo as a landing** — it's where you branch new lanes and do project-wide
+  work, so a session that started in `~` can get there without guessing.
 
   After a switch, if planning-with-files is active, point its plan at the new dir so its files live there.
-  Then (3) **silently set the terminal tab/window title** to what you're working on —
-  `term-title.sh "{{NAME}} · <lane>"` (drop `· <lane>` for the main lane) — so the iTerm2 / Terminal tab
-  shows the project + lane at a glance. It writes the title escape to the real terminal (the Bash tool's
-  own stdout can't), and **no-ops silently** off a real terminal — never surface its output or mention it.
-  Then (4) **auto-run `status`** — so checkin always ends with a recap and you're ready to work. With no
-  `<lane>`, checks into the active stream (or `main`).
+  Then (3) **silently set the terminal tab/window title** —
+  `term-title.sh "{{NAME}} · <lane>"` (just `{{NAME}}` for a bare/home checkin — no `· <lane>`) — so the
+  iTerm2 / Terminal tab shows what you're on. It writes the title escape to the real terminal (the Bash
+  tool's own stdout can't), and **no-ops silently** off a real terminal — never surface its output.
+  Then (4) **auto-run `status`** — so checkin always ends with a recap and you're ready to work.
 - `status` — a **smart brief, not a dump** (read-only; no cd, no writes). Synthesize from `{{NAME}}.md`
   + the active stream's recent `log.md` + the `## TODO` backlog + the `stream.json`s, and print tersely,
   a few lines per heading:

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.6 — 2026-06-26
+
+- checkin: bare '/<project> checkin' is now project-level — it lands at the project HOME (the main repo / base checkout) and lists the lanes to resume or branch, instead of silently entering the active feature lane. The base/main repo is always an offered working-dir landing, so a session opened in ~ can get there to register-branch a new workstream. 'checkin <lane>' still enters that specific lane.
+
 ## v0.7.5 — 2026-06-26
 
 - A lesson with embedded images/files is now a folder note — lessons/<name>/<name>.md with its artifacts as siblings in lessons/<name>/ (embedded ![[<file>]]), never images scattered flat in lessons/. A text-only lesson stays a flat lessons/<name>.md and is promoted to a folder the first time it gains an artifact. Applies to record, reflect, and bootstrap; added to the State-dir lessons description, the format block, and the Obsidian note-style section.

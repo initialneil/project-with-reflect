@@ -4,9 +4,9 @@
 #                       [--remote <connection>] [--root <path>[:role]]...
 #     workstream_mode = worktree | in-repo | logical  (default in-repo)
 #
-# Project state ALWAYS lives centrally ($ROOT/projects/<name>) — pwf is personal reflective
-# memory. Anything git-managed / team-shared is native code (a repo skill, runbook, design-kit),
-# co-located with what it informs; pwf does not try to be that.
+# Project state ALWAYS lives centrally ($ROOT/projects/<name>) — project-with-reflect is personal
+# reflective memory. Anything git-managed / team-shared is native code (a repo skill, runbook,
+# design-kit), co-located with what it informs; project-with-reflect does not try to be that.
 #
 # <repo_path> is the PRIMARY root. A project can span several repos — add more with
 # repeatable --root <path>[:role] (e.g. an app repo + a sibling dataset repo).

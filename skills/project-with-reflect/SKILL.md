@@ -10,7 +10,7 @@ description: >-
   /register-agent, /update, or /meta-reflect, or asks to register / manage / reflect-on a project,
   machine, device, API, MCP, or knowledge note, or wants per-project persistent memory + a
   log->reflect->improve loop.
-argument-hint: "[help | list | status | bootstrap | register-project | register-machine | register-device | register-api | register-mcp | register-knowledge | update | register-agent | meta-reflect]"
+argument-hint: "[status | checkin | help | list | bootstrap | register-project | register-machine | register-device | register-api | register-mcp | register-knowledge | update | register-agent | meta-reflect]"
 hooks:
   PostToolUse:
     - matcher: "Bash"
@@ -67,8 +67,21 @@ On that signal:
 Bare `/project-with-reflect` → `help`.
 - **help** — this menu + how `/<name>` works + a pointer to each project's own `help`.
 - **list** — read `$ROOT/registry.json`: all projects, connections, knowledge, agents.
-- **status** — roll-up across projects: active streams, which projects have unconsumed
-  logs (need `reflect`), which streams are behind `base`, machine/device bindings.
+- **status `[<name>]`** — the **"what do I have / where was I" entry** (open a window anywhere — usually
+  `~` — and you forgot): with **no name**, a discovery roll-up from `registry.json` — every project +
+  connection, which projects have **unconsumed logs** (need `reflect`), which streams are **behind
+  `base`**, open `## TODO`s, machine/device/api bindings — so you can see what exists and what wants
+  attention. With a **`<name>`** (or when cwd resolves to a project), defer to that skill's smart
+  **`status`** brief. Read-only; no cd.
+- **checkin `[<name>]`** — **pick up a project/connection and get ready** (the natural next step after
+  `status`). Resolve the target: an explicit `<name>`, else the project whose `repo`/`dir` contains your
+  cwd. Then **delegate to that skill's `checkin`** — it loads context, handles the working dir (cd
+  decision), **silently sets the terminal tab title** to what you're working on (via
+  `SK/scripts/term-title.sh "<name> · <lane>"` — writes the title escape to the real terminal since the
+  Bash tool's stdout can't; no-ops off a real terminal, never surfaces output), and ends with a `status`
+  recap, so you're immediately ready. If nothing resolves and no name was given, run meta `status` (the
+  discovery list) and ask which to check into. From `~`: `status` to find it → `checkin <name>` to pick
+  it up.
 - **bootstrap `[path]`** — explicitly (re)configure the root: run the first-run path
   prompt (recommend a synced, readable custom path — see "## The root"), then
   `SK/scripts/bootstrap.sh "<path>"`. Use to set up before registering, move the root,
@@ -83,8 +96,8 @@ Bare `/project-with-reflect` → `help`.
   `SK/scripts/register-project.sh <name> <primary-path> <workstream_mode>` plus
   `--remote <connection>` (remote project) and a repeatable `--root <path>[:role]` per extra root.
   The script writes `location` / `host_connection` / `roots[]` into `config.json` and auto-binds the
-  host. **Project state always lives centrally** (`$ROOT/projects/<name>`) — pwf is personal memory;
-  there is no in-repo state mode (anything team-shared is native code, see §Personal memory, not team
+  host. **Project state always lives centrally** (`$ROOT/projects/<name>`) — project-with-reflect is
+  personal memory; there is no in-repo state mode (anything team-shared is native code, see §Personal memory, not team
   state). Generates `/<name>`. If "import", run `/<name> bootstrap` (it reads every root, over the host
   connection if remote).
   - **Obsidian folder-notes (mention only in the post-register summary):**
@@ -179,10 +192,14 @@ transport:
 - **http** — `/<name> <action>` calls the API with the key from `$<key_env>` (never echo it).
   Quirk e.g. "billed by socket wall-clock, not audio".
 - **mcp** — use its `mcp__<name>__*` tools per the note; `reconnect` re-runs the add command.
-- Plus every connection has `update "<content>"` (fold reference material into its note's body —
-  the skill-native form of `update connection`), `note "…"`, `status`, and `reflect` — which
+- Plus every connection has `checkin`, `status`, `update "<content>"` (fold reference material into its
+  note's body — the skill-native form of `update connection`), `note "…"`, and `reflect` — which
   folds `log.md` into the `## Quirks` section of `<name>.md`, then archives
-  (`SK/scripts/reflect.sh archive-entity <conn_dir>`). Facts stay in frontmatter.
+  (`SK/scripts/reflect.sh archive-entity <conn_dir>`). Facts stay in frontmatter. **`checkin`** verifies
+  the connection is reachable and applies its quirks, then auto-runs **`status`** — a smart brief
+  (facts + reachable? + quirk count + recent log), not just the raw facts: ssh `ssh <alias> true` /
+  uptime; serial → the port is present; http → `$<key_env>` is set (optional health ping); mcp → the
+  `mcp__<name>__*` tools are available (re-wire if dropped).
 
 **At register time, seed `<name>.md`'s body with lean useful content** — a one-line what-it-is
 plus a `## Quirks` section pre-filled with the real gotchas you already know (the practice repo,
@@ -214,10 +231,13 @@ loaded skill — `/<name>` works AND Claude can reach for it by its (targeted) d
 when you're working in that project. The state dir doubles as the skill dir (SKILL.md +
 lessons/decisions/workstreams). Alias handles `/<name>-<handle>` stay generated commands.
 The project SKILL.md carries the
-behavioral contract + handlers: `bootstrap · status · list · help · reflect
+behavioral contract + handlers: `checkin [<lane>] · status · bootstrap · list · help · reflect
 [--reground] · record · note · todo · streams · register-branch · <branch> [pr|rebase|reset] ·
 register-eval · eval all · register-task · use-knowledge`, plus **hardware/host** handlers when a
-device or machine is bound: `bind · build · flash · monitor`. `bootstrap` seeds a freshly-registered project from
+device or machine is bound: `bind · build · flash · monitor`. **`checkin`** is the front door to a
+working session (load context + handle the cwd cd-decision, then auto-run `status`); **`status`** is a
+smart brief (Where / Recap / TODO / Workstreams / flags), not a dashboard dump — `<branch>` / "work on
+`<lane>`" is just `checkin` to that lane. `bootstrap` seeds a freshly-registered project from
 its repo docs + the current session (initial reflect pass → lessons + decisions +
 `<name>.md`). Workstreams are reusable lanes (`reset` recycles a merged lane); the
 version lineage is the chain of `base` pointers, and `pr` checks the target is current
@@ -238,11 +258,12 @@ repeated work.
 ## Personal memory, not team state
 Project state **always lives centrally** in `$ROOT/projects/<name>` (symlinked into
 `~/.claude/skills/<name>`); point `$ROOT` at a synced/readable location (an Obsidian vault, a
-cloud-sync folder) and it travels with you across machines. There is **no in-repo state mode** — pwf is
-*personal reflective memory*, auto-accreted and unreviewed, and a tool like that is the wrong home for a
-team artifact. **Anything git-managed and team-shared is native code, co-located with what it informs:**
-a runnable command/skill → `.claude/commands|skills/…`; a design source → a `*-kit/` doc beside the code
-it generates; a cross-cutting fact → a runbook. A lesson is *born* in pwf (cheap, automatic) and
+cloud-sync folder) and it travels with you across machines. There is **no in-repo state mode** —
+project-with-reflect is *personal reflective memory*, auto-accreted and unreviewed, and a tool like that
+is the wrong home for a team artifact. **Anything git-managed and team-shared is native code, co-located
+with what it informs:** a runnable command/skill → `.claude/commands|skills/…`; a design source → a
+`*-kit/` doc beside the code it generates; a cross-cutting fact → a runbook. A lesson is *born* here
+(cheap, automatic) and
 **graduates** into such a native artifact via a normal PR once it's team-relevant and verified — git
 already does review/ownership/provenance; don't reinvent a thinner version inside a memory store. (This
 is why the old `mode: in-repo` was removed: it made an auto-writing personal tool double as a deliberate
@@ -303,11 +324,16 @@ judge. `reflect --reground` does a full grounding-rules-style rewrite of one mod
 **Accumulating records are routed differently** — a run's config + metric + verdict (or any running
 results table) is **appended** to its **flat record lesson** (`lessons/experiment-<name>.md` — no imposed
 subfolder; append-only, never rewritten or archived) so numbers persist after host outputs are pruned.
-Only the working `log.md` is archived; lessons are not.
+Only the working `log.md` is archived; lessons are not. More generally, **reflect triggers `record`
+whenever the sweep surfaces a durable, record-worthy thing it didn't already capture in the moment** (a
+baseline, an "X beats Y", an eval report, a reference worth keeping): it does the `record` action for that
+item — right flat lesson, follow its format, append-only where it accumulates — rather than burying it as
+a generic note. `record` is the primitive; reflect is its backstop, calling it when it sees fit.
 
 **`record` is reflect's proactive, in-the-moment counterpart — and a flexible router (not
 experiment-specific).** Don't let a durable thing wait for the end-of-session sweep: `record` persists it
-straight to its right home — a flat, descriptively-named `lessons/<name>.md` — **by kind**: a **result /
+straight to its right home — a flat, descriptively-named `lessons/<name>.md`, **most often by updating /
+editing / appending an existing lesson** (a new file only when nothing fits) — **by kind**: a **result /
 eval report** → a record lesson (`lessons/experiment-GUAVA.md`, append-only); a **rule / practice /
 conclusion** → a distilled lesson (+ `decisions.md`); a **reference / resource / URL** → a notes lesson
 (or global `knowledge/` if broadly reusable); a **research report / review / etc.** → its own lesson. All

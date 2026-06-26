@@ -40,12 +40,28 @@ All of it **Obsidian-friendly** (lessons / knowledge / dashboard are clean, read
 
 # 4. work through it — key moments auto-log; durable results get recorded to permanent memory
 /myapp-my-feature ...                        # (or just /myapp for the main lane)
-/record the v2 baseline: 0.83 F1 on the test set   # persist a result/conclusion NOW (≡ /myapp record "…")
+/record-a-lesson the v2 baseline: 0.83 F1   # persist a result/conclusion NOW (≡ /myapp record "…")
 
 # 5. close the session: capture it + distill into lean lessons
 /log-and-reflect          # from anywhere in the repo — resolves the project from your cwd
 # (≡ /myapp reflect — "reflect" already captures the session first)
 ```
+
+**Every session after that — pick up where you left off.** Open a new window anywhere (even `~`):
+
+```
+/project-with-reflect status        # forgot what you have? lists your projects + connections,
+                                    #   flags which need reflect / are behind base / have open TODOs
+/myapp checkin                      # pick up "myapp": loads its context, asks about the working dir
+                                    #   (cd into the lane folder / code dir), then recaps — you're ready
+/myapp checkin train-v2            # …or check straight into a specific lane
+```
+
+`status` is a **smart brief** (Where · Recap · TODO · Workstreams · flags), not a dump. `checkin` is the
+**front door to a working session** — it loads, handles the cwd, **silently sets your terminal tab title**
+to the project + lane (iTerm2 / Terminal / any OSC terminal; no-ops elsewhere), and **ends by running
+`status`** so you land with a recap. (Connections have them too: `/gpubox checkin` ssh-pings the box,
+applies its quirks, and briefs it.)
 
 **Remote / multi-repo project** — code on a server (no local checkout), maybe spanning repos? Just
 **describe it in plain language** — Claude registers the host and records the roots for you; there's no
@@ -113,18 +129,20 @@ connections/<name>/
 > for you, not syntax to memorize (e.g. "a lane v081 based on v080, just track it"; "the Soniox API, key
 > in `SONIOX_API_KEY`").
 
-**Overall** (`/project-with-reflect`, bare → `help`): `help` · `list` · `status` ·
-`register-project` · `register-machine` · `register-device` · `register-api` · `register-mcp` ·
+**Overall** (`/project-with-reflect`, bare → `help`): `status [<name>]` · `checkin [<name>]` · `help` ·
+`list` · `register-project` · `register-machine` · `register-device` · `register-api` · `register-mcp` ·
 `register-knowledge` · `register-agent` · `update` · `meta-reflect`.
 
-**Per project** (`/<name>`): `bootstrap` · `status` · `list` · `help` ·
+**Per project** (`/<name>`): `checkin [<lane>]` · `status` · `bootstrap` · `list` · `help` ·
 `reflect [<target>] [--reground]` · `record "…"` · `note "…"` · `todo` · `bind --connection <c> [--build "…"]` ·
 `build` · `flash` · `monitor` · `streams` · `register-branch <b> --base <x>` ·
 `<branch> [pr|rebase|reset]` · `register-eval <e>` · `eval all` · `register-task <t>` ·
-`use-knowledge <k>`.
+`use-knowledge <k>`. (`checkin` = front door: load + cwd-decision + auto-`status`; `status` = smart
+brief, not a dump.)
 
-**Per connection** (`/<name>`, by transport): ssh `<cmd>` · serial `flash | monitor | reconnect wifi | repl` ·
-http/mcp `<call>` — plus `status` · `note "…"` · `update "…"` · `reflect` (folds its log into `## Quirks`).
+**Per connection** (`/<name>`, by transport): `checkin` (verify reachable + apply quirks + auto-`status`) ·
+`status` (smart brief) · ssh `<cmd>` · serial `flash | monitor | reconnect wifi | repl` ·
+http/mcp `<call>` — plus `note "…"` · `update "…"` · `reflect` (folds its log into `## Quirks`).
 
 One ergonomic for everything: **register a handle → get `/<name>-<handle>`**
 (branch → workstream, eval → test case, task → runbook).
@@ -188,7 +206,10 @@ is about a device/API), **then** routes by kind: an **accumulating result** (a r
 verdict) is **appended to a permanent record lesson** (a flat `lessons/experiment-<name>.md` — never
 rewritten or archived, so numbers survive even after the host's output dirs are pruned, and matching that
 lesson's established format); **everything else** folds into the right `lessons/<topic>.md` +
-`decisions.md` (fixes wrong lessons, **splits a lesson if it gets too long to read**). Then it regenerates
+`decisions.md` (fixes wrong lessons, **splits a lesson if it gets too long to read**). When the sweep
+turns up a durable thing you didn't already `record` in the moment — a baseline, an "X beats Y", a
+reference worth keeping — reflect **triggers `record` for it naturally** (`record` is the primitive;
+reflect is its end-of-session backstop). Then it regenerates
 `<name>.md`, archives the consumed **log** (lessons are never archived), and reports what changed. So one
 `/<project> reflect` is the whole end-of-session habit — no separate "log" step. Run it as
 `/<project> reflect`, or **`/log-and-reflect`** from anywhere in the repo (it resolves the project from

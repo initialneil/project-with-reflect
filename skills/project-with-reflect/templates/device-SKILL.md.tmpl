@@ -23,7 +23,12 @@ monitor) and `connection.json` (transport: serial). Flash & monitor are baked in
 - `reconnect wifi` / `repl "<code>"` / `reboot` — talk to the board over `connection.json.port`
   using its toolchain (MicroPython → paste-mode REPL; Arduino/PlatformIO → the matching serial
   command). Reconnect-wifi = push the wifi creds / re-run the connect routine over REPL.
-- `status` — print the facts (`{{NAME}}.md`).
+- `checkin` — **pick up + get ready**: verify the board is connected (its `connection.json.port` is
+  present), apply learned quirks (the download-mode dance, wiring), **silently set the terminal title**
+  (`term-title.sh "{{NAME}}"` — no-ops off a real terminal; never surface its output), then auto-run
+  `status`.
+- `status` — a **smart brief**: the facts (board / port / toolchain / baud) + **port present?** + quirk
+  count + the most recent `log.md` line. Read-only.
 - `update "<content>"` — fold reference material into this note's body sections (`## Quirks`,
   setup, wiring): merge + dedupe, lean — **don't blind-append**. Frontmatter facts aren't touched
   here — re-run register-device to change board / port / flash / monitor.

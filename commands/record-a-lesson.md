@@ -11,7 +11,8 @@ follow `<project_dir>/SKILL.md`'s **record** action.
 
 `record` persists a **durable** thing to permanent memory **now** — distinct from `note` (an ephemeral
 log line) and `reflect` (the end-of-session sweep). It's **flexible** (not experiment-specific): infer or
-take the **kind** and put it in the right **flat `lessons/<descriptive>.md`** —
+take the **kind** and land it in the right **flat `lessons/<descriptive>.md`** — most often by
+**updating / editing / appending an existing lesson**, a new file only when nothing fits —
 - **result / benchmark / eval report** → a record lesson (`lessons/experiment-GUAVA.md`) — accumulates,
   append-only;
 - **rule / must-follow practice / settled conclusion** → a distilled lesson (`lessons/<topic>.md`,

@@ -101,7 +101,36 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   `gen-dashboard.sh {{PDIR}}` to refresh them; you write the prose below). Confirm
   what you captured — distill, don't invent. **Replace any scaffold placeholder with real
   content; never leave boilerplate behind.**
-- `status` — print `{{NAME}}.md`.
+- `checkin [<lane>]` (≡ "work on `<lane>`") — **pick up this project and get ready.** The entry point
+  for a working session: (1) **load** the behavioral-contract context — `{{NAME}}.md` + `decisions.md`
+  + the active (or named `<lane>`) stream's `log.md` + `base`, the lesson modules matching what you're
+  about to do, and bound-connection facts; (2) **handle the working dir** (the Bash cwd persists across
+  calls, so wherever you land is where plan / scratch / planning-with-files files go) — **ask the user;
+  `cd` only on their choice:**
+  - **Remote project** → ask: switch into the lane's **workstream folder** `{{PDIR}}/workstreams/<lane>/`
+    *(recommended — keeps planning + working files in the vault, off the host and out of `~`)* **or
+    stay**. The code stays on the host either way — operate it via `/<host_connection>` over ssh.
+  - **Local project** → the **code dir** is the lane's `worktree_path` (worktree mode) else the repo.
+    Already inside the code dir → **do nothing** (no prompt — you're where you should be). Otherwise ask:
+    **code dir** *(recommended)* / the **workstream folder** `{{PDIR}}/workstreams/<lane>/` / **stay**.
+
+  After a switch, if planning-with-files is active, point its plan at the new dir so its files live there.
+  Then (3) **silently set the terminal tab/window title** to what you're working on —
+  `term-title.sh "{{NAME}} · <lane>"` (drop `· <lane>` for the main lane) — so the iTerm2 / Terminal tab
+  shows the project + lane at a glance. It writes the title escape to the real terminal (the Bash tool's
+  own stdout can't), and **no-ops silently** off a real terminal — never surface its output or mention it.
+  Then (4) **auto-run `status`** — so checkin always ends with a recap and you're ready to work. With no
+  `<lane>`, checks into the active stream (or `main`).
+- `status` — a **smart brief, not a dump** (read-only; no cd, no writes). Synthesize from `{{NAME}}.md`
+  + the active stream's recent `log.md` + the `## TODO` backlog + the `stream.json`s, and print tersely,
+  a few lines per heading:
+  - **Where** — current state / version (the dashboard's "Where" line).
+  - **Recap** — the last session / most recent log highlights (what just happened).
+  - **TODO** — the open `## TODO` items.
+  - **Workstreams** — the lanes + lineage; flag any behind `base`.
+  - **Flags** (only if any) — bound connections with unreflected `log.md` lines, a lesson wanting
+    attention, a stream needing reflect.
+  The full picture stays in `{{NAME}}.md`; `status` is the quick read. `checkin` ends by running it.
 - `list` — handles: workstreams (+ lineage / behind-base), evals, tasks, lesson
   modules + experiment records, global knowledge used (`config.json.knowledge`).
 - `help` — this menu.
@@ -127,7 +156,12 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   **Plain `reflect` (no target):** triage first — any new stream-log entry that's really about a bound
   connection (a device/API quirk, not this app) → move it to that connection's `log.md` (it reflects
   into that connection's quirks via `/<name> reflect`), don't fold it into project lessons. Then route
-  the remaining entries by **kind**:
+  the remaining entries by **kind** — and **whenever the sweep turns up a durable, record-worthy thing
+  the moment didn't already `record` (a baseline / benchmark, a settled "X beats Y", an eval report, a
+  reference worth keeping), trigger `record` for it naturally**: do the `record` action — route it to its
+  right flat lesson, follow that lesson's format, append-only where it accumulates — instead of burying it
+  as a generic note. `record` is the primitive; reflect **calls it when it sees fit** (it's the backstop
+  for the durable things you didn't record in the moment):
   - **Accumulating records** (an experiment run + its config + metric + verdict; any running results
     table) → **append to the relevant record lesson** (`lessons/experiment-<name>.md`, flat — create if
     needed), **matching that lesson's established format** (same sections/columns/artifacts — see the
@@ -163,20 +197,9 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   clean dir, not sibling-clutter / not under `.claude/`), **in-repo** → `git checkout -b` (HEAD
   switches, ready to work), **logical** → no git. **Re-registering an existing lane** updates its
   `base`/`pr_into` only — cycle / log / git untouched. The script generates the `/{{NAME}}-<b>` alias.
-- `<branch>` (or "work on `<branch>`") — switch to that workstream: load its `log.md` + `base` + lessons,
-  then decide the **working dir** (the Bash cwd persists across calls, so wherever you land is where
-  plan / scratch / planning-with-files files go). **Ask the user — `cd` only on their choice:**
-  - **Remote project** → ask: switch into the lane's **workstream folder**
-    `{{PDIR}}/workstreams/<branch>/` *(recommended — keeps planning + working files in the vault, off
-    the host and out of `~`)* **or stay**. The code stays on the host either way — operate it via
-    `/<host_connection>` over ssh.
-  - **Local project** → the **code dir** is the lane's `worktree_path` (worktree mode) else the repo.
-    - If the session is **already inside the code dir** → **do nothing** (no prompt — you're where you
-      should be).
-    - Otherwise ask, three ways: switch to the **code dir** *(recommended)* / the **workstream folder**
-      `{{PDIR}}/workstreams/<branch>/` / **stay**.
-  After any switch, if planning-with-files is active, point its plan at the new dir so its files live
-  there — `reflect` then folds them into the log → lessons.
+- `<branch>` (or "work on `<branch>`") — **checkin to that lane** (load its `log.md` + `base` + lessons,
+  run the working-dir decision, recap — the full behavior is the `checkin` action above), then the lane
+  subcommands:
   - `pr` — rebase onto `base`; if `base` is behind ITS base
     (`git rev-list --count origin/<base>..origin/<base's base>` > 0) warn + offer
     to rebase the integration branch first; then `gh pr create --base <pr_into>`;
@@ -198,7 +221,9 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
 - `record ["<what>"]` — **persist a durable thing into permanent memory NOW, in its right home**
   (not the ephemeral log — that's `note`; not the end-of-session sweep — that's `reflect`). **Flexible** —
   it's not experiment-specific: you (or the user — "record this as a rule", "record this website") infer
-  or name the **kind**, then put it in the right **flat `lessons/<descriptive>.md`**:
+  or name the **kind**, then land it in the right **flat `lessons/<descriptive>.md`** — most often by
+  **updating / editing / appending an existing lesson** (a new file only when nothing fits; don't reflex
+  to a fresh md):
   - **a result / benchmark / eval report** → its record file (`lessons/experiment-GUAVA.md`,
     `lessons/experiment-baseline.md`) — these **accumulate** (append the new run; don't rewrite history).
   - **a rule / must-follow practice / invariant / settled conclusion** → a distilled lesson

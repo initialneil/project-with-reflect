@@ -10,7 +10,7 @@ project **name**, its **path(s)**, whether the code is **local or remote** (cues
 server", "it's on `<host>`", a `user@host:/path`), and any **extra repos** it spans ("also uses the
 dataset repo at …"). Only **AskUserQuestion** for what's genuinely missing or ambiguous —
 workstream_mode (worktree|in-repo|logical), whether to import existing docs. (Project state always lives
-centrally — pwf is personal memory; there is no in-repo state mode.)
+centrally — project-with-reflect is personal memory; there is no in-repo state mode.)
 
 Then read the skill's SKILL.md and run its register-project steps:
 - If the project is **remote** and its host isn't a registered connection yet, **register it first**

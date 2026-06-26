@@ -18,7 +18,11 @@ Facts live in this folder's `{{NAME}}.md` frontmatter (`base_url`, `key_env`) an
 ## Actions
 - `<action> [args]` — make the documented call (curl / SDK / WebSocket) to the right endpoint
   from `{{NAME}}.md`, authenticating with `$<key_env>`. Return the result; **never echo the key**.
-- `status` — print the facts (`{{NAME}}.md`).
+- `checkin` — **pick up + get ready**: verify `$<key_env>` is set (optional cheap health ping to
+  `base_url`), apply learned quirks, **silently set the terminal title** (`term-title.sh "{{NAME}}"` —
+  no-ops off a real terminal; never surface its output), then auto-run `status`. **Never echo the key.**
+- `status` — a **smart brief**: the facts (`base_url` / `key_env`) + **key set? / reachable?** + quirk
+  count + the most recent `log.md` line. Read-only; never prints the key.
 - `update "<content>"` — fold reference material into this note's body sections (`## Endpoints`,
   `## Setup`, `## Usage`, `## Gotchas`): merge + dedupe, lean — **don't blind-append**. **Secrets
   stay in env** (an API key or "let me edit" → an env pointer, never the key). Frontmatter facts

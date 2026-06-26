@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.1 — 2026-06-26
+
+- Add checkin + status as first-class actions on the meta skill and every derived skill (project/workstream/machine/device/api/mcp): status = smart brief (Where/Recap/TODO/Workstreams) + meta discovery roll-up; checkin = pick-up + working-dir cd-decision + silent terminal tab-title (via term-title.sh, OSC to the controlling tty) + auto-status. Renamed top-level /record -> /record-a-lesson (action stays record). Clarified record/reflect: usually update/append an existing lesson (not always a new file), and reflect now triggers record for durable findings. Dropped the pwf abbreviation.
+
 ## v0.7.0 — 2026-06-26
 
 - Renamed rules -> lessons: a flat, general per-project store of every kind (rules, conclusions, experiment/baseline records, reviews, references); accumulating records are append-only so numbers survive host pruning. New 'record' action (+ top-level /record): persist a durable thing now, flexible router by kind, proactive, follows the format of the lesson it continues. Removed project mode:in-repo — state is always central (pwf is personal memory; team-shared knowledge is native code); kept workstream_mode:in-repo. Builds on v0.6.x remote+multi-root projects, NL-first commands, and the work-on-lane cd decision

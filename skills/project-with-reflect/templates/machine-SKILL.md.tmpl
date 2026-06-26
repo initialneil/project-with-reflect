@@ -21,7 +21,13 @@ Facts live in this folder's `{{NAME}}.md` frontmatter (ssh_alias / kind / repo /
 ## Actions
 - `<command>` — run over ssh: `ssh <ssh_alias> <command>` (alias from `connection.json`). E.g.
   `/{{NAME}} nvidia-smi` → `ssh <alias> nvidia-smi`.
-- `status` — quick health (adapt to the box): `ssh <alias> 'uptime; nvidia-smi; df -h'`.
+- `checkin` — **pick up + get ready**: verify reachable (`ssh <alias> true`), apply this box's learned
+  quirks (the power-limit-after-reboot, the dataset mount), **silently set the terminal title**
+  (`term-title.sh "{{NAME}}"` — no-ops off a real terminal; never surface its output), then auto-run
+  `status`. Use it when you sit down to work on this host.
+- `status` — a **smart brief**: the facts (ssh alias / kind / endpoint) + **reachable?** + a quick
+  health line adapted to the box (`ssh <alias> 'uptime; nvidia-smi; df -h'`) + quirk count + the most
+  recent `log.md` line. Read-only.
 - `logs [unit]` — tail a service/journal. `sync <src> <dst>` — rsync over the alias.
 - `reboot` — confirm first, then `ssh <alias> sudo reboot`.
 - `update "<content>"` — fold reference material into this note's body sections (`## Quirks`,

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.4 — 2026-06-26
+
+- reflect/record now route durable knowledge by SCOPE, not just kind: a generalizable practice/recipe/pattern other projects would reuse (e.g. an in-repo /release skill, a CI setup, a review format) is proactively offered for promotion to global knowledge/ (/register-knowledge + use-knowledge) instead of being locked in one project's lessons. Directed reflect on a repo skill offers the same. Pick the widest scope that fits. Added to record, reflect, and 'Where a lesson lands' in the project template + meta SKILL routing.
+
 ## v0.7.3 — 2026-06-26
 
 - register-branch: success message now ends with an explicit 'Next -> /<name>-<branch> checkin' for every lane kind (worktree/branch/tracked/logical), so the named checkin action is suggested rather than the bare alias.

@@ -337,8 +337,12 @@ editing / appending an existing lesson** (a new file only when nothing fits) —
 eval report** → a record lesson (`lessons/experiment-GUAVA.md`, append-only); a **rule / practice /
 conclusion** → a distilled lesson (+ `decisions.md`); a **reference / resource / URL** → a notes lesson
 (or global `knowledge/` if broadly reusable); a **research report / review / etc.** → its own lesson. All
-kinds coexist flat in one project's `lessons/`. Reach for it **unprompted** for results/conclusions (a
-baseline, "X beats Y"); the user can also say "record `<X>`" (optionally "as a `<kind>`").
+kinds coexist flat in one project's `lessons/`. **Route by scope, not just kind: if a practice / recipe /
+pattern is generalizable** (an in-repo `/release` skill, a CI setup, a review format other projects would
+reuse), **offer to promote it to global `knowledge/`** (`/register-knowledge <k>` → distill the recipe →
+`use-knowledge <k>` elsewhere) rather than locking it in one project's lessons; reflect on a repo skill
+does the same. Reach for it **unprompted** for results/conclusions (a baseline, "X beats Y"); the user can
+also say "record `<X>`" (optionally "as a `<kind>`").
 
 **A new record follows the format of the lesson it continues** — for *any* kind, not just experiments. If
 it extends an existing lesson, match that lesson's established structure (sections / columns / artifact

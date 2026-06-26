@@ -149,7 +149,11 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
     **Reflect does NOT edit the source itself** — development is a separate, deliberate activity. It
     proceeds only when you **explicitly ask** *and* the **dev routine is clear** (which lane — direct,
     or a workstream/worktree); the edit then runs through that lane (diff, commit/PR). A repo skill is
-    just part of the codebase; its edit ships in the repo, so the whole team gets it.
+    just part of the codebase; its edit ships in the repo, so the whole team gets it. **If the repo skill
+    (or any pattern) is a *generalizable recipe* other projects would want** — e.g. an in-repo `/release`
+    skill, a CI setup, a test-harness shape — don't bury the takeaway in this project's lessons: **offer to
+    promote it to global `knowledge/`** (`/register-knowledge <k>` → distill the reusable recipe → other
+    projects `use-knowledge <k>` and replicate it). See *Where a lesson lands*.
   - **lesson / knowledge** → fold into `lessons/`/`decisions.md` as usual.
   It distills the *logged experience* about the target, not a fresh codebase audit — if little is
   logged, say so and offer a code-review pass instead. Then archive the consumed entries.
@@ -235,7 +239,11 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   - **a result / benchmark / eval report** → its record file (`lessons/experiment-GUAVA.md`,
     `lessons/experiment-baseline.md`) — these **accumulate** (append the new run; don't rewrite history).
   - **a rule / must-follow practice / invariant / settled conclusion** → a distilled lesson
-    (`lessons/<topic>.md`, bounded update) + a line in `decisions.md` if it's a decision.
+    (`lessons/<topic>.md`, bounded update) + a line in `decisions.md` if it's a decision. **But if it's a
+    *generalizable practice / recipe / pattern* others would reuse** (an in-repo `/release` skill, a CI
+    setup, a review format), it isn't project-specific → **offer the global
+    `$PROJECT_WITH_REFLECT_ROOT/knowledge/<k>`** (`/register-knowledge` + `use-knowledge`) so any project
+    can pick it up, rather than locking it in this project's lessons.
   - **a reference / resource / link** (a URL, a paper, a doc) → a notes lesson (`lessons/resources.md`);
     if broadly reusable across projects, offer the global `$PROJECT_WITH_REFLECT_ROOT/knowledge/<k>`
     (`/register-knowledge` + `use-knowledge`) instead.
@@ -289,8 +297,13 @@ A lesson from the log can take several forms, and reflect routes by **what kind 
   **development follows** as a separate step you drive (direct, or a workstream/worktree), and only on
   your explicit go-ahead with a clear routine. A repo-skill edit ships in the repo, so the whole team
   gets it.
-- **Durable knowledge** — so it isn't relearned. A project **lesson** (`lessons/`, your per-dev
-  knowledge in the PWR root) or a **connection's quirks** (cross-project device/API knowledge).
+- **Durable knowledge** — so it isn't relearned. Routed by **scope**: project-specific → a project
+  **lesson** (`lessons/`, your per-dev knowledge under `$PROJECT_WITH_REFLECT_ROOT`); a device/host/API
+  quirk → a **connection's quirks** (cross-project, lives with the connection); **a generalizable
+  practice / recipe / pattern other projects would reuse** (an in-repo `/release` skill, a CI setup, a
+  scaffolding convention) → **global `knowledge/`** (`/register-knowledge <k>` → distill the recipe; other
+  projects `use-knowledge <k>`). Pick the **widest** scope that fits — don't lock a reusable recipe inside
+  one project's lessons.
 - **An experiment result** — a run's config + metric + verdict → an **append-only record lesson**
   (`lessons/experiment-<name>.md`), so the number survives even after the host output is pruned.
 

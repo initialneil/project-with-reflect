@@ -177,15 +177,17 @@ That contract is what turns logging into *less* repeated work, not just more fil
 
 **Bug-fix stream on a version branch that itself sits on an older one:**
 ```
-/app register-branch v090 --base v080 --track-only   # record lineage: v090 sits on v080
-/app register-branch v090-bug-fix --base v090        # fork origin/v090, PR into v090
-/app-v090-bug-fix                                     # develop; auto-logs
-/app-v090-bug-fix pr                                  # rebase onto v090; if v090 behind v080 → warn+offer; gh pr create --base v090
+/app register-branch v090 --base v080 --track-only   # lineage only: v090 tracks v080 (shared branch / PR-target, no worktree)
+/app register-branch v090-bug-fix --base v090        # worktree at app/.claude/worktrees/v090-bug-fix, forked from origin/v090
+/app-v090-bug-fix                                     # checkin: cd into the worktree + recap; develop (auto-logs)
+/app-v090-bug-fix pr                                  # asks to rebase if origin/v090 moved; if v090 is stale vs v080, asks to rebase v090 first; then gh pr create --base v090
 # …PR merges…
 /app-v090-bug-fix reset                               # recycle the lane onto latest v090 for the next PR
 ```
-The version lineage is the chain of `base` pointers `v080 ← v090 ← v090-bug-fix`; a
-workstream is a **reusable lane**, not one-shot.
+The version lineage is the chain of `base` pointers `v080 ← v090 ← v090-bug-fix`; `pr` walks
+it and **asks before any rebase** so you never PR onto a stale target. Worktree lanes default to
+`<repo>/.claude/worktrees/<branch>` (auto-created, kept out of git); a workstream is a **reusable
+lane**, not one-shot.
 
 **Firmware project across a device and a cloud server:**
 ```

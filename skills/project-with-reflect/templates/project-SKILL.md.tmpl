@@ -191,20 +191,28 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
 - `register-branch <b> --base <x> [--pr-into <y>] [--track-only] [--path <dir>]` — run
   `register-branch.sh {{PDIR}} <b> …` (deterministic git + `stream.json`; you just translate the
   intent into flags — "v081 based on v080, just track" → `v081 --base v080 --track-only`).
-  `--track-only` records **lineage only, no git** (a version / integration branch you rebase onto);
-  otherwise the lane is realized per `config.workstream_mode`: **worktree** → `git worktree add`
-  (needs `--path`; the script refuses with `PWR_NEED_WORKTREE_PATH` if absent → ask the user for a
-  clean dir, not sibling-clutter / not under `.claude/`), **in-repo** → `git checkout -b` (HEAD
-  switches, ready to work), **logical** → no git. **Re-registering an existing lane** updates its
-  `base`/`pr_into` only — cycle / log / git untouched. The script generates the `/{{NAME}}-<b>` alias.
+  `--track-only` records **lineage only, no git** (a version / integration branch you rebase onto —
+  e.g. the shared `v080` itself: PR-target, never committed to directly);
+  otherwise the lane is realized per `config.workstream_mode`: **worktree** → `git worktree add` at
+  **`<repo>/.claude/worktrees/<b>`** by default (auto-created, kept out of the repo's `git status` via a
+  local `.git/info/exclude` entry — no prompt; pass `--path <dir>` to override), forked from
+  `origin/<base>` on a new branch `<b>`; **in-repo** → `git checkout -b` (HEAD switches, ready to work),
+  **logical** → no git. **Re-registering an existing lane** updates its `base`/`pr_into` only — cycle /
+  log / git untouched. The script generates the `/{{NAME}}-<b>` alias.
 - `<branch>` (or "work on `<branch>`") — **checkin to that lane** (load its `log.md` + `base` + lessons,
   run the working-dir decision, recap — the full behavior is the `checkin` action above), then the lane
   subcommands:
-  - `pr` — rebase onto `base`; if `base` is behind ITS base
-    (`git rev-list --count origin/<base>..origin/<base's base>` > 0) warn + offer
-    to rebase the integration branch first; then `gh pr create --base <pr_into>`;
-    log the PR + check. A merged stream is **reusable**: `reset` recycles it.
-  - `rebase` — `git rebase origin/<base>`.
+  - `pr` — open the PR, **verifying the lineage is current first — it always asks before any rebase**
+    (the lane *tracks* its `base`):
+    1. **Lane behind its base?** `git rev-list --count HEAD..origin/<base>` > 0 → `origin/<base>` has moved
+       since you forked → **ask** to `git rebase origin/<base>` before the PR.
+    2. **Base behind ITS base?** if `<base>` is itself a tracked lane on a parent (e.g. `v080 --base v071
+       --track-only`), check `git rev-list --count origin/<base>..origin/<base's base>` > 0 — i.e.
+       `origin/v071` moved and left `origin/v080` stale → **ask** to rebase the integration branch
+       (`<base>`) onto its parent first, so you don't PR onto a stale target. (Walks the `base` chain.)
+    Then `gh pr create --base <pr_into>`; log the PR + check. A merged stream is **reusable**: `reset`
+    recycles it.
+  - `rebase` — `git rebase origin/<base>` (after confirming, per above).
   - `reset` — after a merged PR, fast-forward the lane onto latest `origin/<base>`;
     bump `cycle` in `stream.json`.
 - `register-eval <e> [path]` — copy the case into `evals/<e>/`; generate

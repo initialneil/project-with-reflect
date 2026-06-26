@@ -67,11 +67,13 @@ if [ "$LOC" = "remote" ] && [ "$TRACK_ONLY" != "1" ] && { [ "$WSM" = "worktree" 
   echo "  the host: /${HOST:-<host>} 'git -C <root> checkout -b $BR origin/$BASE'." >&2
   TRACK_ONLY=1
 fi
+# worktree mode: default the worktree dir to <repo>/.claude/worktrees/<branch> unless the user passed
+# --path. Zero-friction, lives with the repo, trivially cleaned; kept out of the repo's git status via
+# a local .git/info/exclude entry (below) so it never pollutes commits.
+DEFAULT_WT=0
 if [ "$TRACK_ONLY" != "1" ] && [ "$WSM" = "worktree" ] && [ -z "$WT_PATH" ]; then
-  echo "PWR_NEED_WORKTREE_PATH: '$NAME' is workstream_mode=worktree — pick a clean directory for the" >&2
-  echo "  '$BR' worktree (NOT a sibling-clutter dir, NOT under .claude/ — e.g. ~/worktrees/$NAME/$BR)," >&2
-  echo "  then re-run with --path <dir>." >&2
-  exit 4
+  [ -n "$REPO" ] || { echo "no repo in config — cannot place a worktree" >&2; exit 2; }
+  WT_PATH="$REPO/.claude/worktrees/$BR"; DEFAULT_WT=1
 fi
 
 resolve_start() {  # echo a valid start-point for $1 (prefer origin/), or return 1
@@ -90,6 +92,13 @@ else
   case "$WSM" in
     worktree)
       START="$(resolve_start "$BASE")" || { echo "base '$BASE' not found (origin/$BASE or $BASE)" >&2; rm -rf "$WS"; exit 1; }
+      mkdir -p "$(dirname "$WT_PATH")"
+      # keep the default in-repo worktree location out of the repo's git status (local exclude only)
+      if [ "$DEFAULT_WT" = "1" ]; then
+        EXCL="$REPO/.git/info/exclude"
+        [ -f "$EXCL" ] && ! grep -qxF ".claude/worktrees/" "$EXCL" 2>/dev/null && \
+          printf '.claude/worktrees/\n' >> "$EXCL"
+      fi
       git -C "$REPO" worktree add "$WT_PATH" -b "$BR" "$START" || { rm -rf "$WS"; exit 1; }
       KIND="worktree"; WORKTREE_PATH="$(cd "$WT_PATH" && pwd)" ;;
     in-repo)

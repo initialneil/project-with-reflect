@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.2 — 2026-06-26
+
+- register-branch: worktree lanes now default to <repo>/.claude/worktrees/<branch> (auto-created, forked from origin/<base>, kept out of git via local .git/info/exclude) — no more required --path / PWR_NEED_WORKTREE_PATH hard-stop; --path still overrides. pr now walks the base chain and always asks before any rebase: if origin/<base> moved since fork, ask to rebase before PR; if <base> is itself a tracked lane whose parent moved (stale), ask to rebase the integration branch onto its parent first, so you never PR onto a stale target.
+
 ## v0.7.1 — 2026-06-26
 
 - Add checkin + status as first-class actions on the meta skill and every derived skill (project/workstream/machine/device/api/mcp): status = smart brief (Where/Recap/TODO/Workstreams) + meta discovery roll-up; checkin = pick-up + working-dir cd-decision + silent terminal tab-title (via term-title.sh, OSC to the controlling tty) + auto-status. Renamed top-level /record -> /record-a-lesson (action stays record). Clarified record/reflect: usually update/append an existing lesson (not always a new file), and reflect now triggers record for durable findings. Dropped the pwf abbreviation.

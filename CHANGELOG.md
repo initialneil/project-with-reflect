@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.9 — 2026-06-26
+
+- Detached remote jobs are now tracked by their owner and reconciled so none leak on the box. Ownership: a job launched for a workstream is tracked in that workstream's folder note under ## Jobs (job/host/session/log/started/status); a job launched with only a machine active goes to the machine's <name>.md ## Running jobs ledger. Machine status + new /<machine> jobs action, and project status/checkin, reconcile the ledger against ground truth (ssh tmux ls — also catches untracked/leaked sessions), flag finished/dead, and offer reattach/tail/mark-done(record result)/kill+clean. Avoids forgotten GPU/compute runs.
+
 ## v0.7.8 — 2026-06-26
 
 - Setting a goal is now auto-recorded: when the user sets a goal for the active workstream (built-in /goal, or stated in prose), the project records it verbatim to a per-workstream goal-log folder note (workstreams/<ws>/<ws>.md) as '### <date>' + a fenced goal block, newest-first (prepended; recent on top), append-only. It's behavioral, not an OS hook — the built-in /goal can't be reliably hooked (no slash-command hook event; it doesn't dependably reach UserPromptSubmit), so the active project records it like the other auto-log triggers. Distinct from log.md's granular events; reflect summarizes against the latest goal.

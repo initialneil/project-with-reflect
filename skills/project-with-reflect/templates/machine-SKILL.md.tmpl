@@ -16,18 +16,40 @@ Facts live in this folder's `{{NAME}}.md` frontmatter (ssh_alias / kind / repo /
    the provider/runbook docs — rather than guessing.
 3. **Read-only commands run freely** (nvidia-smi, df, ls, tail). **Confirm before mutating or
    destructive** ops (reboot, rm, kill, package installs, anything writing outside scratch).
-4. Auto-log notable events to `log.md`: a fix, a recurring setup step, a gotcha.
+4. **Long-running jobs must survive disconnect — launch them detached.** Training, big builds /
+   downloads, long evals — anything that outlives a quick command — **never** run in the foreground of
+   an ssh the local session holds open: a dropped ssh / **lost wifi** / closed Claude session SIGHUPs and
+   **kills** a foreground job. Launch it in a **persistent session on the host** — `tmux` (preferred) or
+   `screen`; fallback `nohup … >log 2>&1 &` / `setsid`. Convention: a named tmux session + a log file —
+   `ssh <alias> 'tmux new-session -d -s <job> "<cmd> 2>&1 | tee ~/runs/<job>.log"'`. Report back the
+   **session name + log path**. Check progress later by reattaching (`tmux attach -t <job>`) or tailing
+   the log over a **fresh** ssh (`/{{NAME}} logs` / `ssh <alias> tail -f ~/runs/<job>.log`) — the job runs
+   regardless of the local session. **The driving (e.g. Mac) session is ephemeral; the host job is durable.**
+   **Track every job you launch** in a **`## Running jobs`** ledger in `{{NAME}}.md` —
+   `job · tmux session · log path · started · status` — **unless a project workstream owns the run**, in
+   which case it's tracked there (see the project skill, *host orchestration*). Mark it `done` / `killed`
+   when it ends and move the outcome to `log.md`, so the ledger shows only what's **actually alive** —
+   **nothing leaks or is forgotten on the box.**
+5. Auto-log notable events to `log.md`: a fix, a recurring setup step, a gotcha — and a launched job's
+   **session name + log path** (so the next session can find a run that's still going).
 
 ## Actions
 - `<command>` — run over ssh: `ssh <ssh_alias> <command>` (alias from `connection.json`). E.g.
-  `/{{NAME}} nvidia-smi` → `ssh <alias> nvidia-smi`.
+  `/{{NAME}} nvidia-smi` → `ssh <alias> nvidia-smi`. **For a long-running job, don't run it here in the
+  foreground — launch it detached** (see *Before acting* §4: tmux session + log; report session + log path).
 - `checkin` — **pick up + get ready**: verify reachable (`ssh <alias> true`), apply this box's learned
   quirks (the power-limit-after-reboot, the dataset mount), **silently set the terminal title**
   (`term-title.sh "{{NAME}}"` — no-ops off a real terminal; never surface its output), then auto-run
   `status`. Use it when you sit down to work on this host.
 - `status` — a **smart brief**: the facts (ssh alias / kind / endpoint) + **reachable?** + a quick
   health line adapted to the box (`ssh <alias> 'uptime; nvidia-smi; df -h'`) + quirk count + the most
-  recent `log.md` line. Read-only.
+  recent `log.md` line + the **`## Running jobs`** ledger, **reconciled** against ground truth
+  (`ssh <alias> tmux ls`): flag any tracked job that finished or died, and any **untracked** session on
+  the box. Read-only (it only flags; `jobs` does the cleanup).
+- `jobs` — the **anti-leak board**: list `## Running jobs`, reconcile against `ssh <alias> tmux ls`
+  (ground truth — catches leaked/forgotten sessions too), then per job offer to **reattach** / **tail**
+  the log / **mark done** (move outcome to `log.md`) / **kill + clean** the session. Keeps the box from
+  accumulating orphaned runs.
 - `logs [unit]` — tail a service/journal. `sync <src> <dst>` — rsync over the alias.
 - `reboot` — confirm first, then `ssh <alias> sudo reboot`.
 - `update "<content>"` — fold reference material into this note's body sections (`## Quirks`,

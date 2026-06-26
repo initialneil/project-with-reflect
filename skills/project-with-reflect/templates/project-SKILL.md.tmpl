@@ -157,6 +157,9 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   - **Recap** — the last session / most recent log highlights (what just happened).
   - **TODO** — the open `## TODO` items.
   - **Workstreams** — the workstreams + lineage; flag any behind `base`.
+  - **Running jobs** (if any) — the active workstream's `## Jobs` (detached remote runs), reconciled
+    against the host (`/<host_connection> jobs` → `tmux ls`): mark which are still alive vs finished/dead,
+    so nothing is left leaking on the box.
   - **Flags** (only if any) — bound connections with unreflected `log.md` lines, a lesson wanting
     attention, a stream needing reflect.
   The full picture stays in `{{NAME}}.md`; `status` is the quick read. `checkin` ends by running it.
@@ -323,7 +326,15 @@ is also its own skill `/<name>`; from here you orchestrate them in project conte
   `$PROJECT_WITH_REFLECT_ROOT/connections/<name>/flash.sh` / `monitor.sh`. Auto-log the flash.
 - A bound **ssh** connection → operate via `/<name>` (deploy / run-remote / fetch-logs over its
   alias); **http/mcp** → call / use via `/<name>`. Never hard-code a host, port, or endpoint, and
-  don't bypass a connection's skill — that's where its learned quirks get applied.
+  don't bypass a connection's skill — that's where its learned quirks get applied. **A long-running
+  remote job (training, a big build/eval) is launched detached on the host via `/<name>`** (tmux/nohup —
+  see the machine skill) so a dropped local session / lost wifi never kills it. **The workstream that
+  launched it owns the tracking** — record it in the active workstream's folder note
+  `workstreams/<workstream>/<workstream>.md` under **`## Jobs`** (`job · host · tmux session · log path ·
+  started · status`), so a run is tied to the work that spawned it and cleaned up with it (not left to the
+  machine's generic ledger — that's only for jobs launched with no project active). `status` / `checkin`
+  **reconcile** `## Jobs` against the host (`/<name> jobs` → `tmux ls`): flag finished/dead runs, prompt to
+  mark done (move the result to a lesson via `record`) + clean the session. **Never leak a run.**
 
 ### Where a lesson lands
 A lesson from the log can take several forms, and reflect routes by **what kind it is + who needs it**:

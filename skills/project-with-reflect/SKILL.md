@@ -186,7 +186,11 @@ self-contained `SKILL.md` + `log.md`, symlinked into `~/.claude/skills/<name>`).
 own `log.md` → `reflect` — the self-improving loop, applied to the thing you operate. Actions by
 transport:
 - **ssh** — `/<name> <cmd>` ⇒ `ssh <ssh_alias> <cmd>` (read-only runs free; **confirm
-  mutating/destructive**). Quirk e.g. "after reboot, `nvidia-smi -pl 300`".
+  mutating/destructive**). **Long-running jobs launch detached** (tmux/nohup on the host) so a dropped
+  ssh / lost wifi / closed session never kills them — the driving session is ephemeral, the host job
+  durable. Each is **tracked by its owner** (a project workstream's `## Jobs`, else the machine's
+  `## Running jobs`) and **reconciled** against `tmux ls` on `status` / `jobs`, so runs don't leak or get
+  forgotten on the box. Quirk e.g. "after reboot, `nvidia-smi -pl 300`".
 - **serial** — `/<name> flash | monitor | reconnect wifi | repl | reboot`. Quirk e.g. the GPIO0
   download-mode dance.
 - **http** — `/<name> <action>` calls the API with the key from `$<key_env>` (never echo it).

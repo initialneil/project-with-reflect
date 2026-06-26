@@ -19,7 +19,7 @@ State dir: `{{PDIR}}`
     (and numbers that host outputs later prune) is never lost or rewritten.
   `reflect` archives only the working `log.md` — **never a lesson**. See the `record` action for how new
   findings land here and **follow the format of the lesson they continue**.
-- `workstreams/<branch>/` — `stream.json` (state) + `log.md` (history) per lane.
+- `workstreams/<workstream>/` — `stream.json` (state) + `log.md` (history) per workstream.
 - `decisions.md` — ideas tried / chosen / rejected (+ datasets, settings).
 - `{{NAME}}.md` — the human dashboard / folder note (regenerated on reflect); also carries the
   project's `## TODO` backlog (see the `todo` action).
@@ -33,10 +33,10 @@ deterministic ops.
 dirs — a project can span several, e.g. an app repo + a sibling dataset repo; if `roots` is absent the
 single `repo` is the only root). For a **remote** project the code lives on `host_connection` (an ssh
 connection): operate it **through `/<host_connection>`** (run / build / test over its alias — contract rule 5),
-and remember **your cwd here (the vault lane) is not the repo's working dir** — each root `path` is a
-dir *on the host*. Never assume a local checkout; load `roots` for the real paths. Version lanes on a
-remote project are **lineage-only automatically** — `register-branch` degrades a `worktree` / `in-repo`
-lane to `tracked` (those git realizations need a local checkout); make a real branch on the host
+and remember **your cwd here (the vault workstream) is not the repo's working dir** — each root `path` is a
+dir *on the host*. Never assume a local checkout; load `roots` for the real paths. Version workstreams on a
+remote project are **lineage-only automatically** — `register-workstream` degrades a `worktree` / `in-repo`
+workstream to `tracked` (those git realizations need a local checkout); make a real branch on the host
 yourself if you want one. (Local single-root projects: `roots` is just the one repo,
 `location: local` — nothing extra to think about.)
 
@@ -104,30 +104,30 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   `gen-dashboard.sh {{PDIR}}` to refresh them; you write the prose below). Confirm
   what you captured — distill, don't invent. **Replace any scaffold placeholder with real
   content; never leave boilerplate behind.**
-- `checkin [<lane>]` (≡ "work on `<lane>`") — **pick up the project (or a lane) and get ready.** The entry
+- `checkin [<workstream>]` (≡ "work on `<workstream>`") — **pick up the project (or a workstream) and get ready.** The entry
   point for a working session: (1) **load** the behavioral-contract context — `{{NAME}}.md` + `decisions.md`
-  + (for a lane) its `log.md` + `base`, the lesson modules matching the task, and bound-connection facts;
+  + (for a workstream) its `log.md` + `base`, the lesson modules matching the task, and bound-connection facts;
   (2) **handle the working dir** (the Bash cwd persists across calls, so where you land is where plan /
   scratch / planning-with-files files go) — **ask the user; `cd` only on their choice.** Two cases — and
-  **bare `checkin` is project-level, NOT auto-resume a lane:**
-  - **Bare `checkin` (no lane) → the project at its HOME.** Do **not** silently enter the "active" feature
-    lane. **List the lanes** (mark the active one) so the user can **resume one** (`checkin <lane>`) or
-    **branch a new one** (`register-branch`). Working dir:
-    - **Local** → offer the **main repo / base checkout** (`<repo>` — where you branch new lanes from and do
-      project-wide work) *(recommended)* / **a specific lane's** worktree / **stay**.
-    - **Remote** → offer the vault **state dir** / a lane's **workstream folder** / **stay**; code is on the
-      host (operate via `/<host_connection>`).
-  - **`checkin <lane>`** (or the `/{{NAME}}-<lane>` alias) → that **lane**:
+  **bare `checkin` is project-level, NOT auto-resume a workstream:**
+  - **Bare `checkin` (no workstream) → the project at its HOME.** Do **not** silently enter the "active" feature
+    workstream. **List the workstreams** (mark the active one) so the user can **resume one** (`checkin <workstream>`) or
+    **branch a new one** (`register-workstream`). Working dir:
+    - **Local** → offer the **main repo / base checkout** (`<repo>` — where you branch new workstreams from and do
+      project-wide work) *(recommended)* / **a specific workstream's** worktree / **stay**.
+    - **Remote** → offer the vault **state dir** / a **workstream folder** (`workstreams/<workstream>/`) /
+      **stay**; code is on the host (operate via `/<host_connection>`).
+  - **`checkin <workstream>`** (or the `/{{NAME}}-<workstream>` alias) → that **workstream**:
     - **Local** → its **code dir** = `worktree_path` (worktree mode) else `<repo>`. Already inside it →
-      **do nothing** (no prompt). Else ask: **code dir** *(recommended)* / the lane's **workstream folder**
-      `{{PDIR}}/workstreams/<lane>/` / **the main repo (base)** / **stay**.
-    - **Remote** → the lane's **workstream folder** `{{PDIR}}/workstreams/<lane>/` *(recommended)* / **stay**.
-  **Always offer the base/main repo as a landing** — it's where you branch new lanes and do project-wide
+      **do nothing** (no prompt). Else ask: **code dir** *(recommended)* / the **workstream folder**
+      `{{PDIR}}/workstreams/<workstream>/` / **the main repo (base)** / **stay**.
+    - **Remote** → the **workstream folder** `{{PDIR}}/workstreams/<workstream>/` *(recommended)* / **stay**.
+  **Always offer the base/main repo as a landing** — it's where you branch new workstreams and do project-wide
   work, so a session that started in `~` can get there without guessing.
 
   After a switch, if planning-with-files is active, point its plan at the new dir so its files live there.
   Then (3) **silently set the terminal tab/window title** —
-  `term-title.sh "{{NAME}} · <lane>"` (just `{{NAME}}` for a bare/home checkin — no `· <lane>`) — so the
+  `term-title.sh "{{NAME}} · <workstream>"` (just `{{NAME}}` for a bare/home checkin — no `· <workstream>`) — so the
   iTerm2 / Terminal tab shows what you're on. It writes the title escape to the real terminal (the Bash
   tool's own stdout can't), and **no-ops silently** off a real terminal — never surface its output.
   Then (4) **auto-run `status`** — so checkin always ends with a recap and you're ready to work.
@@ -137,7 +137,7 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   - **Where** — current state / version (the dashboard's "Where" line).
   - **Recap** — the last session / most recent log highlights (what just happened).
   - **TODO** — the open `## TODO` items.
-  - **Workstreams** — the lanes + lineage; flag any behind `base`.
+  - **Workstreams** — the workstreams + lineage; flag any behind `base`.
   - **Flags** (only if any) — bound connections with unreflected `log.md` lines, a lesson wanting
     attention, a stream needing reflect.
   The full picture stays in `{{NAME}}.md`; `status` is the quick read. `checkin` ends by running it.
@@ -157,8 +157,8 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   - **code (incl. a repo skill)** → reflect **flags a concrete dev item** from the log (what to
     change, where, why — a fix, a guard, a preventive lesson, a small refactor) and records it.
     **Reflect does NOT edit the source itself** — development is a separate, deliberate activity. It
-    proceeds only when you **explicitly ask** *and* the **dev routine is clear** (which lane — direct,
-    or a workstream/worktree); the edit then runs through that lane (diff, commit/PR). A repo skill is
+    proceeds only when you **explicitly ask** *and* the **dev routine is clear** (which workstream — direct,
+    or a workstream/worktree); the edit then runs through that workstream (diff, commit/PR). A repo skill is
     just part of the codebase; its edit ships in the repo, so the whole team gets it. **If the repo skill
     (or any pattern) is a *generalizable recipe* other projects would want** — e.g. an in-repo `/release`
     skill, a CI setup, a test-harness shape — don't bury the takeaway in this project's lessons: **offer to
@@ -202,32 +202,32 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   Report what changed. `--reground` = full grounding-rules-style rewrite of one distilled module
   (never an experiment record — those are append-only).
 - `streams` — list `workstreams/*/stream.json`; flag any behind their `base`.
-- `register-branch <b> --base <x> [--pr-into <y>] [--track-only] [--path <dir>]` — run
-  `register-branch.sh {{PDIR}} <b> …` (deterministic git + `stream.json`; you just translate the
+- `register-workstream <b> --base <x> [--pr-into <y>] [--track-only] [--path <dir>]` — run
+  `register-workstream.sh {{PDIR}} <b> …` (deterministic git + `stream.json`; you just translate the
   intent into flags — "v081 based on v080, just track" → `v081 --base v080 --track-only`).
   `--track-only` records **lineage only, no git** (a version / integration branch you rebase onto —
   e.g. the shared `v080` itself: PR-target, never committed to directly);
-  otherwise the lane is realized per `config.workstream_mode`: **worktree** → `git worktree add` at
+  otherwise the workstream is realized per `config.workstream_mode`: **worktree** → `git worktree add` at
   **`<repo>/.claude/worktrees/<b>`** by default (auto-created, kept out of the repo's `git status` via a
   local `.git/info/exclude` entry — no prompt; pass `--path <dir>` to override), forked from
   `origin/<base>` on a new branch `<b>`; **in-repo** → `git checkout -b` (HEAD switches, ready to work),
-  **logical** → no git. **Re-registering an existing lane** updates its `base`/`pr_into` only — cycle /
+  **logical** → no git. **Re-registering an existing workstream** updates its `base`/`pr_into` only — cycle /
   log / git untouched. The script generates the `/{{NAME}}-<b>` alias.
-- `<branch>` (or "work on `<branch>`") — **checkin to that lane** (load its `log.md` + `base` + lessons,
-  run the working-dir decision, recap — the full behavior is the `checkin` action above), then the lane
+- `<workstream>` (or "work on `<workstream>`") — **checkin to that workstream** (load its `log.md` + `base` + lessons,
+  run the working-dir decision, recap — the full behavior is the `checkin` action above), then the workstream
   subcommands:
   - `pr` — open the PR, **verifying the lineage is current first — it always asks before any rebase**
-    (the lane *tracks* its `base`):
+    (the workstream *tracks* its `base`):
     1. **Lane behind its base?** `git rev-list --count HEAD..origin/<base>` > 0 → `origin/<base>` has moved
        since you forked → **ask** to `git rebase origin/<base>` before the PR.
-    2. **Base behind ITS base?** if `<base>` is itself a tracked lane on a parent (e.g. `v080 --base v071
+    2. **Base behind ITS base?** if `<base>` is itself a tracked workstream on a parent (e.g. `v080 --base v071
        --track-only`), check `git rev-list --count origin/<base>..origin/<base's base>` > 0 — i.e.
        `origin/v071` moved and left `origin/v080` stale → **ask** to rebase the integration branch
        (`<base>`) onto its parent first, so you don't PR onto a stale target. (Walks the `base` chain.)
     Then `gh pr create --base <pr_into>`; log the PR + check. A merged stream is **reusable**: `reset`
     recycles it.
   - `rebase` — `git rebase origin/<base>` (after confirming, per above).
-  - `reset` — after a merged PR, fast-forward the lane onto latest `origin/<base>`;
+  - `reset` — after a merged PR, fast-forward the workstream onto latest `origin/<base>`;
     bump `cycle` in `stream.json`.
 - `register-eval <e> [path]` — copy the case into `evals/<e>/`; generate
   `/{{NAME}}-<e>` (`gen-command.sh {{NAME}} <e> eval {{PDIR}}`). `eval all` runs

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.7 — 2026-06-26
+
+- Renamed /register-branch -> /register-workstream (clean removal, no alias) and unified the casual synonym 'lane' -> 'workstream' everywhere (SKILL, template, scripts, commands, READMEs; gen-command handle kind branch -> workstream). 'workstream' is the structural noun (workstreams/ folder, workstream_mode config) so zero on-disk migration. Literal git 'branch' kept where it's real git (a worktree/in-repo workstream is realized as a git branch). Also fixed the register command doc to the current .claude/worktrees default path.
+
 ## v0.7.6 — 2026-06-26
 
 - checkin: bare '/<project> checkin' is now project-level — it lands at the project HOME (the main repo / base checkout) and lists the lanes to resume or branch, instead of silently entering the active feature lane. The base/main repo is always an offered working-dir landing, so a session opened in ~ can get there to register-branch a new workstream. 'checkin <lane>' still enters that specific lane.

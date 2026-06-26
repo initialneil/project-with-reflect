@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Generate a thin /<project>-<handle> alias command (user scope).
-#   gen-command.sh <project> <handle> <kind:branch|eval|task> <project_dir>
+#   gen-command.sh <project> <handle> <kind:workstream|eval|task> <project_dir>
 set -euo pipefail
 P="${1:?project}"; H="${2:?handle}"; KIND="${3:?kind}"; PDIR="${4:?project_dir}"
 mkdir -p "$HOME/.claude/commands"
 
 # per-kind argument-hint (shows on tab-complete, like /goal's "[<condition> | clear]")
 case "$KIND" in
-  branch) AH='argument-hint: "[checkin | status | pr | rebase | reset]"' ;;
+  workstream) AH='argument-hint: "[checkin | status | pr | rebase | reset]"' ;;
   eval)   AH='argument-hint: "[run | all]"' ;;
   *)      AH='' ;;
 esac
@@ -25,10 +25,10 @@ Project state dir: \`$PDIR\`. Follow \`$PDIR/SKILL.md\` for the \`$KIND\` workfl
 acting on handle \`$H\`. Honor the behavioral contract (load status + decisions +
 relevant lessons first; check before proposing).
 EOF
-[ "$KIND" = branch ] && cat >> "$HOME/.claude/commands/$P-$H.md" <<EOF
+[ "$KIND" = workstream ] && cat >> "$HOME/.claude/commands/$P-$H.md" <<EOF
 
-Bare \`/$P-$H\` = **checkin to lane \`$H\`** (load its log + base + lessons, run the
-working-dir cd-decision, then auto-run \`status\` to recap). \`status\` alone = the lane's
-brief; \`pr | rebase | reset\` = the lane git ops.
+Bare \`/$P-$H\` = **checkin to workstream \`$H\`** (load its log + base + lessons, run the
+working-dir cd-decision, then auto-run \`status\` to recap). \`status\` alone = the workstream's
+brief; \`pr | rebase | reset\` = its git ops.
 EOF
 echo "Generated /$P-$H"

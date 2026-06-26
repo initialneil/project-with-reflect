@@ -77,7 +77,7 @@ Bare `/project-with-reflect` → `help`.
   `status`). Resolve the target: an explicit `<name>`, else the project whose `repo`/`dir` contains your
   cwd. Then **delegate to that skill's `checkin`** — it loads context, handles the working dir (cd
   decision), **silently sets the terminal tab title** to what you're working on (via
-  `SK/scripts/term-title.sh "<name> · <lane>"` — writes the title escape to the real terminal since the
+  `SK/scripts/term-title.sh "<name> · <workstream>"` — writes the title escape to the real terminal since the
   Bash tool's stdout can't; no-ops off a real terminal, never surfaces output), and ends with a `status`
   recap, so you're immediately ready. If nothing resolves and no name was given, run meta `status` (the
   discovery list) and ask which to check into. From `~`: `status` to find it → `checkin <name>` to pick
@@ -231,15 +231,15 @@ loaded skill — `/<name>` works AND Claude can reach for it by its (targeted) d
 when you're working in that project. The state dir doubles as the skill dir (SKILL.md +
 lessons/decisions/workstreams). Alias handles `/<name>-<handle>` stay generated commands.
 The project SKILL.md carries the
-behavioral contract + handlers: `checkin [<lane>] · status · bootstrap · list · help · reflect
-[--reground] · record · note · todo · streams · register-branch · <branch> [pr|rebase|reset] ·
+behavioral contract + handlers: `checkin [<workstream>] · status · bootstrap · list · help · reflect
+[--reground] · record · note · todo · streams · register-workstream · <workstream> [pr|rebase|reset] ·
 register-eval · eval all · register-task · use-knowledge`, plus **hardware/host** handlers when a
 device or machine is bound: `bind · build · flash · monitor`. **`checkin`** is the front door to a
 working session (load context + handle the cwd cd-decision, then auto-run `status`); **`status`** is a
-smart brief (Where / Recap / TODO / Workstreams / flags), not a dashboard dump — `<branch>` / "work on
-`<lane>`" is just `checkin` to that lane. `bootstrap` seeds a freshly-registered project from
+smart brief (Where / Recap / TODO / Workstreams / flags), not a dashboard dump — `<workstream>` / "work on
+`<workstream>`" is just `checkin` to that workstream. `bootstrap` seeds a freshly-registered project from
 its repo docs + the current session (initial reflect pass → lessons + decisions +
-`<name>.md`). Workstreams are reusable lanes (`reset` recycles a merged lane); the
+`<name>.md`). Workstreams are reusable lanes of work (`reset` recycles a merged one); the
 version lineage is the chain of `base` pointers, and `pr` checks the target is current
 before merging.
 

@@ -6,7 +6,7 @@ Run the **reflect** action of the current project's `project-with-reflect` skill
 
 **Resolve the project from the current directory first:** match `$PWD` against `registry.json` projects'
 `repo` / `dir` (the project whose repo contains `$PWD`). If none matches, **ask which project** — don't
-guess. (Same cwd→registry match the auto-log hook and `/register-branch` use.) Then follow
+guess. (Same cwd→registry match the auto-log hook and `/register-workstream` use.) Then follow
 `<project_dir>/SKILL.md`'s **reflect** workflow.
 
 `reflect` is already *log-and-reflect*: it **captures this session first** (appends key events not yet in

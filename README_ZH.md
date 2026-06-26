@@ -131,7 +131,7 @@ connections/<name>/
 **总体**（`/project-with-reflect`）：
 
 ```
-/project-with-reflect           # 无参 → help；另有：status [<name>] · checkin [<name>] · list · update · meta-reflect
+/project-with-reflect           # 无参 → help；另有：status [<name>] · checkin [<name>] · list · meta-reflect
 /register-project   <name>
 /register-machine   <name>      # ssh 服务器 / cloud VM
 /register-device    <name>      # USB / serial 烧录目标
@@ -139,6 +139,15 @@ connections/<name>/
 /register-mcp       <name>      # mcp server + 它的 tools
 /register-knowledge <name>      # 跨 project 可复用的 recipe
 /register-agent     <name>
+```
+
+**在 repo 里**（顶层快捷命令，从 cwd 解析出当前 project，不用加 `/<name>` 前缀）：
+
+```
+/log-and-reflect [<target>] [--reground]   # = /<name> reflect，在 repo 里任意位置可用
+/record-a-lesson "…"                        # = /<name> record（沉淀一条 result / rule / reference）
+/register-workstream <b> --base <x>         # = /<name> register-workstream
+/update <name> "…"                          # 把内容折叠进某个 knowledge / connection note
 ```
 
 **单个 project**（`/<name>`）：

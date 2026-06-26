@@ -138,7 +138,7 @@ connections/<name>/
 **Overall** (`/project-with-reflect`):
 
 ```
-/project-with-reflect           # bare → help; also: status [<name>] · checkin [<name>] · list · update · meta-reflect
+/project-with-reflect           # bare → help; also: status [<name>] · checkin [<name>] · list · meta-reflect
 /register-project   <name>
 /register-machine   <name>      # ssh server / cloud VM
 /register-device    <name>      # USB / serial flash target
@@ -146,6 +146,15 @@ connections/<name>/
 /register-mcp       <name>      # mcp server + its tools
 /register-knowledge <name>      # cross-project reusable recipe
 /register-agent     <name>
+```
+
+**From inside a repo** — top-level shortcuts that resolve the project from your cwd, no `/<name>` prefix:
+
+```
+/log-and-reflect [<target>] [--reground]   # = /<name> reflect, from anywhere in the repo
+/record-a-lesson "…"                        # = /<name> record (a durable result / rule / reference)
+/register-workstream <b> --base <x>         # = /<name> register-workstream
+/update <name> "…"                          # fold content into a knowledge / connection note
 ```
 
 **Per project** (`/<name>`):

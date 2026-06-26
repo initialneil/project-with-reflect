@@ -1,9 +1,13 @@
 # project-with-reflect
 
-一个**会蒸馏自己的** meta-skill。
+> 一个**帮你蒸馏自己的** meta-skill。 —— Neil Z. Shao
+>
+> 搭配 [Obsidian](https://obsidian.md) 和插件体验最佳：
+> - [Neat File Tree](https://github.com/initialneil/obsidian-neat-file-tree) —— 更清爽的文件树。
+> - [Folder Notes](https://github.com/lostpaul/obsidian-folder-notes) —— 更好的 `<folder>/<folder>.md` folder-note 显示（experiment record、eval、每条 workstream 的 goal log）。
 
-你是否同时管理多个项目？是否要记住好几台机器、服务的连接方式？是否厌烦了反复写大段重复的
-prompt、向 Claude 一遍遍解释同一个项目的来龙去脉？
+你是否**同时管理多个项目**？是否要**记住好几台**机器、服务的连接方式？是否厌烦了**反复写大段重复**的
+prompt、向 Claude **一遍遍解释**同一个项目的来龙去脉？
 
 它帮你把每个 **project** 管起来——worktree、log、reflect、沉淀出**长期知识库**；也帮你管理一切你
 要**操作的东西**（connection），每个都成为可直接调用的 `/<name>` skill：

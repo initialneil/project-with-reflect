@@ -1,9 +1,15 @@
 # project-with-reflect
 
-A **self-distilling** meta-skill for Claude Code.
+> A **self-distilling** meta-skill for Claude Code. — Neil Z. Shao
+>
+> Best used with [Obsidian](https://obsidian.md) + plugins:
+>
+> - [Neat File Tree](https://github.com/initialneil/obsidian-neat-file-tree) — a cleaner, calmer file tree.
+> - [Folder Notes](https://github.com/lostpaul/obsidian-folder-notes) — the `<folder>/<folder>.md` folder-note convention this skill optionally leans on (experiment records, evals, the per-workstream goal log).
 
-Juggling several projects at once? Need to remember how to connect to a handful of machines and
-services? Tired of rewriting the same long prompts and re-explaining the same project to Claude?
+
+Juggling **several projects at once**? Need to **remember** how to connect to **a handful of machines** and
+**services**? Tired of **rewriting the same long prompts** and **re-explaining** the same project to Claude?
 
 It manages each **project** for you — worktrees, logs, reflect, a growing **long-term knowledge
 base** — and everything you **operate** (a *connection*), each becoming a callable `/<name>` skill:

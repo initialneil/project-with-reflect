@@ -26,5 +26,5 @@ python3 "$HERE/_note.py" "$CDIR/$NAME.md" "$NAME" connection \
 
 pwr_install_skill "$CDIR" "$NAME" "$TPL/machine-SKILL.md.tmpl"
 pwr_registry_put connections "$NAME" "{\"transport\":\"ssh\",\"ssh_alias\":\"$ALIAS\",\"kind\":\"$KIND\"}"
-echo "Registered ssh connection '$NAME' (kind=$KIND, ssh $ALIAS) — skill at ~/.claude/skills/$NAME. No passwords stored."
-echo "Use /$NAME <command> (e.g. /$NAME nvidia-smi → ssh $ALIAS nvidia-smi). Run /reload-plugins to load it now."
+echo "Registered ssh connection '$NAME' (kind=$KIND, ssh $ALIAS) — installed as a Claude/Codex skill. No passwords stored."
+echo "Use /$NAME <command> (e.g. /$NAME nvidia-smi -> ssh $ALIAS nvidia-smi). Restart/reload your agent if it does not see the new skill yet."

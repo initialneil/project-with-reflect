@@ -1,6 +1,6 @@
 # project-with-reflect
 
-> A **self-distilling** meta-skill for Claude Code. — Neil Z. Shao
+> A **self-distilling** meta-skill for Codex, Claude Code, and other AI coding agents. — Neil Z. Shao
 >
 > Best used with [Obsidian](https://obsidian.md) + plugins:
 >
@@ -9,7 +9,7 @@
 
 
 Juggling **several projects at once**? Need to **remember** how to connect to **a handful of machines** and
-**services**? Tired of **rewriting the same long prompts** and **re-explaining** the same project to Claude?
+**services**? Tired of **rewriting the same long prompts** and **re-explaining** the same project to your agent?
 
 It manages each **project** for you — worktrees, logs, reflect, a growing **long-term knowledge
 base** — and everything you **operate** (a *connection*), each becoming a callable `/<name>` skill:
@@ -27,14 +27,18 @@ All of it **Obsidian-friendly** (lessons / knowledge / dashboard are clean, read
 - **Everything is a skill** — a project, and each connection above, gets its own `/<name>` once registered.
 - **Auto-logs as you work** — commits, decisions, key findings, an experiment's result, an error + its fix, jotted to the active stream.
 - **`reflect` distills itself** — captures the session, then folds the log into **lean, readable lessons** it loads next time (and appends run results to a permanent **experiment record**).
-- **Loads before acting** — Claude reads existing lessons / decisions / knowledge first, so it stops re-explaining and repeating mistakes.
+- **Loads before acting** — the agent reads existing lessons / decisions / knowledge first, so it stops re-explaining and repeating mistakes.
 
 > **Core loop:** `work (auto-log) → /<project> reflect (capture + distill) → lean readable lessons → better next session`
 
 ## Quick start
 
 ```
-# 1. install (in Claude Code)
+# 1a. install for Codex
+mkdir -p ~/.codex/skills
+ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.codex/skills/project-with-reflect
+
+# 1b. install in Claude Code
 /plugin marketplace add initialneil/project-with-reflect
 /plugin install project-with-reflect@project-with-reflect
 
@@ -53,6 +57,34 @@ All of it **Obsidian-friendly** (lessons / knowledge / dashboard are clean, read
 # (≡ /myapp reflect — "reflect" already captures the session first)
 ```
 
+## Coding agent support
+
+The canonical skill lives at `skills/project-with-reflect/`. Agent-specific surfaces mirror or point to
+that source so one repo can be installed across common coding agents:
+
+| Agent | Support | Entry point |
+| --- | --- | --- |
+| Codex | First-class skill install | `.codex/skills/project-with-reflect/` |
+| Claude Code | Plugin + skill + slash commands/hooks | `.claude-plugin/`, `skills/project-with-reflect/`, `commands/` |
+| Generic agent CLIs | Repository instructions | `AGENTS.md`, `llms.txt` |
+| Cursor | Rule adapter | `.cursor/rules/project-with-reflect.mdc` |
+| Gemini CLI | Context adapter | `.gemini/GEMINI.md` |
+| OpenCode | Agent instructions | `.opencode/AGENTS.md` |
+| Continue | Prompt adapter | `.continue/prompts/project-with-reflect.md` |
+| GitHub Copilot coding agent | Repository instructions | `.github/copilot-instructions.md` |
+
+Codex and Claude Code get the most complete behavior because project-with-reflect can install generated
+project/connection skills into both user skill directories:
+
+```
+~/.codex/skills/<name>
+~/.claude/skills/<name>
+```
+
+Other agents can still use the same generated `SKILL.md` files by loading the repository instructions or
+symlinking/copying `$PROJECT_WITH_REFLECT_ROOT/projects/<name>` and
+`$PROJECT_WITH_REFLECT_ROOT/connections/<name>` into their own skill/rule location.
+
 **Every session after that — pick up where you left off.** Open a new window anywhere (even `~`):
 
 ```
@@ -70,13 +102,13 @@ to the project + workstream (iTerm2 / Terminal / any OSC terminal; no-ops elsewh
 applies its quirks, and briefs it.)
 
 **Remote / multi-repo project** — code on a server (no local checkout), maybe spanning repos? Just
-**describe it in plain language** — Claude registers the host and records the roots for you; there's no
+**describe it in plain language** — the agent registers the host and records the roots for you; there's no
 flag syntax to remember:
 
 ```
 /register-project myapp — it's on the gpubox server at /srv/myapp, and also uses the dataset repo at /srv/dataset
 ```
-Claude registers `gpubox` as an ssh connection if it isn't one yet (key-based, no passwords on disk),
+The agent registers `gpubox` as an ssh connection if it isn't one yet (key-based, no passwords on disk),
 records both repos as roots, and binds the host. Then `/myapp bootstrap` seeds lessons + decisions from
 them over ssh. Open a session anywhere and say **`/myapp work on <workstream>`** — it asks before switching
 into that workstream's folder, so your planning + working files stay in the vault (never littering the server
@@ -131,7 +163,7 @@ connections/<name>/
 
 ## Actions
 
-> You describe what you want in **plain language** — the names and flags below are what Claude fills in
+> You describe what you want in **plain language** — the names and flags below are what the agent fills in
 > for you, not syntax to memorize (e.g. "a workstream v081 based on v080, just track it"; "the Soniox API, key
 > in `SONIOX_API_KEY`").
 
@@ -199,14 +231,14 @@ Two `bootstrap` actions get you from zero to a working setup:
   keep `$PROJECT_WITH_REFLECT_ROOT` (recommending a synced, readable path) and sets it up.
   Use it to set up before registering, move the root, or repair a missing pointer.
 - **`/<name> bootstrap`** — *seed a freshly-registered project from what already exists.*
-  Claude reads the repo's docs (README, specs, CHANGELOG), skims the code, and uses the
+  The agent reads the repo's docs (README, specs, CHANGELOG), skims the code, and uses the
   current session, then does an initial reflect pass: writes the `lessons/<topic>.md`
   modules, populates `decisions.md` with choices already made, and writes the `<name>.md`
   dashboard. So a project you register today starts full, not empty — distilled, not invented.
 
 ## The behavioral contract (what makes it work)
 
-Every generated `/<name>` makes Claude, **before acting**:
+Every generated `/<name>` makes the agent, **before acting**:
 1. **Load first, propose second** — read `<name>.md` + `decisions.md` + matching lesson modules.
 2. **Check the ledger before proposing** — if it's in `decisions.md`, cite it; never re-propose blind.
 3. **Never improvise guarded state** — datasets, settings, branch/release conventions are invariants.
@@ -236,7 +268,7 @@ workstream**, not one-shot.
 **Firmware project across a device and a cloud server:**
 ```
 /register-device cardputer-adv   # autodetect board + /dev/cu.usb*; writes connection.json + flash/monitor
-/register-machine gcs-server     # ssh connection; new? describe it — Claude guides provider setup + billing, confirms cost first
+/register-machine gcs-server     # ssh connection; new? describe it — the agent guides provider setup + billing, confirms cost first
 /register-project splattingavatar ~/code/splattingavatar
 /splattingavatar bind --connection cardputer-adv --connection gcs-server
 /splattingavatar build && /splattingavatar flash && /splattingavatar monitor   # compile with the server endpoint baked in, flash over USB, watch it connect

@@ -94,10 +94,10 @@ PY
 bash "$HERE/gen-dashboard.sh" "$PDIR"
 
 # Expose the project as a REAL skill: its state dir IS the skill dir (SKILL.md + data),
-# so /<name> works AND Claude can reach for it by description. Retire any old command form.
+# so /<name> works in Claude/Codex and agents can reach for it by description. Retire any
+# old Claude command form.
 rm -f "$HOME/.claude/commands/$NAME.md"
-mkdir -p "$HOME/.claude/skills"
-ln -sfn "$PDIR" "$HOME/.claude/skills/$NAME"
+pwr_link_skill_dirs "$PDIR" "$NAME"
 
 pwr_registry_put projects "$NAME" "{\"dir\":\"$PDIR\",\"repo\":\"$REPO\",\"location\":\"$LOCATION\",\"host_connection\":\"$REMOTE\",\"workstream_mode\":\"$WSM\"}"
 
@@ -106,9 +106,9 @@ pwr_registry_put projects "$NAME" "{\"dir\":\"$PDIR\",\"repo\":\"$REPO\",\"locat
 bash "$HERE/obsidian-folder-note.sh" "$PDIR" || true
 
 if [ "$LOCATION" = "remote" ]; then
-  echo "Registered REMOTE project '$NAME' on host '$REMOTE' (workstream_mode=$WSM) at $PDIR — installed as a skill."
+  echo "Registered REMOTE project '$NAME' on host '$REMOTE' (workstream_mode=$WSM) at $PDIR — installed as a Claude/Codex skill."
   echo "Code lives on the host; operate it via /$REMOTE. ${#ROOTS[@]} extra root(s) recorded."
 else
-  echo "Registered project '$NAME' (workstream_mode=$WSM) at $PDIR — installed as a skill (~/.claude/skills/$NAME)."
+  echo "Registered project '$NAME' (workstream_mode=$WSM) at $PDIR — installed as a Claude/Codex skill."
 fi
-echo "Use /$NAME (or just mention $NAME) to work on it. Run /reload-plugins to load it this session."
+echo "Use /$NAME (or just mention $NAME) to work on it. Restart/reload your agent if it does not see the new skill yet."

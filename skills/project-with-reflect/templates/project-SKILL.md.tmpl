@@ -29,8 +29,9 @@ State dir: `{{PDIR}}`
   (images / fixtures) as siblings. `tasks/<task>.md`, `config.json`.
 
 This skill is self-contained: its `SKILL.md` works even without the meta-skill installed. When the
-meta-skill IS installed, prefer its helpers at `~/.claude/skills/project-with-reflect/scripts/` for
-deterministic ops.
+meta-skill IS installed, prefer its helpers in the active agent's user skill directory
+(`~/.claude/skills/project-with-reflect/scripts/` for Claude Code,
+`~/.codex/skills/project-with-reflect/scripts/` for Codex) for deterministic ops.
 
 **Codebase roots.** `config.json` carries `location` (`local` | `remote`) and `roots[]` (the working
 dirs — a project can span several, e.g. an app repo + a sibling dataset repo; if `roots` is absent the

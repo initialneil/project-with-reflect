@@ -49,14 +49,26 @@ pwr_ensure_root() {
 
 # pwr_install_skill <entity_dir> <name> <template_path>
 # Make an entity a real skill: SKILL.md (from template, if absent) + log.md, symlinked into
-# ~/.claude/skills/<name>, and attach <name>.md as the Obsidian folder note. Shared by every
-# connection transport (ssh/serial/http/mcp) and any other skill-entity.
+# each supported user-scope skill directory, and attach <name>.md as the Obsidian folder note.
+# Shared by every connection transport (ssh/serial/http/mcp) and any other skill-entity.
+pwr_link_skill_dirs() {
+  local DIR="$1" NAME="$2"
+  mkdir -p "$HOME/.claude/skills"
+  ln -sfn "$DIR" "$HOME/.claude/skills/$NAME"
+
+  # Codex discovers user skills from $CODEX_HOME/skills, with ~/.codex as the normal default.
+  # Other agents can still use the generated SKILL.md by copying or symlinking the same DIR.
+  local CODEX_DIR="${CODEX_HOME:-$HOME/.codex}/skills"
+  mkdir -p "$CODEX_DIR"
+  ln -sfn "$DIR" "$CODEX_DIR/$NAME"
+}
+
 pwr_install_skill() {
   local DIR="$1" NAME="$2" TPL="$3" HERE
   HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   [ -f "$DIR/SKILL.md" ] || sed "s/{{NAME}}/$NAME/g; s|{{DIR}}|$DIR|g" "$TPL" > "$DIR/SKILL.md"
   [ -f "$DIR/log.md" ]   || echo "# log" > "$DIR/log.md"
-  mkdir -p "$HOME/.claude/skills"; ln -sfn "$DIR" "$HOME/.claude/skills/$NAME"
+  pwr_link_skill_dirs "$DIR" "$NAME"
   bash "$HERE/obsidian-folder-note.sh" "$DIR" || true
 }
 

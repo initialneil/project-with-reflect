@@ -1,30 +1,17 @@
 ---
 name: project-with-reflect
 description: >-
-  Meta-skill that turns each of your projects and connections (ssh hosts, serial devices,
-  HTTP APIs, MCP servers) into its own lightweight, self-improving skill. Work through
-  /<project> or /<connection>; it auto-logs the moments that matter; reflect distills those
-  logs into lean, readable lessons so the next session — yours or any agent's — starts smarter
-  instead of repeating mistakes. Use when the user types /project-with-reflect, /register-project,
-  /register-machine, /register-device, /register-api, /register-mcp, /register-knowledge,
-  /register-agent, /update, or /meta-reflect, or asks to register / manage / reflect-on a project,
-  machine, device, API, MCP, or knowledge note, or wants per-project persistent memory + a
-  log->reflect->improve loop.
-argument-hint: "[status | checkin | help | list | bootstrap | register-project | register-machine | register-device | register-api | register-mcp | register-knowledge | update | register-agent | meta-reflect]"
-hooks:
-  PostToolUse:
-    - matcher: "Bash"
-      hooks:
-        - type: command
-          command: "SH=\"${CLAUDE_SKILL_DIR:-$HOME/.claude/skills/project-with-reflect}/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.claude/skills/project-with-reflect/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] && sh \"$SH\" --context=posttool; exit 0"
-  PreCompact:
-    - matcher: "*"
-      hooks:
-        - type: command
-          command: "SH=\"${CLAUDE_SKILL_DIR:-$HOME/.claude/skills/project-with-reflect}/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.claude/skills/project-with-reflect/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] && sh \"$SH\" --context=precompact; exit 0"
+  Meta-skill that turns each of your projects and connections (ssh hosts, serial devices, HTTP APIs, MCP servers) into its own lightweight, self-improving skill. Work through a project or connection; it auto-logs moments that matter; reflect distills logs into lean, readable lessons so the next session starts smarter. Use when the user asks to register, manage, check in to, or reflect on a project, machine, device, API, MCP, or knowledge note, or wants persistent project memory with a log-to-reflect loop.
 ---
 
 # project-with-reflect
+
+## Codex adapter note
+
+This is the Codex-facing mirror of the canonical skill. Interpret Claude Code slash-command names
+such as `/project-with-reflect`, `/register-project`, and `/<project>` as user intents or skill handles
+when the active Codex surface does not expose those commands directly. When the canonical text says
+`AskUserQuestion`, ask the user concisely or use the available Codex user-input flow.
 
 A meta-skill that **continuously generates and updates per-project sub-skills**.
 Core loop: `work (auto-logs key moments) → reflect = capture the session + distill (bounded) → lean,

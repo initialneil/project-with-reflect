@@ -25,5 +25,5 @@ python3 "$HERE/_note.py" "$CDIR/$NAME.md" "$NAME" connection \
 
 pwr_install_skill "$CDIR" "$NAME" "$TPL/mcp-SKILL.md.tmpl"
 pwr_registry_put connections "$NAME" "{\"transport\":\"mcp\"}"
-echo "Registered mcp connection '$NAME' — skill at ~/.claude/skills/$NAME. Tools: mcp__${NAME}__*"
-echo "Reminder: ensure it's wired — 'claude mcp add --scope user $NAME ...' (verify 'claude mcp get $NAME'). /reload-plugins to load."
+echo "Registered mcp connection '$NAME' — installed as a Claude/Codex skill. Tools: mcp__${NAME}__*"
+echo "Reminder: ensure it's wired in the active agent (for Claude Code: 'claude mcp add --scope user $NAME ...'). Restart/reload your agent if it does not see the new skill yet."

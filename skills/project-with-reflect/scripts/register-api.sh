@@ -26,6 +26,6 @@ python3 "$HERE/_note.py" "$CDIR/$NAME.md" "$NAME" connection \
 
 pwr_install_skill "$CDIR" "$NAME" "$TPL/api-SKILL.md.tmpl"
 pwr_registry_put connections "$NAME" "{\"transport\":\"http\",\"key_env\":\"$KEYENV\"}"
-echo "Registered http connection '$NAME' — skill at ~/.claude/skills/$NAME.${KEYENV:+ Key: \$$KEYENV in env (never on disk).}"
+echo "Registered http connection '$NAME' — installed as a Claude/Codex skill.${KEYENV:+ Key: \$$KEYENV in env (never on disk).}"
 [ -n "$DOCS" ] && echo "  docs: $DOCS (recorded for grounding — fetch before coding against the API)."
-echo "Fill its endpoints/usage in $CDIR/$NAME.md. Use /$NAME <action>. Run /reload-plugins to load it now."
+echo "Fill its endpoints/usage in $CDIR/$NAME.md. Use /$NAME <action>. Restart/reload your agent if it does not see the new skill yet."

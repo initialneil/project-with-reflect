@@ -8,8 +8,8 @@
     {
       "name": "project-with-reflect",
       "source": "./",
-      "description": "A meta-skill that turns each project/machine/device into its own lightweight, self-improving skill: work through /<project>, auto-log key events, /<project>-reflect distills logs into lean readable rules. Closed log -> reflect -> improve loop.",
-      "version": "0.7.10"
+      "description": "A multi-agent meta-skill for Codex, Claude Code, and other coding agents: turn each project, machine, device, API, and MCP server into a lightweight, self-improving skill; auto-log key events; reflect logs into lean lessons.",
+      "version": "0.8.0"
     }
   ]
 }

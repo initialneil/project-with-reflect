@@ -1,0 +1,7 @@
+interface:
+  display_name: "Project with Reflect"
+  short_description: "Persistent project memory and reflection"
+  default_prompt: "Use $project-with-reflect to check in to this project, load prior lessons, and reflect durable findings."
+
+policy:
+  allow_implicit_invocation: true

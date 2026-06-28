@@ -1,0 +1,22 @@
+# project-with-reflect
+
+`project-with-reflect` is a self-distilling meta-skill for AI coding agents. It turns each project,
+machine, serial device, HTTP API, and MCP server into a persistent skill with logs, lessons,
+decisions, and a reflect loop.
+
+Canonical skill:
+- `skills/project-with-reflect/SKILL.md`
+
+Primary install surfaces:
+- Claude Code plugin: `.claude-plugin/`
+- Claude Code skill: `.claude/skills/project-with-reflect`
+- Codex skill: `.codex/skills/project-with-reflect`
+- Generic agent instructions: `AGENTS.md`
+
+Important behavior:
+- Configure `$PROJECT_WITH_REFLECT_ROOT` with `skills/project-with-reflect/scripts/bootstrap.sh`.
+- Prefer a synced readable root such as an Obsidian vault folder named `Project-with-Reflect`.
+- Register projects with `register-project`, connections with `register-machine`,
+  `register-device`, `register-api`, and `register-mcp`.
+- Generated project and connection skills are symlinked into Claude Code and Codex user skill dirs.
+- Durable findings go to lessons/decisions with `record`; session closure uses `reflect`.

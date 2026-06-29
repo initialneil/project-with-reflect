@@ -20,12 +20,13 @@ prompt、向 agent **一遍遍解释**同一个项目的来龙去脉？
 
 而且全程 **Obsidian 友好**（lessons / 知识 / dashboard 都是干净可读的 Markdown）。
 
-**核心逻辑：**
+## 一眼看懂 At a glance
 
 - **万物皆 skill** —— project 和上面每个 connection，注册后都得到自己的 `/<name>`。
 - **工作时自动 log** —— commit、决定、关键发现、实验结果、error + 修复，随手记进当前 stream。
 - **`reflect` 蒸馏自己** —— 先 capture 这次 session，再把 log 提炼成**精简、可读的 lessons**，下次自动加载（实验结果则追加进一份永久的 **experiment record**）。
 - **动手前先加载** —— agent 先读已有 lessons / decisions / 知识，不再重复解释、重复犯错。
+- **跨 agent 使用** —— Claude Code 走 plugin flow；Codex 和其他 agents 使用这个 repo 里的 skill surfaces。
 
 > **核心循环 core loop：** `work（自动 log）→ /<project> reflect（capture + 提炼）→ 精简可读 lessons → 下次更好`
 
@@ -74,35 +75,9 @@ ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.code
 # （≡ /myapp reflect —— reflect 本来就会先 capture）
 ```
 
-## Coding agent 支持
+## 下次接着做 Pick up next session
 
-规范的 skill 源码在 `skills/project-with-reflect/`。各个 agent 的入口只做镜像或轻量适配，
-这样同一个 repo 可以发布给常见 coding agents：
-
-| Agent | 支持方式 | 入口 |
-| --- | --- | --- |
-| Codex | 一等 skill 安装 | `.codex/skills/project-with-reflect/` |
-| Claude Code | Plugin + skill + slash commands/hooks | `.claude-plugin/`、`skills/project-with-reflect/`、`commands/` |
-| 通用 agent CLI | repo 级说明 | `AGENTS.md`、`llms.txt` |
-| Cursor | rule adapter | `.cursor/rules/project-with-reflect.mdc` |
-| Gemini CLI | context adapter | `.gemini/GEMINI.md` |
-| OpenCode | agent instructions | `.opencode/AGENTS.md` |
-| Continue | prompt adapter | `.continue/prompts/project-with-reflect.md` |
-| GitHub Copilot coding agent | repo 级说明 | `.github/copilot-instructions.md` |
-
-Codex 和 Claude Code 的支持最完整，因为 project-with-reflect 会把生成出来的 project /
-connection skills 同时安装进两个 user-scope skill 目录：
-
-```
-~/.codex/skills/<name>
-~/.claude/skills/<name>
-```
-
-其他 agents 也能复用同一份生成的 `SKILL.md`：加载 repo 级说明，或把
-`$PROJECT_WITH_REFLECT_ROOT/projects/<name>` 和
-`$PROJECT_WITH_REFLECT_ROOT/connections/<name>` 复制 / symlink 到它们自己的 skill 或 rule 目录。
-
-**之后每个 session —— 接着上次继续。** 在任意位置（哪怕 `~`）开一个新窗口：
+在任意位置（哪怕 `~`）开一个新窗口：
 
 ```
 /project-with-reflect status        # 忘了自己有哪些？列出所有 project + connection，
@@ -117,64 +92,7 @@ connection skills 同时安装进两个 user-scope skill 目录：
 （iTerm2 / Terminal / 任意支持 OSC 的终端；其它环境自动跳过），并**以 `status` 收尾**，让你带着 recap 落地。
 （connection 也有：`/gpubox checkin` 会 ssh-ping 这台机器、应用它的 quirks、再给一份简报。）
 
-**远程 / 多 repo 的 project** —— 代码在服务器上（本地没有 checkout）、还可能横跨多个 repo？直接
-**用大白话描述**就行 —— agent 会替你注册 host、记录各个 root，不用记任何 flag 语法：
-
-```
-/register-project myapp —— 它在 gpubox 服务器的 /srv/myapp，另外还用到 /srv/dataset 这个数据集 repo
-```
-如果 gpubox 还不是 connection，agent 会先把它注册成 ssh connection（key-based，磁盘上不存密码），
-把两个 repo 记为 root 并 bind 上 host。然后 `/myapp bootstrap` 通过 ssh 从这些 repo seed 出
-lessons + decisions。之后在任意位置开一个 session，说 **`/myapp work on <workstream>`** —— 它会先征求你同意
-再切进那条 workstream 的目录，于是 planning / 工作文件都留在 vault 里（绝不弄乱服务器或你的 `~`），
-同时 `/myapp` 通过 `/gpubox` 在 host 上 build / test。
-
-也能把设备 / 服务变成 skill——`/register-device`、`/register-api`、`/register-mcp`、
-`/register-machine`；project `bind` 之后可直接 build / flash / 调用（见下文）。
-
-## 首次运行：选 root  First run
-
-首次运行会询问 `$PROJECT_WITH_REFLECT_ROOT` 放哪。**推荐用一个 custom、可同步、可读的
-路径** —— 你的 Obsidian vault，或一个云文件同步文件夹（Dropbox / Google Drive / OneDrive /
-iCloud / Nutstore），在其中用一个 `Project-with-Reflect` 文件夹，这样 lessons 和 knowledge
-能跨机器同步、也方便阅读；`~/.project-with-reflect` 是不同步的默认值。（Notion / Google Docs
-不是本地文件夹，不能作为 root —— root 必须是真实的本地目录。）选择会被保存（pointer + shell rc）。
-
-## 结构 The model
-
-```
-$PROJECT_WITH_REFLECT_ROOT/
-  projects/<name>/      每个 project 的 skill + 状态
-  connections/<name>/   你操作的一切 —— ssh | serial | http | mcp —— 每个都是自己的 /<name> skill
-  knowledge/            全局、可被 agent 使用的参考笔记，project 按需 opt-in
-  memories/             长期全局事实（保持精简）
-  agents/  templates/  scripts/  registry.json
-```
-
-connection **磁盘上不存任何 secret** —— 只存放 key 的环境变量**名字**（如 `SONIOX_API_KEY`），
-绝不存 key 本身或 ssh 密码。
-
-每个 project：
-```
-projects/<name>/
-  SKILL.md             自包含的 dispatcher + behavioral contract
-  <name>.md            人类看的 dashboard（含 ## TODO backlog）—— 由 reflect 重新生成
-  lessons/<name>.md    各种 lessons，扁平存放（rules · 参考 · review · 研究报告）；
-                       多数 bounded-update，少数 append-only —— 如 experiment-GUAVA.md 累积 run 记录
-  workstreams/<workstream>/ stream.json + log.md （log 按 workstream 存放）
-  decisions.md         试过 / 选定 / 否决的想法 —— 提议前先查
-  evals/<eval>/  tasks/<task>.md  config.json
-```
-
-每个 connection（一个 skill，按 transport）：
-```
-connections/<name>/
-  connection.json      transport + facts（port/board · ssh alias · base_url/key_env · mcp tools · docs_url）
-  <name>.md            facts（frontmatter）+ 学到的 ## Quirks
-  SKILL.md   log.md    /<name> flash|monitor|call|… → reflect 把 log 折叠进 quirks
-```
-
-## 命令 Actions
+## 命令速查 Command reference
 
 > 你用**大白话**说要做什么 —— 下面的名字和 flag 是 agent 替你填的，不用背（比如「开一条 v081，
 > 基于 v080，只追踪」「Soniox 这个 API，key 在 `SONIOX_API_KEY`」）。
@@ -235,6 +153,120 @@ connections/<name>/
 统一的 ergonomic：**注册一个 handle → 得到 `/<name>-<handle>`**
 （一条 workstream、一个 eval test case、或一个 task runbook）。
 
+## 常见工作流 Common workflows
+
+**远程 / 多 repo 的 project** —— 代码在服务器上（本地没有 checkout）、还可能横跨多个 repo？直接
+**用大白话描述**就行 —— agent 会替你注册 host、记录各个 root，不用记任何 flag 语法：
+
+```
+/register-project myapp —— 它在 gpubox 服务器的 /srv/myapp，另外还用到 /srv/dataset 这个数据集 repo
+```
+如果 gpubox 还不是 connection，agent 会先把它注册成 ssh connection（key-based，磁盘上不存密码），
+把两个 repo 记为 root 并 bind 上 host。然后 `/myapp bootstrap` 通过 ssh 从这些 repo seed 出
+lessons + decisions。之后在任意位置开一个 session，说 **`/myapp work on <workstream>`** —— 它会先征求你同意
+再切进那条 workstream 的目录，于是 planning / 工作文件都留在 vault 里（绝不弄乱服务器或你的 `~`），
+同时 `/myapp` 通过 `/gpubox` 在 host 上 build / test。
+
+也能把设备 / 服务变成 skill——`/register-device`、`/register-api`、`/register-mcp`、
+`/register-machine`；project `bind` 之后可直接 build / flash / 调用。
+
+**在一个本身基于更旧 branch 的 version branch 上做 bug-fix stream：**
+
+```
+/app register-workstream v090 --base v080 --track-only   # 仅 lineage：v090 tracks v080（共享分支 / PR 目标，不开 worktree）
+/app register-workstream v090-bug-fix --base v090        # 在 app/.claude/worktrees/v090-bug-fix 开 worktree，从 origin/v090 fork
+/app-v090-bug-fix                                     # checkin：cd 进 worktree + recap；开发（自动 log）
+/app-v090-bug-fix pr                                  # 若 origin/v090 有更新会询问是否 rebase；若 v090 相对 v080 已 stale，会询问先 rebase v090；再 gh pr create --base v090
+# …PR 合并后…
+/app-v090-bug-fix reset                               # 把这条 workstream 重置到最新 v090，准备下一个 PR
+```
+version lineage 就是 `base` 指针链 `v080 ← v090 ← v090-bug-fix`；`pr` 会沿着这条链走，
+**任何 rebase 前都会先询问**，让你绝不会 PR 到一个 stale 的目标。worktree workstream 默认落在
+`<repo>/.claude/worktrees/<workstream>`（自动创建、不进 git）；一个 workstream 是**可复用的 workstream**，不是一次性的。
+
+**横跨一个 device 和一台 cloud server 的固件 project：**
+
+```
+/register-device cardputer-adv   # autodetect board + /dev/cu.usb*；写 connection.json + flash/monitor
+/register-machine gcs-server     # ssh connection；还没有？描述它 —— agent 引导 provider 配置 + billing，先确认费用
+/register-project splattingavatar ~/code/splattingavatar
+/splattingavatar bind --connection cardputer-adv --connection gcs-server
+/splattingavatar build && /splattingavatar flash && /splattingavatar monitor   # 把 server endpoint 编进固件、通过 USB flash、看它连上 server
+```
+每个也都是自己的 skill —— `/cardputer-adv flash`、`/gcs-server <cmd>`；project 里的 `flash`/`monitor`
+会委托给它，于是它学到的 quirks 自动生效。
+
+## 首次运行：选 root  First run
+
+首次运行会询问 `$PROJECT_WITH_REFLECT_ROOT` 放哪。**推荐用一个 custom、可同步、可读的
+路径** —— 你的 Obsidian vault，或一个云文件同步文件夹（Dropbox / Google Drive / OneDrive /
+iCloud / Nutstore），在其中用一个 `Project-with-Reflect` 文件夹，这样 lessons 和 knowledge
+能跨机器同步、也方便阅读；`~/.project-with-reflect` 是不同步的默认值。（Notion / Google Docs
+不是本地文件夹，不能作为 root —— root 必须是真实的本地目录。）选择会被保存（pointer + shell rc）。
+
+## 心智模型 Mental model
+
+```
+$PROJECT_WITH_REFLECT_ROOT/
+  projects/<name>/      每个 project 的 skill + 状态
+  connections/<name>/   你操作的一切 —— ssh | serial | http | mcp —— 每个都是自己的 /<name> skill
+  knowledge/            全局、可被 agent 使用的参考笔记，project 按需 opt-in
+  memories/             长期全局事实（保持精简）
+  agents/  templates/  scripts/  registry.json
+```
+
+connection **磁盘上不存任何 secret** —— 只存放 key 的环境变量**名字**（如 `SONIOX_API_KEY`），
+绝不存 key 本身或 ssh 密码。
+
+每个 project：
+
+```
+projects/<name>/
+  SKILL.md             自包含的 dispatcher + behavioral contract
+  <name>.md            人类看的 dashboard（含 ## TODO backlog）—— 由 reflect 重新生成
+  lessons/<name>.md    各种 lessons，扁平存放（rules · 参考 · review · 研究报告）；
+                       多数 bounded-update，少数 append-only —— 如 experiment-GUAVA.md 累积 run 记录
+  workstreams/<workstream>/ stream.json + log.md （log 按 workstream 存放）
+  decisions.md         试过 / 选定 / 否决的想法 —— 提议前先查
+  evals/<eval>/  tasks/<task>.md  config.json
+```
+
+每个 connection（一个 skill，按 transport）：
+```
+connections/<name>/
+  connection.json      transport + facts（port/board · ssh alias · base_url/key_env · mcp tools · docs_url）
+  <name>.md            facts（frontmatter）+ 学到的 ## Quirks
+  SKILL.md   log.md    /<name> flash|monitor|call|… → reflect 把 log 折叠进 quirks
+```
+
+## 支持的 Agents Supported agents
+
+规范的 skill 源码在 `skills/project-with-reflect/`。各个 agent 的入口只做镜像或轻量适配，
+这样同一个 repo 可以发布给常见 coding agents：
+
+| Agent | 支持方式 | 入口 |
+| --- | --- | --- |
+| Codex | 一等 skill 安装 | `.codex/skills/project-with-reflect/` |
+| Claude Code | Plugin + skill + slash commands/hooks | `.claude-plugin/`、`skills/project-with-reflect/`、`commands/` |
+| 通用 agent CLI | repo 级说明 | `AGENTS.md`、`llms.txt` |
+| Cursor | rule adapter | `.cursor/rules/project-with-reflect.mdc` |
+| Gemini CLI | context adapter | `.gemini/GEMINI.md` |
+| OpenCode | agent instructions | `.opencode/AGENTS.md` |
+| Continue | prompt adapter | `.continue/prompts/project-with-reflect.md` |
+| GitHub Copilot coding agent | repo 级说明 | `.github/copilot-instructions.md` |
+
+Codex 和 Claude Code 的支持最完整，因为 project-with-reflect 会把生成出来的 project /
+connection skills 同时安装进两个 user-scope skill 目录：
+
+```
+~/.codex/skills/<name>
+~/.claude/skills/<name>
+```
+
+其他 agents 也能复用同一份生成的 `SKILL.md`：加载 repo 级说明，或把
+`$PROJECT_WITH_REFLECT_ROOT/projects/<name>` 和
+`$PROJECT_WITH_REFLECT_ROOT/connections/<name>` 复制 / symlink 到它们自己的 skill 或 rule 目录。
+
 ## Bootstrap
 
 两个 `bootstrap` 帮你从零到可用：
@@ -257,32 +289,6 @@ connections/<name>/
    skill 去操作它（会自动套用它学到的 quirks）；`connection.json` 提供硬事实，绝不靠猜 port / host / endpoint。
 
 正是这个 contract，让记录 log 变成**更少**的重复劳动，而不是更多的文件。
-
-## 实例 Worked examples
-
-**在一个本身基于更旧 branch 的 version branch 上做 bug-fix stream：**
-```
-/app register-workstream v090 --base v080 --track-only   # 仅 lineage：v090 tracks v080（共享分支 / PR 目标，不开 worktree）
-/app register-workstream v090-bug-fix --base v090        # 在 app/.claude/worktrees/v090-bug-fix 开 worktree，从 origin/v090 fork
-/app-v090-bug-fix                                     # checkin：cd 进 worktree + recap；开发（自动 log）
-/app-v090-bug-fix pr                                  # 若 origin/v090 有更新会询问是否 rebase；若 v090 相对 v080 已 stale，会询问先 rebase v090；再 gh pr create --base v090
-# …PR 合并后…
-/app-v090-bug-fix reset                               # 把这条 workstream 重置到最新 v090，准备下一个 PR
-```
-version lineage 就是 `base` 指针链 `v080 ← v090 ← v090-bug-fix`；`pr` 会沿着这条链走，
-**任何 rebase 前都会先询问**，让你绝不会 PR 到一个 stale 的目标。worktree workstream 默认落在
-`<repo>/.claude/worktrees/<workstream>`（自动创建、不进 git）；一个 workstream 是**可复用的 workstream**，不是一次性的。
-
-**横跨一个 device 和一台 cloud server 的固件 project：**
-```
-/register-device cardputer-adv   # autodetect board + /dev/cu.usb*；写 connection.json + flash/monitor
-/register-machine gcs-server     # ssh connection；还没有？描述它 —— agent 引导 provider 配置 + billing，先确认费用
-/register-project splattingavatar ~/code/splattingavatar
-/splattingavatar bind --connection cardputer-adv --connection gcs-server
-/splattingavatar build && /splattingavatar flash && /splattingavatar monitor   # 把 server endpoint 编进固件、通过 USB flash、看它连上 server
-```
-每个也都是自己的 skill —— `/cardputer-adv flash`、`/gcs-server <cmd>`；project 里的 `flash`/`monitor`
-会委托给它，于是它学到的 quirks 自动生效。
 
 ## Reflect = bounded update
 

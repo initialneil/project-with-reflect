@@ -22,12 +22,13 @@ base** — and everything you **operate** (a *connection*), each becoming a call
 
 All of it **Obsidian-friendly** (lessons / knowledge / dashboard are clean, readable Markdown).
 
-**The core idea:**
+## At a glance
 
 - **Everything is a skill** — a project, and each connection above, gets its own `/<name>` once registered.
 - **Auto-logs as you work** — commits, decisions, key findings, an experiment's result, an error + its fix, jotted to the active stream.
 - **`reflect` distills itself** — captures the session, then folds the log into **lean, readable lessons** it loads next time (and appends run results to a permanent **experiment record**).
 - **Loads before acting** — the agent reads existing lessons / decisions / knowledge first, so it stops re-explaining and repeating mistakes.
+- **Runs across agents** — Claude Code has the plugin flow; Codex and other agents use the skill surfaces in this repo.
 
 > **Core loop:** `work (auto-log) → /<project> reflect (capture + distill) → lean readable lessons → better next session`
 
@@ -76,35 +77,9 @@ ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.code
 # (≡ /myapp reflect — "reflect" already captures the session first)
 ```
 
-## Coding agent support
+## Pick up next session
 
-The canonical skill lives at `skills/project-with-reflect/`. Agent-specific surfaces mirror or point to
-that source so one repo can be installed across common coding agents:
-
-| Agent | Support | Entry point |
-| --- | --- | --- |
-| Codex | First-class skill install | `.codex/skills/project-with-reflect/` |
-| Claude Code | Plugin + skill + slash commands/hooks | `.claude-plugin/`, `skills/project-with-reflect/`, `commands/` |
-| Generic agent CLIs | Repository instructions | `AGENTS.md`, `llms.txt` |
-| Cursor | Rule adapter | `.cursor/rules/project-with-reflect.mdc` |
-| Gemini CLI | Context adapter | `.gemini/GEMINI.md` |
-| OpenCode | Agent instructions | `.opencode/AGENTS.md` |
-| Continue | Prompt adapter | `.continue/prompts/project-with-reflect.md` |
-| GitHub Copilot coding agent | Repository instructions | `.github/copilot-instructions.md` |
-
-Codex and Claude Code get the most complete behavior because project-with-reflect can install generated
-project/connection skills into both user skill directories:
-
-```
-~/.codex/skills/<name>
-~/.claude/skills/<name>
-```
-
-Other agents can still use the same generated `SKILL.md` files by loading the repository instructions or
-symlinking/copying `$PROJECT_WITH_REFLECT_ROOT/projects/<name>` and
-`$PROJECT_WITH_REFLECT_ROOT/connections/<name>` into their own skill/rule location.
-
-**Every session after that — pick up where you left off.** Open a new window anywhere (even `~`):
+Open a new window anywhere, even `~`:
 
 ```
 /project-with-reflect status        # forgot what you have? lists your projects + connections,
@@ -120,67 +95,7 @@ to the project + workstream (iTerm2 / Terminal / any OSC terminal; no-ops elsewh
 `status`** so you land with a recap. (Connections have them too: `/gpubox checkin` ssh-pings the box,
 applies its quirks, and briefs it.)
 
-**Remote / multi-repo project** — code on a server (no local checkout), maybe spanning repos? Just
-**describe it in plain language** — the agent registers the host and records the roots for you; there's no
-flag syntax to remember:
-
-```
-/register-project myapp — it's on the gpubox server at /srv/myapp, and also uses the dataset repo at /srv/dataset
-```
-The agent registers `gpubox` as an ssh connection if it isn't one yet (key-based, no passwords on disk),
-records both repos as roots, and binds the host. Then `/myapp bootstrap` seeds lessons + decisions from
-them over ssh. Open a session anywhere and say **`/myapp work on <workstream>`** — it asks before switching
-into that workstream's folder, so your planning + working files stay in the vault (never littering the server
-or your `~`), while `/myapp` builds/tests on the host through `/gpubox`.
-
-You can also turn devices and services into skills — `/register-device`, `/register-api`,
-`/register-mcp`, `/register-machine` — and `bind` them to a project to `build` / `flash` / call
-directly (see below).
-
-## First run: choosing the root
-
-On first run it asks where to keep `$PROJECT_WITH_REFLECT_ROOT`. A **custom, synced,
-readable path is recommended** — your Obsidian vault or a cloud file-sync folder
-(Dropbox / Google Drive / OneDrive / iCloud / Nutstore), using a `Project-with-Reflect`
-folder there, so your lessons and knowledge sync across machines and stay easy to read.
-`~/.project-with-reflect` is the no-sync default. (Notion / Google Docs can't be the
-root — the root must be a real local folder.) The choice is saved (pointer + shell rc).
-
-## The model
-
-```
-$PROJECT_WITH_REFLECT_ROOT/
-  projects/<name>/      per-project skill + state
-  connections/<name>/   everything you operate — ssh | serial | http | mcp — each its own /<name> skill
-  knowledge/            global, agent-usable reference notes any project opts into
-  memories/             durable global facts (kept tight)
-  agents/  templates/  scripts/  registry.json
-```
-
-Connections keep **no secrets on disk** — only the *name* of the env var holding a key
-(e.g. `SONIOX_API_KEY`), never the key itself or an ssh password.
-
-Per project:
-```
-projects/<name>/
-  SKILL.md             self-contained dispatcher + behavioral contract
-  <name>.md            human dashboard (+ ## TODO backlog) — regenerated by reflect
-  lessons/<name>.md    readable lessons of every kind, flat (rules · references · reviews · research);
-                       most bounded-updated, some append-only — e.g. experiment-GUAVA.md = run records
-  workstreams/<workstream>/ stream.json + log.md  (the log lives per-workstream)
-  decisions.md         ideas tried / chosen / rejected — checked before proposing
-  evals/<eval>/  tasks/<task>.md  config.json
-```
-
-Per connection (a skill, by transport):
-```
-connections/<name>/
-  connection.json      transport + facts (port/board · ssh alias · base_url/key_env · mcp tools · docs_url)
-  <name>.md            facts (frontmatter) + learned ## Quirks
-  SKILL.md   log.md    /<name> flash|monitor|call|… → reflect folds the log into quirks
-```
-
-## Actions
+## Command reference
 
 > You describe what you want in **plain language** — the names and flags below are what the agent fills in
 > for you, not syntax to memorize (e.g. "a workstream v081 based on v080, just track it"; "the Soniox API, key
@@ -242,6 +157,124 @@ connections/<name>/
 One ergonomic for everything: **register a handle → get `/<name>-<handle>`**
 (a workstream, an eval test case, or a task runbook).
 
+## Common workflows
+
+**Remote / multi-repo project** — code on a server (no local checkout), maybe spanning repos? Just
+**describe it in plain language** — the agent registers the host and records the roots for you; there's no
+flag syntax to remember:
+
+```
+/register-project myapp — it's on the gpubox server at /srv/myapp, and also uses the dataset repo at /srv/dataset
+```
+The agent registers `gpubox` as an ssh connection if it isn't one yet (key-based, no passwords on disk),
+records both repos as roots, and binds the host. Then `/myapp bootstrap` seeds lessons + decisions from
+them over ssh. Open a session anywhere and say **`/myapp work on <workstream>`** — it asks before switching
+into that workstream's folder, so your planning + working files stay in the vault (never littering the server
+or your `~`), while `/myapp` builds/tests on the host through `/gpubox`.
+
+You can also turn devices and services into skills — `/register-device`, `/register-api`,
+`/register-mcp`, `/register-machine` — and `bind` them to a project to `build` / `flash` / call
+directly.
+
+**Bug-fix stream on a version branch that itself sits on an older one:**
+
+```
+/app register-workstream v090 --base v080 --track-only   # lineage only: v090 tracks v080 (shared branch / PR-target, no worktree)
+/app register-workstream v090-bug-fix --base v090        # worktree at app/.claude/worktrees/v090-bug-fix, forked from origin/v090
+/app-v090-bug-fix                                     # checkin: cd into the worktree + recap; develop (auto-logs)
+/app-v090-bug-fix pr                                  # asks to rebase if origin/v090 moved; if v090 is stale vs v080, asks to rebase v090 first; then gh pr create --base v090
+# …PR merges…
+/app-v090-bug-fix reset                               # recycle the workstream onto latest v090 for the next PR
+```
+The version lineage is the chain of `base` pointers `v080 ← v090 ← v090-bug-fix`; `pr` walks
+it and **asks before any rebase** so you never PR onto a stale target. Worktree workstreams default to
+`<repo>/.claude/worktrees/<workstream>` (auto-created, kept out of git); a workstream is a **reusable
+workstream**, not one-shot.
+
+**Firmware project across a device and a cloud server:**
+
+```
+/register-device cardputer-adv   # autodetect board + /dev/cu.usb*; writes connection.json + flash/monitor
+/register-machine gcs-server     # ssh connection; new? describe it — the agent guides provider setup + billing, confirms cost first
+/register-project splattingavatar ~/code/splattingavatar
+/splattingavatar bind --connection cardputer-adv --connection gcs-server
+/splattingavatar build && /splattingavatar flash && /splattingavatar monitor   # compile with the server endpoint baked in, flash over USB, watch it connect
+```
+Each is also its own skill — `/cardputer-adv flash`, `/gcs-server <cmd>` — and project-context
+`flash`/`monitor` delegate to it, so its learned quirks apply.
+
+## First run: choosing the root
+
+On first run it asks where to keep `$PROJECT_WITH_REFLECT_ROOT`. A **custom, synced,
+readable path is recommended** — your Obsidian vault or a cloud file-sync folder
+(Dropbox / Google Drive / OneDrive / iCloud / Nutstore), using a `Project-with-Reflect`
+folder there, so your lessons and knowledge sync across machines and stay easy to read.
+`~/.project-with-reflect` is the no-sync default. (Notion / Google Docs can't be the
+root — the root must be a real local folder.) The choice is saved (pointer + shell rc).
+
+## Mental model
+
+```
+$PROJECT_WITH_REFLECT_ROOT/
+  projects/<name>/      per-project skill + state
+  connections/<name>/   everything you operate — ssh | serial | http | mcp — each its own /<name> skill
+  knowledge/            global, agent-usable reference notes any project opts into
+  memories/             durable global facts (kept tight)
+  agents/  templates/  scripts/  registry.json
+```
+
+Connections keep **no secrets on disk** — only the *name* of the env var holding a key
+(e.g. `SONIOX_API_KEY`), never the key itself or an ssh password.
+
+Per project:
+
+```
+projects/<name>/
+  SKILL.md             self-contained dispatcher + behavioral contract
+  <name>.md            human dashboard (+ ## TODO backlog) — regenerated by reflect
+  lessons/<name>.md    readable lessons of every kind, flat (rules · references · reviews · research);
+                       most bounded-updated, some append-only — e.g. experiment-GUAVA.md = run records
+  workstreams/<workstream>/ stream.json + log.md  (the log lives per-workstream)
+  decisions.md         ideas tried / chosen / rejected — checked before proposing
+  evals/<eval>/  tasks/<task>.md  config.json
+```
+
+Per connection (a skill, by transport):
+```
+connections/<name>/
+  connection.json      transport + facts (port/board · ssh alias · base_url/key_env · mcp tools · docs_url)
+  <name>.md            facts (frontmatter) + learned ## Quirks
+  SKILL.md   log.md    /<name> flash|monitor|call|… → reflect folds the log into quirks
+```
+
+## Supported agents
+
+The canonical skill lives at `skills/project-with-reflect/`. Agent-specific surfaces mirror or point to
+that source so one repo can be installed across common coding agents:
+
+| Agent | Support | Entry point |
+| --- | --- | --- |
+| Codex | First-class skill install | `.codex/skills/project-with-reflect/` |
+| Claude Code | Plugin + skill + slash commands/hooks | `.claude-plugin/`, `skills/project-with-reflect/`, `commands/` |
+| Generic agent CLIs | Repository instructions | `AGENTS.md`, `llms.txt` |
+| Cursor | Rule adapter | `.cursor/rules/project-with-reflect.mdc` |
+| Gemini CLI | Context adapter | `.gemini/GEMINI.md` |
+| OpenCode | Agent instructions | `.opencode/AGENTS.md` |
+| Continue | Prompt adapter | `.continue/prompts/project-with-reflect.md` |
+| GitHub Copilot coding agent | Repository instructions | `.github/copilot-instructions.md` |
+
+Codex and Claude Code get the most complete behavior because project-with-reflect can install generated
+project/connection skills into both user skill directories:
+
+```
+~/.codex/skills/<name>
+~/.claude/skills/<name>
+```
+
+Other agents can still use the same generated `SKILL.md` files by loading the repository instructions or
+symlinking/copying `$PROJECT_WITH_REFLECT_ROOT/projects/<name>` and
+`$PROJECT_WITH_REFLECT_ROOT/connections/<name>` into their own skill/rule location.
+
 ## Bootstrap
 
 Two `bootstrap` actions get you from zero to a working setup:
@@ -267,33 +300,6 @@ Every generated `/<name>` makes the agent, **before acting**:
    `connection.json` for the hard facts, never guess a port / host / endpoint.
 
 That contract is what turns logging into *less* repeated work, not just more files.
-
-## Worked examples
-
-**Bug-fix stream on a version branch that itself sits on an older one:**
-```
-/app register-workstream v090 --base v080 --track-only   # lineage only: v090 tracks v080 (shared branch / PR-target, no worktree)
-/app register-workstream v090-bug-fix --base v090        # worktree at app/.claude/worktrees/v090-bug-fix, forked from origin/v090
-/app-v090-bug-fix                                     # checkin: cd into the worktree + recap; develop (auto-logs)
-/app-v090-bug-fix pr                                  # asks to rebase if origin/v090 moved; if v090 is stale vs v080, asks to rebase v090 first; then gh pr create --base v090
-# …PR merges…
-/app-v090-bug-fix reset                               # recycle the workstream onto latest v090 for the next PR
-```
-The version lineage is the chain of `base` pointers `v080 ← v090 ← v090-bug-fix`; `pr` walks
-it and **asks before any rebase** so you never PR onto a stale target. Worktree workstreams default to
-`<repo>/.claude/worktrees/<workstream>` (auto-created, kept out of git); a workstream is a **reusable
-workstream**, not one-shot.
-
-**Firmware project across a device and a cloud server:**
-```
-/register-device cardputer-adv   # autodetect board + /dev/cu.usb*; writes connection.json + flash/monitor
-/register-machine gcs-server     # ssh connection; new? describe it — the agent guides provider setup + billing, confirms cost first
-/register-project splattingavatar ~/code/splattingavatar
-/splattingavatar bind --connection cardputer-adv --connection gcs-server
-/splattingavatar build && /splattingavatar flash && /splattingavatar monitor   # compile with the server endpoint baked in, flash over USB, watch it connect
-```
-Each is also its own skill — `/cardputer-adv flash`, `/gcs-server <cmd>` — and project-context
-`flash`/`monitor` delegate to it, so its learned quirks apply.
 
 ## Reflect = bounded update
 

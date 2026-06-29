@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.1 — 2026-06-29
+
+- Update Chinese README for multi-agent support
+
 ## v0.8.0 — 2026-06-28
 
 - Add Codex and multi-agent publishing surfaces

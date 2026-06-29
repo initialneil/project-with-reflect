@@ -1,13 +1,13 @@
 # project-with-reflect
 
-> 一个**帮你蒸馏自己的** meta-skill。 —— Neil Z. Shao
+> 一个面向 Codex、Claude Code 和其他 AI coding agents 的**帮你蒸馏自己的** meta-skill。 —— Neil Z. Shao
 >
 > 搭配 [Obsidian](https://obsidian.md) 和插件体验最佳：
 > - [Neat File Tree](https://github.com/initialneil/obsidian-neat-file-tree) —— 更清爽的文件树。
 > - [Folder Notes](https://github.com/lostpaul/obsidian-folder-notes) —— 更好的 `<folder>/<folder>.md` folder-note 显示（experiment record、eval、每条 workstream 的 goal log）。
 
 你是否**同时管理多个项目**？是否要**记住好几台**机器、服务的连接方式？是否厌烦了**反复写大段重复**的
-prompt、向 Claude **一遍遍解释**同一个项目的来龙去脉？
+prompt、向 agent **一遍遍解释**同一个项目的来龙去脉？
 
 它帮你把每个 **project** 管起来——worktree、log、reflect、沉淀出**长期知识库**；也帮你管理一切你
 要**操作的东西**（connection），每个都成为可直接调用的 `/<name>` skill：
@@ -25,14 +25,18 @@ prompt、向 Claude **一遍遍解释**同一个项目的来龙去脉？
 - **万物皆 skill** —— project 和上面每个 connection，注册后都得到自己的 `/<name>`。
 - **工作时自动 log** —— commit、决定、关键发现、实验结果、error + 修复，随手记进当前 stream。
 - **`reflect` 蒸馏自己** —— 先 capture 这次 session，再把 log 提炼成**精简、可读的 lessons**，下次自动加载（实验结果则追加进一份永久的 **experiment record**）。
-- **动手前先加载** —— Claude 先读已有 lessons / decisions / 知识，不再重复解释、重复犯错。
+- **动手前先加载** —— agent 先读已有 lessons / decisions / 知识，不再重复解释、重复犯错。
 
 > **核心循环 core loop：** `work（自动 log）→ /<project> reflect（capture + 提炼）→ 精简可读 lessons → 下次更好`
 
 ## 快速上手 Quick start
 
 ```
-# 1. 安装（在 Claude Code 里）
+# 1a. 安装到 Codex
+mkdir -p ~/.codex/skills
+ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.codex/skills/project-with-reflect
+
+# 1b. 安装到 Claude Code
 /plugin marketplace add initialneil/project-with-reflect
 /plugin install project-with-reflect@project-with-reflect
 
@@ -51,6 +55,34 @@ prompt、向 Claude **一遍遍解释**同一个项目的来龙去脉？
 # （≡ /myapp reflect —— reflect 本来就会先 capture）
 ```
 
+## Coding agent 支持
+
+规范的 skill 源码在 `skills/project-with-reflect/`。各个 agent 的入口只做镜像或轻量适配，
+这样同一个 repo 可以发布给常见 coding agents：
+
+| Agent | 支持方式 | 入口 |
+| --- | --- | --- |
+| Codex | 一等 skill 安装 | `.codex/skills/project-with-reflect/` |
+| Claude Code | Plugin + skill + slash commands/hooks | `.claude-plugin/`、`skills/project-with-reflect/`、`commands/` |
+| 通用 agent CLI | repo 级说明 | `AGENTS.md`、`llms.txt` |
+| Cursor | rule adapter | `.cursor/rules/project-with-reflect.mdc` |
+| Gemini CLI | context adapter | `.gemini/GEMINI.md` |
+| OpenCode | agent instructions | `.opencode/AGENTS.md` |
+| Continue | prompt adapter | `.continue/prompts/project-with-reflect.md` |
+| GitHub Copilot coding agent | repo 级说明 | `.github/copilot-instructions.md` |
+
+Codex 和 Claude Code 的支持最完整，因为 project-with-reflect 会把生成出来的 project /
+connection skills 同时安装进两个 user-scope skill 目录：
+
+```
+~/.codex/skills/<name>
+~/.claude/skills/<name>
+```
+
+其他 agents 也能复用同一份生成的 `SKILL.md`：加载 repo 级说明，或把
+`$PROJECT_WITH_REFLECT_ROOT/projects/<name>` 和
+`$PROJECT_WITH_REFLECT_ROOT/connections/<name>` 复制 / symlink 到它们自己的 skill 或 rule 目录。
+
 **之后每个 session —— 接着上次继续。** 在任意位置（哪怕 `~`）开一个新窗口：
 
 ```
@@ -67,12 +99,12 @@ prompt、向 Claude **一遍遍解释**同一个项目的来龙去脉？
 （connection 也有：`/gpubox checkin` 会 ssh-ping 这台机器、应用它的 quirks、再给一份简报。）
 
 **远程 / 多 repo 的 project** —— 代码在服务器上（本地没有 checkout）、还可能横跨多个 repo？直接
-**用大白话描述**就行 —— Claude 会替你注册 host、记录各个 root，不用记任何 flag 语法：
+**用大白话描述**就行 —— agent 会替你注册 host、记录各个 root，不用记任何 flag 语法：
 
 ```
 /register-project myapp —— 它在 gpubox 服务器的 /srv/myapp，另外还用到 /srv/dataset 这个数据集 repo
 ```
-如果 gpubox 还不是 connection，Claude 会先把它注册成 ssh connection（key-based，磁盘上不存密码），
+如果 gpubox 还不是 connection，agent 会先把它注册成 ssh connection（key-based，磁盘上不存密码），
 把两个 repo 记为 root 并 bind 上 host。然后 `/myapp bootstrap` 通过 ssh 从这些 repo seed 出
 lessons + decisions。之后在任意位置开一个 session，说 **`/myapp work on <workstream>`** —— 它会先征求你同意
 再切进那条 workstream 的目录，于是 planning / 工作文件都留在 vault 里（绝不弄乱服务器或你的 `~`），
@@ -125,7 +157,7 @@ connections/<name>/
 
 ## 命令 Actions
 
-> 你用**大白话**说要做什么 —— 下面的名字和 flag 是 Claude 替你填的，不用背（比如「开一条 v081，
+> 你用**大白话**说要做什么 —— 下面的名字和 flag 是 agent 替你填的，不用背（比如「开一条 v081，
 > 基于 v080，只追踪」「Soniox 这个 API，key 在 `SONIOX_API_KEY`」）。
 
 **总体**（`/project-with-reflect`）：
@@ -190,14 +222,14 @@ connections/<name>/
 
 - **`/project-with-reflect bootstrap [path]`** —— （重新）配置 root：询问 `$PROJECT_WITH_REFLECT_ROOT`
   放哪（推荐可同步、可读的路径）并建好。用于注册前的初始化、迁移 root、或修复丢失的 pointer。
-- **`/<name> bootstrap`** —— *用已有内容给一个刚注册的 project 灌入初始记忆。* Claude 读 repo 的文档
+- **`/<name> bootstrap`** —— *用已有内容给一个刚注册的 project 灌入初始记忆。* agent 读 repo 的文档
   （README、specs、CHANGELOG）、浏览代码、并结合当前 session，做一次初始 reflect：写出
   `lessons/<topic>.md` 模块、把已做的决定填进 `decisions.md`、生成 `<name>.md` dashboard。这样今天注册的
   project 一开始就是满的，而不是空的 —— 提炼，而非杜撰。
 
 ## Behavioral contract（让它真正有用的关键）
 
-每个生成的 `/<name>` 都会让 Claude 在**动手前**：
+每个生成的 `/<name>` 都会让 agent 在**动手前**：
 1. **先加载，再提议** —— 读 `<name>.md` + `decisions.md` + 匹配的 lesson modules。
 2. **提议前先查 ledger** —— 如果它已在 `decisions.md` 里，引用它，绝不盲目重复提议。
 3. **绝不擅自改 guarded state** —— dataset、训练 settings、branch/release 约定都是 invariants。
@@ -225,7 +257,7 @@ version lineage 就是 `base` 指针链 `v080 ← v090 ← v090-bug-fix`；`pr` 
 **横跨一个 device 和一台 cloud server 的固件 project：**
 ```
 /register-device cardputer-adv   # autodetect board + /dev/cu.usb*；写 connection.json + flash/monitor
-/register-machine gcs-server     # ssh connection；还没有？描述它 —— Claude 引导 provider 配置 + billing，先确认费用
+/register-machine gcs-server     # ssh connection；还没有？描述它 —— agent 引导 provider 配置 + billing，先确认费用
 /register-project splattingavatar ~/code/splattingavatar
 /splattingavatar bind --connection cardputer-adv --connection gcs-server
 /splattingavatar build && /splattingavatar flash && /splattingavatar monitor   # 把 server endpoint 编进固件、通过 USB flash、看它连上 server

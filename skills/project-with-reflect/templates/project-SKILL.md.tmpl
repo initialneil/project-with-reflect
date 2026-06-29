@@ -20,8 +20,8 @@ State dir: `{{PDIR}}`
   `reflect` archives only the working `log.md` — **never a lesson**. See the `record` action for how new
   findings land here and **follow the format of the lesson they continue**.
 - `workstreams/<workstream>/` — per workstream: `stream.json` (state) + `log.md` (granular history) +
-  `<workstream>.md` (folder note = the **goal log**: dated `### <date>` + ```` ```goal ```` blocks,
-  newest-first; see *Working*).
+  `<workstream>.md` (folder note = the **goal/plan log**: dated `### <date>` + ```` ```goal ```` / ```` ```plan ````
+  blocks, newest-first; see *Working*).
 - `decisions.md` — ideas tried / chosen / rejected (+ datasets, settings).
 - `{{NAME}}.md` — the human dashboard / folder note (regenerated on reflect); also carries the
   project's `## TODO` backlog (see the `todo` action).
@@ -86,22 +86,28 @@ the finding is about**, so knowledge lands where it's reusable:
   connection's log; *only true for this app?* → stream log. Device/API knowledge thus stays with the
   device/API (reusable across projects), not buried in one project's lessons.
 
-**A goal set → the workstream's goal log (newest-first).** When the user sets a goal for the active
-workstream — a built-in `/goal`, or stating one in prose ("the goal is … / here's the plan …": a bulk of
-work to track) — **record it verbatim** to that workstream's **folder note**
-`workstreams/<workstream>/<workstream>.md` (the workstream's goal log — distinct from `log.md`'s granular
-events), **prepended above prior goals (recent on top)**:
+**A goal or plan set → the workstream's goal/plan log (newest-first).** When the user sets a **goal** for the
+active workstream (a built-in `/goal`, or stating one in prose — "the goal is …") **or a plan is settled** (an
+approved **plan-mode** plan / `ExitPlanMode`, a planning-with-files `task_plan.md`, or a plan laid out in prose
+— "here's the plan: …": a bulk of work to track) — **record it verbatim** to that workstream's **folder note**
+`workstreams/<workstream>/<workstream>.md` (distinct from `log.md`'s granular events), **prepended above prior
+entries (recent on top)**, tagging the fenced block by kind:
 
 ````
 ### <date>
 ```goal
-<the full goal text, verbatim — multi-line as given>
+<the goal text, verbatim>
+```
+```plan
+<the plan text, verbatim — multi-line as given>
 ```
 ````
 
-**Never rewrite or delete past goals** — it's an append-only history, just reverse-chronological. Create the
-folder note if absent. (The built-in `/goal` **can't be hooked**, so this is native skill behavior — record
-it the moment you see the user set a goal.) `reflect` summarizes progress against the **top (latest)** goal.
+Use a `goal` block for a goal, a `plan` block for a plan; an entry can carry either or both. **Never rewrite or
+delete past entries** — append-only, reverse-chronological; record a **plan as it's settled / approved** (the
+snapshot), not on every micro-edit — a fresh dated entry when it's substantially revised. Create the folder
+note if absent. (Built-in `/goal` and plan mode **can't be hooked**, so this is native skill behavior — record
+it the moment you see a goal or plan set.) `reflect` summarizes progress against the **top (latest)** goal/plan.
 
 **Record durable results the moment they land — proactively, don't wait for `reflect`.** A *log* line is
 ephemeral working memory (consumed at reflect). But a **durable, reusable result** — a measured

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.5 — 2026-06-29
+
+- Track plans like goals: the workstream folder note is now a goal/plan log — a settled plan (plan-mode/ExitPlanMode, task_plan.md, or prose) is recorded verbatim in a dated, newest-first ```plan``` block alongside ```goal``` entries.
+
 ## v0.8.4 — 2026-06-29
 
 - Project emoji: config.json gains an 'emoji' a checkin prefixes to the terminal title (glanceable tabs); bootstrap/checkin improvise + persist one via new config-set.sh helper.

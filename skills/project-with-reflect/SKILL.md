@@ -320,10 +320,11 @@ accomplished; **PreCompact** reminds you to flush un-logged events to the active
 is compacted (detail lost to a compaction can't be recovered at reflect time). Both always exit 0 —
 they never block a tool or a compaction. They cover the *mechanical* checkpoints; decisions /
 long-tasks / findings stay behavioral triggers (see a project's `Working`), and `reflect`'s
-capture-first is the end-of-session backstop. **Setting a goal is also a behavioral auto-record** —
-the built-in `/goal` can't be hooked, so when the user sets a goal the active project records it verbatim
-to the workstream's **goal-log folder note** (`workstreams/<workstream>/<workstream>.md`, `### <date>` +
-a ```goal``` block, **newest-first**); see a project's `Working`.
+capture-first is the end-of-session backstop. **Setting a goal or settling a plan is also a behavioral
+auto-record** — the built-in `/goal` and plan mode can't be hooked, so when the user sets a goal or a plan
+is approved the active project records it verbatim to the workstream's **goal/plan-log folder note**
+(`workstreams/<workstream>/<workstream>.md`, `### <date>` + a ```goal``` or ```plan``` block,
+**newest-first**); see a project's `Working`.
 
 ## Reflect = bounded update
 `reflect` is **log-and-reflect**: it **captures the session first** (appends this conversation's

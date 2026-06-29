@@ -29,28 +29,47 @@ prompt、向 agent **一遍遍解释**同一个项目的来龙去脉？
 
 > **核心循环 core loop：** `work（自动 log）→ /<project> reflect（capture + 提炼）→ 精简可读 lessons → 下次更好`
 
+## 安装 Install
+
+**优雅的发布版安装：**
+
+Claude Code 现在有最顺手的一等 marketplace 流程：
+
+```
+/plugin marketplace add initialneil/project-with-reflect
+/plugin install project-with-reflect@project-with-reflect
+```
+
+Codex 和其他支持 Agent Skills installer 的 agent，可以用开放的 skills CLI：
+
+```
+npx skills add initialneil/project-with-reflect
+```
+
+**Codex 本地 / 开发安装：**
+
+如果你正从 checkout 开发，或当前 agent 还没有把 skills CLI 自动接到 Codex 的 user skill 目录，
+用这个 fallback：
+
+```
+mkdir -p ~/.codex/skills
+ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.codex/skills/project-with-reflect
+```
+
 ## 快速上手 Quick start
 
 ```
-# 1a. 安装到 Codex
-mkdir -p ~/.codex/skills
-ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.codex/skills/project-with-reflect
-
-# 1b. 安装到 Claude Code
-/plugin marketplace add initialneil/project-with-reflect
-/plugin install project-with-reflect@project-with-reflect
-
-# 2. 注册一个 project → 生成 /myapp skill
+# 1. 注册一个 project → 生成 /myapp skill
 /register-project myapp ~/code/myapp
 
-# 3. 注册一条 workstream（一条可复用的工作流）—— 直接说它基于哪条（worktree / branch / 仅追踪，按 project 的 mode）
+# 2. 注册一条 workstream（一条可复用的工作流）—— 直接说它基于哪条（worktree / branch / 仅追踪，按 project 的 mode）
 /register-workstream my-feature 基于 main        # → 生成 /myapp-my-feature
 
-# 4. 照常开发；关键时刻自动 log；重要结果会被 record 进永久记忆
+# 3. 照常开发；关键时刻自动 log；重要结果会被 record 进永久记忆
 /myapp-my-feature …                          # （或直接 /myapp 用主 workstream）
 /record-a-lesson v2 baseline：测试集 0.83 F1   # 立刻持久化一个结果/结论（≡ /myapp record "…"）
 
-# 5. session 收尾：capture 这次 session + 提炼成精简 lessons
+# 4. session 收尾：capture 这次 session + 提炼成精简 lessons
 /log-and-reflect          # 在 repo 里任意位置 —— 自动按 cwd 找到 project
 # （≡ /myapp reflect —— reflect 本来就会先 capture）
 ```

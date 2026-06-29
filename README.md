@@ -31,28 +31,47 @@ All of it **Obsidian-friendly** (lessons / knowledge / dashboard are clean, read
 
 > **Core loop:** `work (auto-log) → /<project> reflect (capture + distill) → lean readable lessons → better next session`
 
+## Install
+
+**Elegant published install:**
+
+Claude Code has the nicest first-class marketplace flow:
+
+```
+/plugin marketplace add initialneil/project-with-reflect
+/plugin install project-with-reflect@project-with-reflect
+```
+
+For Codex and other agents that support the Agent Skills installer, use the open skills CLI:
+
+```
+npx skills add initialneil/project-with-reflect
+```
+
+**Codex local/dev install:**
+
+Use this when working from a checkout, or if your agent does not yet wire the skills CLI into Codex's
+user skill directory:
+
+```
+mkdir -p ~/.codex/skills
+ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.codex/skills/project-with-reflect
+```
+
 ## Quick start
 
 ```
-# 1a. install for Codex
-mkdir -p ~/.codex/skills
-ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.codex/skills/project-with-reflect
-
-# 1b. install in Claude Code
-/plugin marketplace add initialneil/project-with-reflect
-/plugin install project-with-reflect@project-with-reflect
-
-# 2. register a project → generates the /myapp skill
+# 1. register a project → generates the /myapp skill
 /register-project myapp ~/code/myapp
 
-# 3. register a workstream (a reusable lane of work) — just say what it's based on (worktree / branch / tracked, per the mode)
+# 2. register a workstream (a reusable lane of work) — just say what it's based on (worktree / branch / tracked, per the mode)
 /register-workstream my-feature based on main   # → generates /myapp-my-feature
 
-# 4. work through it — key moments auto-log; durable results get recorded to permanent memory
+# 3. work through it — key moments auto-log; durable results get recorded to permanent memory
 /myapp-my-feature ...                        # (or just /myapp for the main workstream)
 /record-a-lesson the v2 baseline: 0.83 F1   # persist a result/conclusion NOW (≡ /myapp record "…")
 
-# 5. close the session: capture it + distill into lean lessons
+# 4. close the session: capture it + distill into lean lessons
 /log-and-reflect          # from anywhere in the repo — resolves the project from your cwd
 # (≡ /myapp reflect — "reflect" already captures the session first)
 ```

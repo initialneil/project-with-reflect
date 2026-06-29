@@ -9,7 +9,7 @@
       "name": "project-with-reflect",
       "source": "./",
       "description": "A multi-agent meta-skill for Codex, Claude Code, and other coding agents: turn each project, machine, device, API, and MCP server into a lightweight, self-improving skill; auto-log key events; reflect logs into lean lessons.",
-      "version": "0.8.1"
+      "version": "0.8.2"
     }
   ]
 }

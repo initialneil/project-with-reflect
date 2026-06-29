@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.2 — 2026-06-29
+
+- Separate install docs and add elegant skills installer path
+
 ## v0.8.1 — 2026-06-29
 
 - Update Chinese README for multi-agent support

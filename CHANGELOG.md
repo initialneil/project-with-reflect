@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.3 — 2026-06-29
+
+- Workstream /<name>-<b> hints now show the working-dir path (worktree → repo); fix new workstreams getting a wrong alias label and missing checkin body. README: knowledge-base screenshots (VS Code + Obsidian).
+
 ## v0.8.2 — 2026-06-29
 
 - Separate install docs and add elegant skills installer path

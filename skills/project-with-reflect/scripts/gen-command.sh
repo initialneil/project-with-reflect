@@ -12,9 +12,31 @@ case "$KIND" in
   *)      AH='' ;;
 esac
 
+# Description tag. For a workstream, show its actual working dir (worktree path → repo →
+# the vault workstream folder, $HOME abbreviated to ~) instead of the generic alias note —
+# that's the one fact you want when scanning the command menu ("which checkout is this?").
+TAG="(project-with-reflect alias)"
+if [ "$KIND" = workstream ]; then
+  TAG="$(python3 - "$PDIR" "$H" <<'PY'
+import json, os, sys
+pdir, h = sys.argv[1], sys.argv[2]
+def jget(p, k):
+    try: return json.load(open(p)).get(k) or ""
+    except Exception: return ""
+wt   = jget(os.path.join(pdir, "workstreams", h, "stream.json"), "worktree_path")
+repo = jget(os.path.join(pdir, "config.json"), "repo")
+path = wt or repo or os.path.join(pdir, "workstreams", h)
+home = os.path.expanduser("~")
+if path == home or path.startswith(home + os.sep):
+    path = "~" + path[len(home):]
+print("(%s)" % path)
+PY
+)"
+fi
+
 {
   echo "---"
-  echo "description: \"$P — $KIND '$H' (project-with-reflect alias)\""
+  echo "description: \"$P — $KIND '$H' $TAG\""
   [ -n "$AH" ] && echo "$AH"
   echo "---"
 } > "$HOME/.claude/commands/$P-$H.md"

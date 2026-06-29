@@ -22,6 +22,19 @@ base** — and everything you **operate** (a *connection*), each becoming a call
 
 All of it **Obsidian-friendly** (lessons / knowledge / dashboard are clean, readable Markdown).
 
+<p align="center"><em>Your personal knowledge base — readable in your editor and your notes app:</em></p>
+
+<table>
+  <tr>
+    <td width="50%" align="center"><img src="assets/show-in-vscode.jpg" alt="Knowledge base in VS Code"></td>
+    <td width="50%" align="center"><img src="assets/show-in-obsidian.jpg" alt="Knowledge base in Obsidian"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Show your knowledge base in VS Code</sub></td>
+    <td align="center"><sub>Show your knowledge base in Obsidian</sub></td>
+  </tr>
+</table>
+
 ## At a glance
 
 - **Everything is a skill** — a project, and each connection above, gets its own `/<name>` once registered.

@@ -20,6 +20,19 @@ prompt、向 agent **一遍遍解释**同一个项目的来龙去脉？
 
 而且全程 **Obsidian 友好**（lessons / 知识 / dashboard 都是干净可读的 Markdown）。
 
+<p align="center"><em>你的个人知识库 —— 在编辑器和笔记软件里都清晰可读：</em></p>
+
+<table>
+  <tr>
+    <td width="50%" align="center"><img src="assets/show-in-vscode.jpg" alt="Knowledge base in VS Code"></td>
+    <td width="50%" align="center"><img src="assets/show-in-obsidian.jpg" alt="Knowledge base in Obsidian"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Show your knowledge base in VS Code</sub></td>
+    <td align="center"><sub>Show your knowledge base in Obsidian</sub></td>
+  </tr>
+</table>
+
 ## 一眼看懂 At a glance
 
 - **万物皆 skill** —— project 和上面每个 connection，注册后都得到自己的 `/<name>`。

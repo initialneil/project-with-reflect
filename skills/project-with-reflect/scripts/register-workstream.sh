@@ -118,7 +118,7 @@ json.dump({"branch": br, "base": base, "pr_into": printo, "kind": kind,
           open(sj, "w"), indent=2)
 PY
 
-bash "$HERE/gen-command.sh" "$NAME" "$BR" branch "$PDIR" >/dev/null
+bash "$HERE/gen-command.sh" "$NAME" "$BR" workstream "$PDIR" >/dev/null
 # Next step is always: check into the workstream (loads log+base+lessons, runs the cwd decision, recaps).
 NEXT="Next → /$NAME-$BR checkin   (picks up the workstream: load log+base+lessons, handle the working dir, recap)"
 case "$KIND" in

@@ -59,32 +59,25 @@ ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.code
 
 ## 快速上手 Quick start
 
+日常循环是：**注册 → status / checkin → 开始工作 → log-and-reflect 收尾**。
+
 ```
 # 1. 注册一个 project → 生成 /myapp skill
 /register-project myapp ~/code/myapp
 
-# 2. 注册一条 workstream（一条可复用的工作流）—— 直接说它基于哪条（worktree / branch / 仅追踪，按 project 的 mode）
+# 可选：注册一条可复用 workstream —— 直接说它基于哪条
 /register-workstream my-feature 基于 main        # → 生成 /myapp-my-feature
 
-# 3. 照常开发；关键时刻自动 log；重要结果会被 record 进永久记忆
+# 2. 开始前先 status / checkin，可以在任何位置执行（哪怕 ~）
+/project-with-reflect status        # 列出 project / connection，并标出哪些需要注意
+/myapp checkin                      # 加载上下文，询问 cwd，然后用 status recap
+/myapp checkin train-v2             # 或直接 checkin 进具体 workstream
+
+# 3. 开始工作，重要发现随手 record，session 结束时 reflect
 /myapp-my-feature …                          # （或直接 /myapp 用主 workstream）
 /record-a-lesson v2 baseline：测试集 0.83 F1   # 立刻持久化一个结果/结论（≡ /myapp record "…"）
-
-# 4. session 收尾：capture 这次 session + 提炼成精简 lessons
 /log-and-reflect          # 在 repo 里任意位置 —— 自动按 cwd 找到 project
 # （≡ /myapp reflect —— reflect 本来就会先 capture）
-```
-
-## 下次接着做 Pick up next session
-
-在任意位置（哪怕 `~`）开一个新窗口：
-
-```
-/project-with-reflect status        # 忘了自己有哪些？列出所有 project + connection，
-                                    #   并标出哪些待 reflect / 落后于 base / 有未完成 TODO
-/myapp checkin                      # 接手 "myapp"：加载它的上下文，询问工作目录
-                                    #   （cd 进 workstream 文件夹 / 代码目录），然后 recap —— 立刻就绪
-/myapp checkin train-v2            # …… 或直接 checkin 进某条具体 workstream
 ```
 
 `status` 是**智能简报**（Where · Recap · TODO · Workstreams · flags），不是 dump。`checkin` 是

@@ -61,32 +61,25 @@ ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.code
 
 ## Quick start
 
+The daily loop is: **register → check status / check in → work → log and reflect**.
+
 ```
 # 1. register a project → generates the /myapp skill
 /register-project myapp ~/code/myapp
 
-# 2. register a workstream (a reusable lane of work) — just say what it's based on (worktree / branch / tracked, per the mode)
+# optional: register a reusable workstream — just say what it's based on
 /register-workstream my-feature based on main   # → generates /myapp-my-feature
 
-# 3. work through it — key moments auto-log; durable results get recorded to permanent memory
+# 2. check status and check in before work, from anywhere (even ~)
+/project-with-reflect status        # lists projects/connections and flags what needs attention
+/myapp checkin                      # loads context, asks about cwd, then recaps with status
+/myapp checkin train-v2             # or check straight into a specific workstream
+
+# 3. work, record durable findings, then close the session with reflect
 /myapp-my-feature ...                        # (or just /myapp for the main workstream)
 /record-a-lesson the v2 baseline: 0.83 F1   # persist a result/conclusion NOW (≡ /myapp record "…")
-
-# 4. close the session: capture it + distill into lean lessons
 /log-and-reflect          # from anywhere in the repo — resolves the project from your cwd
 # (≡ /myapp reflect — "reflect" already captures the session first)
-```
-
-## Pick up next session
-
-Open a new window anywhere, even `~`:
-
-```
-/project-with-reflect status        # forgot what you have? lists your projects + connections,
-                                    #   flags which need reflect / are behind base / have open TODOs
-/myapp checkin                      # pick up "myapp": loads its context, asks about the working dir
-                                    #   (cd into the workstream folder / code dir), then recaps — you're ready
-/myapp checkin train-v2            # …or check straight into a specific workstream
 ```
 
 `status` is a **smart brief** (Where · Recap · TODO · Workstreams · flags), not a dump. `checkin` is the

@@ -122,7 +122,9 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   capture any **past experiment results** that already exist (configs, run logs, metric tables) into
   a flat `lessons/experiment-<name>.md` record so they persist, populate `decisions.md` with the key choices already made,
   and write the `{{NAME}}.md` **narrative body** (the YAML frontmatter facts auto-generate — run
-  `gen-dashboard.sh {{PDIR}}` to refresh them; you write the prose below). Confirm
+  `gen-dashboard.sh {{PDIR}}` to refresh them; you write the prose below). **Pick a fitting emoji** for
+  the project (one glyph that captures what it is) and persist it with `config-set.sh {{PDIR}} emoji
+  "<glyph>"` — checkin shows it in the terminal title. Confirm
   what you captured — distill, don't invent. **Replace any scaffold placeholder with real
   content; never leave boilerplate behind.**
 - `checkin [<workstream>]` (≡ "work on `<workstream>`") — **pick up the project (or a workstream) and get ready.** The entry
@@ -147,10 +149,15 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   work, so a session that started in `~` can get there without guessing.
 
   After a switch, if planning-with-files is active, point its plan at the new dir so its files live there.
-  Then (3) **silently set the terminal tab/window title** —
-  `term-title.sh "{{NAME}} · <workstream>"` (just `{{NAME}}` for a bare/home checkin — no `· <workstream>`) — so the
-  iTerm2 / Terminal tab shows what you're on. It writes the title escape to the real terminal (the Bash
-  tool's own stdout can't), and **no-ops silently** off a real terminal — never surface its output.
+  Then (3) **silently set the terminal tab/window title**, prefixed with the project's **emoji** so the
+  tab is glanceable at a row of terminals —
+  `term-title.sh "<emoji> {{NAME}} · <workstream>"` (just `<emoji> {{NAME}}` for a bare/home checkin — no
+  `· <workstream>`). The emoji is `config.json.emoji`; if it's missing, **improvise one fitting glyph**
+  for the project (one that captures what it is — a mirror 🪞 for a reflect tool, a brain 🧠 for a
+  knowledge base, a rocket 🚀 for an app) and **persist it once** with `config-set.sh {{PDIR}} emoji
+  "<glyph>"`, then use it — so every later checkin shows the same icon. `term-title.sh` writes the title
+  escape to the real terminal (the Bash tool's own stdout can't), keeps the emoji intact, and **no-ops
+  silently** off a real terminal — never surface its output.
   Then (4) **auto-run `status`** — so checkin always ends with a recap and you're ready to work.
 - `status` — a **smart brief, not a dump** (read-only; no cd, no writes). Synthesize from `{{NAME}}.md`
   + the active stream's recent `log.md` + the `## TODO` backlog + the `stream.json`s, and print tersely,

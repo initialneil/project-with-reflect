@@ -77,9 +77,11 @@ Bare `/project-with-reflect` → `help`.
 - **checkin `[<name>]`** — **pick up a project/connection and get ready** (the natural next step after
   `status`). Resolve the target: an explicit `<name>`, else the project whose `repo`/`dir` contains your
   cwd. Then **delegate to that skill's `checkin`** — it loads context, handles the working dir (cd
-  decision), **silently sets the terminal tab title** to what you're working on (via
-  `SK/scripts/term-title.sh "<name> · <workstream>"` — writes the title escape to the real terminal since the
-  Bash tool's stdout can't; no-ops off a real terminal, never surfaces output), and ends with a `status`
+  decision), **silently sets the terminal tab title** to what you're working on, **prefixed with the
+  project's emoji** (`config.json.emoji`, improvised + persisted if missing) so a row of tabs is
+  glanceable (via `SK/scripts/term-title.sh "<emoji> <name> · <workstream>"` — writes the title escape to
+  the real terminal since the Bash tool's stdout can't; no-ops off a real terminal, never surfaces
+  output), and ends with a `status`
   recap, so you're immediately ready. If nothing resolves and no name was given, run meta `status` (the
   discovery list) and ask which to check into. From `~`: `status` to find it → `checkin <name>` to pick
   it up.

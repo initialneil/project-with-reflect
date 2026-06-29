@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.4 — 2026-06-29
+
+- Project emoji: config.json gains an 'emoji' a checkin prefixes to the terminal title (glanceable tabs); bootstrap/checkin improvise + persist one via new config-set.sh helper.
+
 ## v0.8.3 — 2026-06-29
 
 - Workstream /<name>-<b> hints now show the working-dir path (worktree → repo); fix new workstreams getting a wrong alias label and missing checkin body. README: knowledge-base screenshots (VS Code + Obsidian).

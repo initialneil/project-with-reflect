@@ -61,19 +61,28 @@ ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.code
 
 日常循环是：**注册 → status / checkin → 开始工作 → log-and-reflect 收尾**。
 
+**1. 注册一次**
+
 ```
-# 1. 注册一个 project → 生成 /myapp skill
+# 注册一个 project → 生成 /myapp skill
 /register-project myapp ~/code/myapp
 
 # 可选：注册一条可复用 workstream —— 直接说它基于哪条
 /register-workstream my-feature 基于 main        # → 生成 /myapp-my-feature
+```
 
-# 2. 开始前先 status / checkin，可以在任何位置执行（哪怕 ~）
+**2. 开始前 status / checkin**
+
+```
+# 可以在任何位置执行，哪怕 ~
 /project-with-reflect status        # 列出 project / connection，并标出哪些需要注意
 /myapp checkin                      # 加载上下文，询问 cwd，然后用 status recap
 /myapp checkin train-v2             # 或直接 checkin 进具体 workstream
+```
 
-# 3. 开始工作，重要发现随手 record，session 结束时 reflect
+**3. 工作、record、reflect**
+
+```
 /myapp-my-feature …                          # （或直接 /myapp 用主 workstream）
 /record-a-lesson v2 baseline：测试集 0.83 F1   # 立刻持久化一个结果/结论（≡ /myapp record "…"）
 /log-and-reflect          # 在 repo 里任意位置 —— 自动按 cwd 找到 project

@@ -63,19 +63,28 @@ ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.code
 
 The daily loop is: **register → check status / check in → work → log and reflect**.
 
+**1. Register once**
+
 ```
-# 1. register a project → generates the /myapp skill
+# register a project → generates the /myapp skill
 /register-project myapp ~/code/myapp
 
 # optional: register a reusable workstream — just say what it's based on
 /register-workstream my-feature based on main   # → generates /myapp-my-feature
+```
 
-# 2. check status and check in before work, from anywhere (even ~)
+**2. Check status and check in**
+
+```
+# from anywhere, even ~
 /project-with-reflect status        # lists projects/connections and flags what needs attention
 /myapp checkin                      # loads context, asks about cwd, then recaps with status
 /myapp checkin train-v2             # or check straight into a specific workstream
+```
 
-# 3. work, record durable findings, then close the session with reflect
+**3. Work, record, reflect**
+
+```
 /myapp-my-feature ...                        # (or just /myapp for the main workstream)
 /record-a-lesson the v2 baseline: 0.83 F1   # persist a result/conclusion NOW (≡ /myapp record "…")
 /log-and-reflect          # from anywhere in the repo — resolves the project from your cwd

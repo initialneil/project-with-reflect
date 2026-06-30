@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.6 — 2026-06-30
+
+- Checkin auto-applies a clean fast-forward (lane behind base, no local commits, clean tree) without asking — it's lossless; only a diverged lane (history-rewriting rebase) or dirty tree prompts. Applied to checkin, rebase/sync, and the pr lineage check.
+
 ## v0.8.5 — 2026-06-29
 
 - Track plans like goals: the workstream folder note is now a goal/plan log — a settled plan (plan-mode/ExitPlanMode, task_plan.md, or prose) is recorded verbatim in a dated, newest-first ```plan``` block alongside ```goal``` entries.

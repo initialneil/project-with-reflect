@@ -154,6 +154,15 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   **Always offer the base/main repo as a landing** — it's where you branch new workstreams and do project-wide
   work, so a session that started in `~` can get there without guessing.
 
+  **Freshness (worktree / branch workstream) — auto-sync a clean fast-forward, only ask when it's not
+  clean.** When you pick up a workstream that's behind `origin/<base>`, check whether the catch-up is a
+  pure fast-forward: `git -C <dir> rev-list --count origin/<base>..HEAD` = 0 (the lane has **no** commits of
+  its own) **and** the working tree is clean. If so it's **lossless and unambiguous → just
+  `git -C <dir> merge --ff-only origin/<base>` and report it** ("fast-forwarded `<n>` commits onto
+  `<base>`") — **don't ask.** Only **ask** when it's genuinely a choice: the lane has **diverged** (its own
+  commits → catching up means a history-rewriting `rebase`) or the tree is **dirty** — then surface it in the
+  recap and let the user pick `rebase` / `reset`. (Up to date or ahead → nothing to do.)
+
   After a switch, if planning-with-files is active, point its plan at the new dir so its files live there.
   Then (3) **silently set the terminal tab/window title**, prefixed with the project's **emoji** so the
   tab is glanceable at a row of terminals —
@@ -263,10 +272,12 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
 - `<workstream>` (or "work on `<workstream>`") — **checkin to that workstream** (load its `log.md` + `base` + lessons,
   run the working-dir decision, recap — the full behavior is the `checkin` action above), then the workstream
   subcommands (all operate on its **one** worktree — never create another):
-  - `pr` — open the PR, **verifying the lineage is current first — it always asks before any rebase**
-    (the workstream *tracks* its `base`):
+  - `pr` — open the PR, **verifying the lineage is current first — it always asks before any history-rewriting
+    rebase** (the workstream *tracks* its `base`):
     1. **Lane behind its base?** `git rev-list --count HEAD..origin/<base>` > 0 → `origin/<base>` has moved
-       since you forked → **ask** to `git rebase origin/<base>` before the PR.
+       since you forked. If it's a **clean fast-forward** (`git rev-list --count origin/<base>..HEAD` = 0,
+       clean tree) just **fast-forward it** before the PR — lossless, no need to ask. Only if the lane has
+       **diverged** (its own commits) **ask** to `git rebase origin/<base>` first.
     2. **Base behind ITS base?** if `<base>` is itself a tracked workstream on a parent (e.g. `v080 --base v071
        --track-only`), check `git rev-list --count origin/<base>..origin/<base's base>` > 0 — i.e.
        `origin/v071` moved and left `origin/v080` stale → **ask** to rebase the integration branch
@@ -274,7 +285,9 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
     Then `gh pr create --base <pr_into>`; log the PR + check. A merged stream is **reusable**: `reset`
     recycles it.
   - `rebase` / `sync` — bring the **one** worktree up to date with `origin/<base>` (`git -C <worktree_path>
-    fetch` + rebase/ff), after confirming. Reuse the dir — never re-add a worktree.
+    fetch` then catch up). A **clean fast-forward** (no local commits ahead, clean tree) applies **without
+    asking** — it's lossless; only a true **rebase** (the lane diverged) **asks first**, since it rewrites
+    history. Reuse the dir — never re-add a worktree.
   - `reset` — after a merged PR, **recycle the same worktree**: `git -C <worktree_path>` fast-forward onto
     latest `origin/<base>` and bump `cycle` in `stream.json`. **Never** create a new worktree for the next
     cycle — the workstream's one dir is reused.

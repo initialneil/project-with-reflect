@@ -110,6 +110,10 @@ to the project + workstream (iTerm2 / Terminal / any OSC terminal; no-ops elsewh
 `status`** so you land with a recap. (Connections have them too: `/gpubox checkin` ssh-pings the box,
 applies its quirks, and briefs it.)
 
+> **After `/compact` or `/clear`, run `/<project> checkin` again.** Both wipe the loaded lessons / recap
+> from context (your cwd and tab title survive), so re-checking-in re-grounds you. Neither runs `reflect` —
+> `/log-and-reflect` first if you want the session distilled into lessons before clearing.
+
 ## Command reference
 
 > You describe what you want in **plain language** — the names and flags below are what the agent fills in

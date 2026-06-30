@@ -107,6 +107,10 @@ ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.code
 （iTerm2 / Terminal / 任意支持 OSC 的终端；其它环境自动跳过），并**以 `status` 收尾**，让你带着 recap 落地。
 （connection 也有：`/gpubox checkin` 会 ssh-ping 这台机器、应用它的 quirks、再给一份简报。）
 
+> **`/compact` 或 `/clear` 之后，请再 `/<project> checkin` 一次。** 两者都会把已加载的 lessons / recap
+> 从上下文里清掉（cwd 和 tab 标题仍在），重新 checkin 让你重新进入状态。两者都**不会**触发 `reflect` ——
+> 想把这段 session 蒸馏成 lessons，请先 `/log-and-reflect`。
+
 ## 命令速查 Command reference
 
 > 你用**大白话**说要做什么 —— 下面的名字和 flag 是 agent 替你填的，不用背（比如「开一条 v081，

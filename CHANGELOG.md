@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.7 — 2026-07-01
+
+- checkin <workstream> now cd's straight to its code dir (worktree/repo) instead of asking — the destination is unambiguous when you name a workstream; bare/home checkin still offers the landing choice.
+
 ## v0.8.6 — 2026-06-30
 
 - Checkin auto-applies a clean fast-forward (lane behind base, no local commits, clean tree) without asking — it's lossless; only a diverged lane (history-rewriting rebase) or dirty tree prompts. Applied to checkin, rebase/sync, and the pr lineage check.

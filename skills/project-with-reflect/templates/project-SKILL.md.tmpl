@@ -146,13 +146,17 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
       project-wide work) *(recommended)* / **a specific workstream's** worktree / **stay**.
     - **Remote** → offer the vault **state dir** / a **workstream folder** (`workstreams/<workstream>/`) /
       **stay**; code is on the host (operate via `/<host_connection>`).
-  - **`checkin <workstream>`** (or the `/{{NAME}}-<workstream>` alias) → that **workstream**:
-    - **Local** → its **code dir** = `worktree_path` (worktree mode) else `<repo>`. Already inside it →
-      **do nothing** (no prompt). Else ask: **code dir** *(recommended)* / the **workstream folder**
-      `{{PDIR}}/workstreams/<workstream>/` / **the main repo (base)** / **stay**.
-    - **Remote** → the **workstream folder** `{{PDIR}}/workstreams/<workstream>/` *(recommended)* / **stay**.
-  **Always offer the base/main repo as a landing** — it's where you branch new workstreams and do project-wide
-  work, so a session that started in `~` can get there without guessing.
+  - **`checkin <workstream>`** (or the `/{{NAME}}-<workstream>` alias) → that **workstream**. You named it,
+    so **just `cd` there — don't ask** (the destination is unambiguous, and `cd` is trivially reversible):
+    - **Local** → **`cd` to its code dir** = `worktree_path` (worktree mode) else `<repo>`. Already inside
+      it → do nothing. (Only if the tree is **dirty with unrelated changes** where landing would be
+      confusing, ask first.) Want planning/scratch files in the vault instead? **Mention** you can move to
+      the **workstream folder** `{{PDIR}}/workstreams/<workstream>/` — offer it, don't block on it.
+    - **Remote** → **`cd` to the workstream folder** `{{PDIR}}/workstreams/<workstream>/` (the natural local
+      landing; the code is on the host — operate it via `/<host_connection>`).
+  For a **bare / home checkin** (no workstream named), landing is a genuine choice, so **offer** the
+  base/main repo *(recommended — where you branch new workstreams and do project-wide work)* / a specific
+  workstream / stay, so a session that started in `~` gets there without guessing.
 
   **Freshness (worktree / branch workstream) — auto-sync a clean fast-forward, only ask when it's not
   clean.** When you pick up a workstream that's behind `origin/<base>`, check whether the catch-up is a

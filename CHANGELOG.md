@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.8 — 2026-07-01
+
+- Fix checkin skipping its steps after /compact: checkin now always runs the full ritual (load → cwd → freshness → title → status) every invocation; 'already inside' skips only the redundant cd, never the title/load/freshness/recap — so a post-compact re-checkin actually re-grounds.
+
 ## v0.8.7 — 2026-07-01
 
 - checkin <workstream> now cd's straight to its code dir (worktree/repo) instead of asking — the destination is unambiguous when you name a workstream; bare/home checkin still offers the landing choice.

@@ -344,6 +344,15 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   establishes the shape (propose it; the user refines), and later entries follow it; if the user tunes the
   format, new entries follow the latest (don't retro-edit an append-only record — note a format bump).
 
+  **An experiment record opens with a `## Setup` that makes it debuggable and reproducible.** The test:
+  a month later the reader can (a) judge an odd value or visual from the md alone, and (b) instruct the
+  agent to reproduce the run. Carry: code state (repo + commit, env), exact reproduce command(s) incl.
+  environment gotchas, dataset (variant / paths / split / per-iteration sampling), **every model in the
+  loop with its input / output / conditioning** (incl. normalization artifacts, e.g. a codec/stats file),
+  loss formulas + weights + optimizer defaults, the eval protocol **with its interpretation caveats**
+  (expected jitter, by-design artifacts — so an "unexpected" number can be triaged from the md), and
+  runtime/hardware. Results stay append-only below it.
+
   **A lesson with artifacts is a *folder note*, never scattered files.** The moment a lesson needs to embed
   images/files, it becomes `lessons/<name>/<name>.md` (an Obsidian folder note) with its artifacts as
   **siblings in `lessons/<name>/`**, embedded by name (`![[<file>.png]]` resolves to the sibling). Copy the

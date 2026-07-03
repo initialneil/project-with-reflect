@@ -2,7 +2,9 @@
 # Generate a thin /<project>-<handle> alias command (user scope).
 #   gen-command.sh <project> <handle> <kind:workstream|eval|task> <project_dir>
 set -euo pipefail
+HERE="$(cd "$(dirname "$0")" && pwd)"; source "$HERE/common.sh"   # for pwr_validate_name
 P="${1:?project}"; H="${2:?handle}"; KIND="${3:?kind}"; PDIR="${4:?project_dir}"
+pwr_validate_name "project" "$P"; pwr_validate_name "handle" "$H"   # both land in ~/.claude/commands/<P>-<H>.md
 mkdir -p "$HOME/.claude/commands"
 
 # per-kind argument-hint (shows on tab-complete, like /goal's "[<condition> | clear]")

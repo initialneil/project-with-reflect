@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.10 — 2026-07-03
+
+- Security hardening: pwr_validate_name rejects path-traversal/unsafe entity names in every register script + gen-command (closes the rm -rf footgun); publish.sh refuses to release while untracked files exist (git add -A can no longer sweep a stray secret into a public commit).
+
 ## v0.8.9 — 2026-07-03
 
 - Writing doctrine: every note is reader-first; experiment records open with a debuggable+reproducible ## Setup; component visuals show raw AND end-to-end (+ swap-parity metric).

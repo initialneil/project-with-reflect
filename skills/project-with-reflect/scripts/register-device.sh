@@ -8,7 +8,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"; source "$HERE/common.sh"; pwr_first_run_guard; pwr_ensure_root
 TPL="$HERE/../templates"
-NAME="${1:?device name required}"; BOARD="${2:-}"; PORT="${3:-}"
+NAME="${1:?device name required}"; pwr_validate_name "device name" "$NAME"; BOARD="${2:-}"; PORT="${3:-}"
 TOOLCHAIN="${4:-arduino-cli}"; BAUD="${5:-115200}"; FLASH_CMD="${6:-}"; MONITOR_CMD="${7:-}"; DOCS="${8:-}"
 CDIR="$PWR_ROOT/connections/$NAME"; mkdir -p "$CDIR"
 

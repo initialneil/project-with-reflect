@@ -8,7 +8,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"; source "$HERE/common.sh"; pwr_first_run_guard; pwr_ensure_root
 TPL="$HERE/../templates"
-NAME="${1:?mcp name required}"; ADDCMD="${2:-}"; DOCS="${3:-}"
+NAME="${1:?mcp name required}"; pwr_validate_name "mcp name" "$NAME"; ADDCMD="${2:-}"; DOCS="${3:-}"
 CDIR="$PWR_ROOT/connections/$NAME"; mkdir -p "$CDIR"
 
 python3 - "$CDIR/connection.json" "$NAME" "$ADDCMD" "$DOCS" <<'PY'

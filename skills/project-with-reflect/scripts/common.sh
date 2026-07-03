@@ -38,6 +38,22 @@ pwr_first_run_guard() {
   exit 3
 }
 
+# pwr_validate_name <label> <value> — entity names / workstreams / handles become paths,
+# symlinks in ~/.claude/skills, slash-commands, and shell-built JSON. Reject anything that
+# could traverse (`..`, `/`) or corrupt those (quotes, spaces, control chars) BEFORE any
+# mkdir/ln/rm touches disk. Allowed: alnum start, then letters digits . _ -
+pwr_validate_name() {
+  case "$2" in
+    ""|*..*|*/*)      echo "invalid $1 '$2' — empty, '..' or '/' not allowed" >&2; exit 2 ;;
+  esac
+  case "$2" in
+    [!A-Za-z0-9]*)    echo "invalid $1 '$2' — must start with a letter/digit" >&2; exit 2 ;;
+  esac
+  case "$2" in
+    *[!A-Za-z0-9._-]*) echo "invalid $1 '$2' — allowed: letters digits . _ -" >&2; exit 2 ;;
+  esac
+}
+
 pwr_ensure_root() {
   # connections/ = everything you operate (ssh | serial | http | mcp); knowledge/ = plain-md only.
   mkdir -p "$PWR_ROOT"/projects "$PWR_ROOT"/connections \

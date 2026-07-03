@@ -31,6 +31,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 NAME="${POS[0]:?project name required}"
+pwr_validate_name "project name" "$NAME"
 REPO="${POS[1]:-}"
 WSM="${POS[2]:-in-repo}"
 

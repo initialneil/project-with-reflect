@@ -13,8 +13,11 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 
+source "$HERE/common.sh"   # for pwr_validate_name (no root needed — this script works off PDIR)
+
 PDIR="${1:?usage: register-workstream.sh <project_dir> <workstream> [--base b] [--pr-into p] [--track-only] [--path dir]}"
 BR="${2:?workstream name required}"
+pwr_validate_name "workstream name" "$BR"   # BR becomes paths + a `rm -rf` target on failure — validate FIRST
 shift 2
 
 BASE=""; PRINTO=""; TRACK_ONLY=0; WT_PATH=""

@@ -8,6 +8,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"; source "$HERE/common.sh"; pwr_first_run_guard; pwr_ensure_root
 NAME="${1:?knowledge slug required}"
+pwr_validate_name "knowledge slug" "$NAME"
 mkdir -p "$PWR_ROOT/knowledge"
 KFILE="$PWR_ROOT/knowledge/$NAME.md"
 [ -f "$KFILE" ] || printf -- '---\ntags:\n  - knowledge\n---\n# %s\n' "$NAME" > "$KFILE"

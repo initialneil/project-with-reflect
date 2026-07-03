@@ -8,7 +8,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"; source "$HERE/common.sh"; pwr_first_run_guard; pwr_ensure_root
 TPL="$HERE/../templates"
-NAME="${1:?machine name required}"; ALIAS="${2:-$1}"; REPO="${3:-}"; ENDPOINT="${4:-}"; KIND="${5:-ssh}"; DOCS="${6:-}"
+NAME="${1:?machine name required}"; pwr_validate_name "machine name" "$NAME"; ALIAS="${2:-$1}"; REPO="${3:-}"; ENDPOINT="${4:-}"; KIND="${5:-ssh}"; DOCS="${6:-}"
 CDIR="$PWR_ROOT/connections/$NAME"; mkdir -p "$CDIR"
 
 python3 - "$CDIR/connection.json" "$NAME" "$ALIAS" "$REPO" "$ENDPOINT" "$KIND" "$DOCS" <<'PY'

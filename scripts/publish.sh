@@ -14,6 +14,17 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+# Preflight: `git add -A` below sweeps EVERYTHING into a public commit+push — refuse while
+# untracked files exist, so a stray .env / key / scratch note can never ride a release.
+# Track intentionally (git add), ignore (.gitignore), or remove them, then re-run.
+UNTRACKED="$(git ls-files --others --exclude-standard)"
+if [ -n "$UNTRACKED" ]; then
+  echo "error: untracked files present — a release would publish them:" >&2
+  printf '%s\n' "$UNTRACKED" | sed 's/^/    /' >&2
+  echo "git add what belongs in the release, .gitignore or remove the rest, then re-run." >&2
+  exit 1
+fi
+
 BUMP="${1:-patch}"
 
 CUR="$(perl -ne 'print $1 and exit if /"version":\s*"([0-9]+\.[0-9]+\.[0-9]+)"/' .claude-plugin/plugin.json)"

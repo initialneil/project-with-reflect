@@ -370,7 +370,10 @@ record opens with a `## Setup` that makes it debuggable and reproducible** — c
 exact reproduce commands + gotchas, dataset (variant/paths/split/sampling), each model's
 input/output/conditioning (+ normalization artifacts), loss formulas/weights, the eval protocol **with its
 interpretation caveats** (expected jitter, by-design artifacts), runtime — the bar: a month later the md
-alone lets you triage an odd number and re-run the experiment. **A lesson with embedded artifacts is a folder note** — `lessons/<name>/<name>.md`
+alone lets you triage an odd number and re-run the experiment. For a component
+inside a larger pipeline, record BOTH its raw output and the end-to-end result with the component swapped
+in (borrowed stages marked, e.g. `e2e*`) + a swap-parity metric — raw alone is unjudgeable when downstream
+stages own part of the quality; e2e alone hides where credit belongs. **A lesson with embedded artifacts is a folder note** — `lessons/<name>/<name>.md`
 with its images/files as siblings in `lessons/<name>/` (copied off the host so they survive pruning),
 embedded `![[<file>]]`; **never scatter a lesson's images flat in `lessons/`**. This is native skill
 behavior, not a special format file.

@@ -353,6 +353,13 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   (expected jitter, by-design artifacts — so an "unexpected" number can be triaged from the md), and
   runtime/hardware. Results stay append-only below it.
 
+  **When the recorded artifact is a component of a larger pipeline, show raw AND end-to-end.** A
+  component's raw output alone is unjudgeable when downstream stages own part of the quality (a
+  refiner, a post-process); the e2e view alone hides where credit belongs. Record both — the raw
+  output, and the full pipeline with the component swapped in, **marking borrowed stages** (e.g. an
+  `e2e*` column) — plus a swap-parity metric (component-swapped e2e vs original e2e on the same
+  reference).
+
   **A lesson with artifacts is a *folder note*, never scattered files.** The moment a lesson needs to embed
   images/files, it becomes `lessons/<name>/<name>.md` (an Obsidian folder note) with its artifacts as
   **siblings in `lessons/<name>/`**, embedded by name (`![[<file>.png]]` resolves to the sibling). Copy the

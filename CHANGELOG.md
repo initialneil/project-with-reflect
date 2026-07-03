@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.9 — 2026-07-03
+
+- Writing doctrine: every note is reader-first; experiment records open with a debuggable+reproducible ## Setup; component visuals show raw AND end-to-end (+ swap-parity metric).
+
 ## v0.8.8 — 2026-07-01
 
 - Fix checkin skipping its steps after /compact: checkin now always runs the full ritual (load → cwd → freshness → title → status) every invocation; 'already inside' skips only the redundant cd, never the title/load/freshness/recap — so a post-compact re-checkin actually re-grounds.

@@ -435,6 +435,19 @@ Notes carry **content, not boilerplate**: clean headings, real decisions/lessons
 meta-instructions and no comment cruft in the files (that guidance lives in this skill).
 Don't keep scaffold placeholders — replace them with real content.
 
+**How every note is written — reader-first:**
+- **Conclusion first.** Lead with what a skimmer needs — the verdict, the rule, the current state —
+  then evidence, then reference material (setups, commands, raw tables) last, read on demand. One
+  screen at the top should fully inform.
+- **Headers are plain signposts** (`## Setup`, `## Verdict`) — never carry rationale or contract text
+  ("Setup — enough to reproduce" leaks the skill's contract into the note; the contract lives here).
+- **Tables for enumerable facts; short paragraphs; one idea per bullet.** No walls of prose.
+- **One name per concept**, used consistently within and across the project's notes.
+- **Interpretation caveats sit NEXT TO the data they guard** (expected jitter, by-design artifacts,
+  which comparisons are fair) — so an odd value can be triaged where it's read, not three sections away.
+- **Format changes bump, never rewrite**: reorganizing a note for readability is allowed (a one-line
+  format-bump note at the end); recorded data is never altered.
+
 Note style: when the root is an **Obsidian vault**, write `lessons/` + `decisions.md` +
 the `{{NAME}}.md` dashboard in clean Obsidian Flavored Markdown — light frontmatter
 `tags`, one `> [!note]` callout per note, `[[wikilinks]]` between these notes, and

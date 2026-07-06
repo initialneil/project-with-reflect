@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.12 — 2026-07-06
+
+- Add 'pickup', the receive side of handoff: grab the 📥 batons addressed to your lane + new shared decisions/results and act, mid-session, without a full checkin (checkin's Sibling-lanes surface is an auto-pickup). handoff sends, pickup receives — encodes the train (work→checkin) / paper (pickup→discuss→handoff) rhythm.
+
 ## v0.8.11 — 2026-07-06
 
 - Cross-workstream cooperation: two lanes of one project (e.g. train + paper) coordinate through the shared vault — results via record→experiment-records, pivots via decisions.md, and a directed baton via new 'handoff <lane>' (writes a 📥-tagged plan/note into the sibling's goal/plan log). status gains a 'Sibling lanes' surface so each checkin picks up the sibling's handoffs + shared changes.

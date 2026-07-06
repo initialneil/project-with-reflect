@@ -241,7 +241,7 @@ when you're working in that project. The state dir doubles as the skill dir (SKI
 lessons/decisions/workstreams). Alias handles `/<name>-<handle>` stay generated commands.
 The project SKILL.md carries the
 behavioral contract + handlers: `checkin [<workstream>] · status · bootstrap · list · help · reflect
-[--reground] · record · note · handoff · todo · streams · register-workstream · <workstream> [pr|rebase|reset] ·
+[--reground] · record · note · handoff · pickup · todo · streams · register-workstream · <workstream> [pr|rebase|reset] ·
 register-eval · eval all · register-task · use-knowledge`, plus **hardware/host** handlers when a
 device or machine is bound: `bind · build · flash · monitor`. **`checkin`** is the front door to a
 working session (load context + handle the cwd cd-decision, then auto-run `status`); **`status`** is a
@@ -335,8 +335,10 @@ is approved the active project records it verbatim to the workstream's **goal/pl
 lane + a `paper` lane, `dev` + `research`, …). Two sessions coordinate asynchronously via shared state —
 results → the shared `lessons/experiment-*.md` (`record`), pivots → shared `decisions.md`, and a directed
 "you pick this up next" → **`handoff <other-lane> "…"`** (writes a `📥`-tagged dated entry into the other
-lane's goal/plan log). Each `checkin`/`status` surfaces sibling handoffs + shared changes since that lane
-was last here, so the baton can't be missed; see a project's `Working`.
+lane's goal/plan log) received with **`pickup`** (`handoff` sends, `pickup` receives). Each `checkin`/`status`
+auto-does a pickup (surfacing sibling handoffs + shared changes since that lane was last here), and standalone
+`pickup` grabs a fresh baton mid-session without a full checkin, so the baton can't be missed; see a project's
+`Working`.
 
 ## Reflect = bounded update
 `reflect` is **log-and-reflect**: it **captures the session first** (appends this conversation's

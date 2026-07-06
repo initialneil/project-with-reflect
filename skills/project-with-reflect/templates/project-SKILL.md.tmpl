@@ -117,17 +117,20 @@ talk live. Route by kind:
   the moment it lands (append-only). It's visible to every lane instantly — the sibling reads it, no copy.
 - **A settled pivot / decision** (paper+user → train) → a line in the **shared** `decisions.md`; the sibling
   loads it on its next `checkin` (contract rule 1).
-- **A directed "you pick this up next"** → **`handoff <other-lane> "…"`** (the action below): it appends a
-  dated entry to the **other lane's** goal/plan log (`workstreams/<other>/<other>.md`), tagged `📥 from
-  <this-lane>` — a ```plan``` block when you're handing over a plan/pivot to execute, a ```handoff``` block
-  for an FYI/ask. Newest-first, so the sibling's next `checkin` surfaces it at the top and it acts on it.
-The loop: **train** finishes a phase → `record`s the result + `handoff paper "phase N: <metric>, <what's
-worth discussing>"`; **paper** `checkin` (sees the result + the 📥) → discusses with you → `record`s the
-decision + `handoff train "pivot: <new plan>"`; **train** `checkin` (sees the 📥 plan at top) → adopts it as
-its active plan and continues. Each `status`/`checkin` **surfaces sibling handoffs + what changed in shared
-state since this lane was last here** (see `status` → *Sibling lanes*), so a baton is impossible to miss.
-(Two lanes writing the **same** shared file at the exact same moment can clash — in practice handoffs are
-turn-based; keep shared writes append-only and, if you ever collide, re-read and re-append.)
+- **A directed "you pick this up next"** → send with **`handoff <other-lane> "…"`** / receive with
+  **`pickup`** (the two actions below). `handoff` appends a dated entry to the **other lane's** goal/plan log
+  (`workstreams/<other>/<other>.md`), tagged `📥 from <this-lane>` — a ```plan``` block to hand over a
+  plan/pivot to execute, a ```handoff``` block for an FYI/ask. `pickup` is the mirror: grab the `📥` batons
+  addressed to **you** + any new shared decisions/results, and act. **`handoff` sends, `pickup` receives.**
+The loop (the two lanes have different rhythms): **train** *just works* — finishes a phase → `record`s the
+result + `handoff paper "phase N: <metric>, <what's worth discussing>"`, then `checkin`/`pickup` before each
+phase to absorb any pivot and continues. **paper** runs a **`pickup` → discuss → `handoff`** cycle: `pickup`
+once in a while (sees the new result + the 📥) → discusses with you → `record`s the decision + `handoff train
+"pivot: <new plan>"`. Each `checkin` **auto-does a pickup** (its *Sibling lanes* surface — new handoffs +
+shared changes since this lane was last here), and mid-session standalone **`pickup`** grabs a fresh baton
+without a full checkin — so a baton is impossible to miss. (Two lanes writing the **same** shared file at the
+exact same moment can clash — in practice the `handoff`/`pickup` turn-taking serializes them; keep shared
+writes append-only and, if you ever collide, re-read and re-append.)
 
 **Record durable results the moment they land — proactively, don't wait for `reflect`.** A *log* line is
 ephemeral working memory (consumed at reflect). But a **durable, reusable result** — a measured
@@ -211,10 +214,11 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   - **Recap** — the last session / most recent log highlights (what just happened).
   - **TODO** — the open `## TODO` items.
   - **Workstreams** — the workstreams + lineage; flag any behind `base`.
-  - **Sibling lanes** (only if >1 active workstream) — for each **other** active workstream, its latest
-    goal/plan-log headline, and **loudly surface any `📥` handoff addressed to THIS lane** that postdates
-    this lane's last session (the baton the sibling passed) + any **new** `decisions.md` / experiment-record
-    entries since then. This is how a `train`/`paper`-style pair picks each other up — see *Working*.
+  - **Sibling lanes** (only if >1 active workstream) — an **auto-`pickup`**: for each **other** active
+    workstream, its latest goal/plan-log headline, and **loudly surface any `📥` handoff addressed to THIS
+    lane** that's still pending (above this lane's most recent own entry) + any **new** `decisions.md` /
+    experiment-record entries since then. This is how a `train`/`paper`-style pair picks each other up;
+    mid-session, the standalone `pickup` action does the same without a full checkin — see *Working*.
   - **Running jobs** (if any) — the active workstream's `## Jobs` (detached remote runs), reconciled
     against the host (`/<host_connection> jobs` → `tmux ls`): mark which are still alive vs finished/dead,
     so nothing is left leaking on the box.
@@ -347,6 +351,18 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   moment a decision in this window is really the **other** lane's to act on — don't rely on it noticing
   buried log lines. (Durable results still go to the shared `lessons/experiment-*.md` via `record`, settled
   pivots to shared `decisions.md`; `handoff` is the *directed "you, next"* on top of that shared state.)
+- `pickup` — **the receive side of `handoff`: grab the baton mid-session, lightweight.** Run it "once in a
+  while" during a working session to see whether the sibling lane passed you anything — **without** a full
+  `checkin` (no reload / cwd / title / freshness ritual). `checkin` already does a pickup as part of its
+  *Sibling lanes* surface; `pickup` is the standalone version so a long session can keep grabbing batons
+  cheaply. It (1) reads this lane's goal/plan log for **`📥 from <sibling>` entries sitting above your most
+  recent own entry** — newest-first ordering means anything *below* an entry you authored is already handled,
+  so those on top are the **pending** batons; and (2) scans the shared `decisions.md` + `lessons/experiment-*.md`
+  for **new** entries since you last looked. Then **act**: a ```plan``` handoff → **adopt it** as your active
+  plan (append it as your own `### <date>` ```plan``` entry — that supersedes the `📥`, so it won't nag again)
+  and get to work; a ```handoff``` FYI / ask → address it (if it needs no plan entry, drop a `> ✅ <date>`
+  read-receipt under it — the one allowed annotation, since it's your own mailbox). Nothing pending → say so
+  in a line. **`handoff` sends, `pickup` receives.**
 - `record ["<what>"]` — **persist a durable thing into permanent memory NOW, in its right home**
   (not the ephemeral log — that's `note`; not the end-of-session sweep — that's `reflect`). **Flexible** —
   it's not experiment-specific: you (or the user — "record this as a rule", "record this website") infer

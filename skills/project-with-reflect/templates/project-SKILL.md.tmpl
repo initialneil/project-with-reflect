@@ -109,6 +109,26 @@ snapshot), not on every micro-edit — a fresh dated entry when it's substantial
 note if absent. (Built-in `/goal` and plan mode **can't be hooked**, so this is native skill behavior — record
 it the moment you see a goal or plan set.) `reflect` summarizes progress against the **top (latest)** goal/plan.
 
+**Two workstreams cooperating (e.g. a `train` lane + a `paper` lane, or `dev` + `research`) — the shared
+vault is the blackboard; hand off through it, never window-to-window.** Two sessions (one per lane, often
+different terminals/machines) coordinate **asynchronously through this project's shared state** — they never
+talk live. Route by kind:
+- **A result / benchmark** (train → paper) → `record` it to the **shared** `lessons/experiment-<name>.md`
+  the moment it lands (append-only). It's visible to every lane instantly — the sibling reads it, no copy.
+- **A settled pivot / decision** (paper+user → train) → a line in the **shared** `decisions.md`; the sibling
+  loads it on its next `checkin` (contract rule 1).
+- **A directed "you pick this up next"** → **`handoff <other-lane> "…"`** (the action below): it appends a
+  dated entry to the **other lane's** goal/plan log (`workstreams/<other>/<other>.md`), tagged `📥 from
+  <this-lane>` — a ```plan``` block when you're handing over a plan/pivot to execute, a ```handoff``` block
+  for an FYI/ask. Newest-first, so the sibling's next `checkin` surfaces it at the top and it acts on it.
+The loop: **train** finishes a phase → `record`s the result + `handoff paper "phase N: <metric>, <what's
+worth discussing>"`; **paper** `checkin` (sees the result + the 📥) → discusses with you → `record`s the
+decision + `handoff train "pivot: <new plan>"`; **train** `checkin` (sees the 📥 plan at top) → adopts it as
+its active plan and continues. Each `status`/`checkin` **surfaces sibling handoffs + what changed in shared
+state since this lane was last here** (see `status` → *Sibling lanes*), so a baton is impossible to miss.
+(Two lanes writing the **same** shared file at the exact same moment can clash — in practice handoffs are
+turn-based; keep shared writes append-only and, if you ever collide, re-read and re-append.)
+
 **Record durable results the moment they land — proactively, don't wait for `reflect`.** A *log* line is
 ephemeral working memory (consumed at reflect). But a **durable, reusable result** — a measured
 **baseline / benchmark**, a **settled conclusion** ("X beats Y", "λ=0 is visually bad"), an **experiment
@@ -191,6 +211,10 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   - **Recap** — the last session / most recent log highlights (what just happened).
   - **TODO** — the open `## TODO` items.
   - **Workstreams** — the workstreams + lineage; flag any behind `base`.
+  - **Sibling lanes** (only if >1 active workstream) — for each **other** active workstream, its latest
+    goal/plan-log headline, and **loudly surface any `📥` handoff addressed to THIS lane** that postdates
+    this lane's last session (the baton the sibling passed) + any **new** `decisions.md` / experiment-record
+    entries since then. This is how a `train`/`paper`-style pair picks each other up — see *Working*.
   - **Running jobs** (if any) — the active workstream's `## Jobs` (detached remote runs), reconciled
     against the host (`/<host_connection> jobs` → `tmux ls`): mark which are still alive vs finished/dead,
     so nothing is left leaking on the box.
@@ -314,6 +338,15 @@ distilled lesson) and say where it landed — don't just log it and hope reflect
   linked modules load when relevant (see the contract). Use after `/register-knowledge <k>`.
 - `note "…"` — force an **ephemeral** log line into the active stream (working memory, consumed at
   reflect). For a **durable** finding use `record` instead.
+- `handoff <other-workstream> "<what>"` — **pass a baton to a sibling lane** of this project (the
+  cross-workstream channel — see *Working*). Append a dated entry to the **other** lane's goal/plan log
+  `{{PDIR}}/workstreams/<other-workstream>/<other-workstream>.md`, **newest-first**, prefixed `📥 from
+  <this-lane>`: a ```plan``` block when you're handing over a plan/pivot to execute, a ```handoff``` block
+  for an FYI / ask / pointer. Create the folder note if absent; **append-only** (never rewrite the sibling's
+  past entries). The target lane's next `checkin`/`status` surfaces it (see *Sibling lanes*). Use it the
+  moment a decision in this window is really the **other** lane's to act on — don't rely on it noticing
+  buried log lines. (Durable results still go to the shared `lessons/experiment-*.md` via `record`, settled
+  pivots to shared `decisions.md`; `handoff` is the *directed "you, next"* on top of that shared state.)
 - `record ["<what>"]` — **persist a durable thing into permanent memory NOW, in its right home**
   (not the ephemeral log — that's `note`; not the end-of-session sweep — that's `reflect`). **Flexible** —
   it's not experiment-specific: you (or the user — "record this as a rule", "record this website") infer

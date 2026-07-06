@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.11 — 2026-07-06
+
+- Cross-workstream cooperation: two lanes of one project (e.g. train + paper) coordinate through the shared vault — results via record→experiment-records, pivots via decisions.md, and a directed baton via new 'handoff <lane>' (writes a 📥-tagged plan/note into the sibling's goal/plan log). status gains a 'Sibling lanes' surface so each checkin picks up the sibling's handoffs + shared changes.
+
 ## v0.8.10 — 2026-07-03
 
 - Security hardening: pwr_validate_name rejects path-traversal/unsafe entity names in every register script + gen-command (closes the rm -rf footgun); publish.sh refuses to release while untracked files exist (git add -A can no longer sweep a stray secret into a public commit).

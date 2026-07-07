@@ -226,15 +226,19 @@ During a substantial work session:
 
   After a switch, keep PWR's own plan/progress memory in the workstream state; any local scratch files the
   user chooses to create should live in the selected working dir.
-  Then (3) **silently set the terminal tab/window title**, prefixed with the project's **emoji** so the
-  tab is glanceable at a row of terminals —
+  Then (3) **silently set the visible session title**, prefixed with the project's **emoji** so the
+  work is glanceable across terminals / Codex threads —
   `term-title.sh "<emoji> {{NAME}} · <workstream>"` (just `<emoji> {{NAME}}` for a bare/home checkin — no
   `· <workstream>`). The emoji is `config.json.emoji`; if it's missing, **improvise one fitting glyph**
   for the project (one that captures what it is — a mirror 🪞 for a reflect tool, a brain 🧠 for a
   knowledge base, a rocket 🚀 for an app) and **persist it once** with `config-set.sh {{PDIR}} emoji
-  "<glyph>"`, then use it — so every later checkin shows the same icon. `term-title.sh` writes the title
-  escape to the real terminal (the Bash tool's own stdout can't), keeps the emoji intact, and **no-ops
-  silently** off a real terminal — never surface its output.
+  "<glyph>"`, then use it — so every later checkin shows the same icon.
+  - **Terminal/iTerm2**: `term-title.sh` writes the title escape to the real terminal (the Bash tool's own
+    stdout can't), keeps the emoji intact, and **no-ops silently** off a real terminal — never surface its
+    output.
+  - **Codex Desktop**: if the app exposes a native thread-title tool and the current thread id is available,
+    rename the Codex thread/sidebar item to the same compact title. This is an app-tool action, **not** a
+    shell escape; skip silently when unavailable rather than blocking checkin.
   Then (4) **auto-run `status`** — so checkin always ends with a recap and you're ready to work.
 - `status` — a **smart brief, not a dump** (read-only; no cd, no writes). Synthesize from `{{NAME}}.md`
   + the active stream's recent `log.md` + the `## TODO` backlog + the `stream.json`s, and print tersely,

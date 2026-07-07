@@ -66,7 +66,9 @@ Bare `/project-with-reflect` → `help`.
   cwd. Then **delegate to that skill's `checkin`** — it loads context, handles the working dir (cd
   decision), **silently sets the terminal tab title** to what you're working on (via
   `SK/scripts/term-title.sh "<name> · <workstream>"` — writes the title escape to the real terminal since the
-  Bash tool's stdout can't; no-ops off a real terminal, never surfaces output), and ends with a `status`
+  Bash tool's stdout can't; no-ops off a real terminal, never surfaces output; in Codex Desktop, also rename
+  the app thread/sidebar title to the same compact title when the native thread-title tool and current
+  thread id are available), and ends with a `status`
   recap, so you're immediately ready. If nothing resolves and no name was given, run meta `status` (the
   discovery list) and ask which to check into. From `~`: `status` to find it → `checkin <name>` to pick
   it up.

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.3 — 2026-07-07
+
+- Add Codex Desktop thread title checkin behavior
+
 ## v0.9.2 — 2026-07-07
 
 - Keep planning-with-files mention to acknowledgements

@@ -108,7 +108,8 @@ The daily loop is: **register → check status / check in → work → log and r
 
 `status` is a **smart brief** (Where · Recap · TODO · Workstreams · flags), not a dump. `checkin` is the
 **front door to a working session** — it loads, handles the cwd, **silently sets your terminal tab title**
-to the project + workstream (iTerm2 / Terminal / any OSC terminal; no-ops elsewhere), and **ends by running
+to the project + workstream (iTerm2 / Terminal / any OSC terminal; no-ops elsewhere), updates the Codex
+Desktop thread/sidebar title when the app tool is available, and **ends by running
 `status`** so you land with a reboot from disk: current goal/plan, what was done, what was learned, what is
 next, and what failed or is risky. (Connections have them too: `/gpubox checkin` ssh-pings the box,
 applies its quirks, and briefs it.)

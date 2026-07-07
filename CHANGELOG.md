@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.5 — 2026-07-07
+
+- Harden Codex/Claude Desktop title-setting: if the native title tool needs a thread/session id and it is not already in context, first resolve the active local thread/session via the app listing/current-thread tool instead of silently skipping.
+
 ## v0.9.4 — 2026-07-07
 
 - checkin also renames the Claude Code desktop/web session/sidebar title when a native session-title tool is available — mirrors the existing Codex Desktop thread-title behavior (Terminal/iTerm2 OSC unchanged)

@@ -236,12 +236,16 @@ During a substantial work session:
   - **Terminal/iTerm2**: `term-title.sh` writes the title escape to the real terminal (the Bash tool's own
     stdout can't), keeps the emoji intact, and **no-ops silently** off a real terminal — never surface its
     output.
-  - **Codex Desktop**: if the app exposes a native thread-title tool and the current thread id is available,
-    rename the Codex thread/sidebar item to the same compact title. This is an app-tool action, **not** a
-    shell escape; skip silently when unavailable rather than blocking checkin.
+  - **Codex Desktop**: if the app exposes a native thread-title tool, rename the Codex thread/sidebar item to
+    the same compact title. If the current thread id is not already available, use the app's thread-list/current
+    thread tool to identify the active local thread first (match the active thread in this cwd/title when needed);
+    only skip when the app title tool or a reliable current-thread lookup is unavailable. This is an app-tool
+    action, **not** a shell escape, and it should not block checkin.
   - **Claude Desktop / web**: likewise, if running in the Claude Code desktop or web app and it exposes a
-    native session-title tool with the current session id available, rename the session/sidebar title to the
-    same compact title. App-tool action, **not** a shell escape; skip silently when unavailable.
+    native session-title tool, rename the session/sidebar title to the same compact title. If the session id is
+    not already available, first use the app's session/thread listing tool to resolve the active session when
+    possible; only skip when no native title tool or reliable current-session lookup exists. App-tool action,
+    **not** a shell escape.
   Then (4) **auto-run `status`** — so checkin always ends with a recap and you're ready to work.
 - `status` — a **smart brief, not a dump** (read-only; no cd, no writes). Synthesize from `{{NAME}}.md`
   + the active stream's recent `log.md` + the `## TODO` backlog + the `stream.json`s, and print tersely,

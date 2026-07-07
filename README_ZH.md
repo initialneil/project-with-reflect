@@ -37,6 +37,7 @@ prompt、向 agent **一遍遍解释**同一个项目的来龙去脉？
 
 - **万物皆 skill** —— project 和上面每个 connection，注册后都得到自己的 `/<name>`。
 - **工作时自动 log** —— commit、决定、关键发现、实验结果、error + 修复，随手记进当前 stream。
+- **原生 hooks 提醒记忆卫生** —— 大块工作前 checkin，风险命令前重读磁盘记忆，编辑/发现后记录，compact 前 flush。
 - **`reflect` 蒸馏自己** —— 先 capture 这次 session，再把 log 提炼成**精简、可读的 lessons**，下次自动加载（实验结果则追加进一份永久的 **experiment record**）。
 - **checkin 从磁盘重启状态** —— 开始工作前，agent 重新加载 goal / plan、进展、发现和失败尝试。
 - **动手前先加载** —— agent 先读已有 lessons / decisions / 知识，不再重复解释、重复犯错。
@@ -339,7 +340,7 @@ Inspired by my dear friend Zhaolong WANG from Tsinghua.
 并借鉴了这些项目的思路：
 - [hermes-agent](https://github.com/nousresearch/hermes-agent) —— closed learning loop。
 - [grounding-rules](https://github.com/initialneil/grounding-rules) —— 精简、可读的 rules。
-- [planning-with-files](https://github.com/othmanadi/planning-with-files) —— 持久 Markdown 工作记忆；启发了 PWR 的 checkin reboot、两次观察就落盘，以及显式记录失败尝试。
+- [planning-with-files](https://github.com/othmanadi/planning-with-files) —— 持久 Markdown 工作记忆的哲学；启发了 PWR 原生的 checkin reboot、两次观察就落盘，以及显式记录失败尝试。
 
 ## License
 

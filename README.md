@@ -39,6 +39,7 @@ All of it **Obsidian-friendly** (lessons / knowledge / dashboard are clean, read
 
 - **Everything is a skill** — a project, and each connection above, gets its own `/<name>` once registered.
 - **Auto-logs as you work** — commits, decisions, key findings, an experiment's result, an error + its fix, jotted to the active stream.
+- **Native hooks nudge memory hygiene** — checkin before substantial work, re-read disk memory before risky commands, record edits/findings, flush before compaction.
 - **`reflect` distills itself** — captures the session, then folds the log into **lean, readable lessons** it loads next time (and appends run results to a permanent **experiment record**).
 - **Checkin reboots from disk** — before work, the agent reloads the goal/plan, progress, findings, and failed attempts from persistent files.
 - **Loads before acting** — the agent reads existing lessons / decisions / knowledge first, so it stops re-explaining and repeating mistakes.
@@ -354,7 +355,7 @@ Inspired by my dear friend Zhaolong WANG from Tsinghua.
 Built on ideas from:
 - [hermes-agent](https://github.com/nousresearch/hermes-agent) — the closed learning loop.
 - [grounding-rules](https://github.com/initialneil/grounding-rules) — lean, readable rules.
-- [planning-with-files](https://github.com/othmanadi/planning-with-files) — persistent markdown working memory; inspired PWR's checkin reboot, two-observation recording rule, and visible failed-attempt discipline.
+- [planning-with-files](https://github.com/othmanadi/planning-with-files) — persistent markdown working-memory philosophy; inspired PWR's native checkin reboot, two-observation recording rule, and visible failed-attempt discipline.
 
 ## License
 

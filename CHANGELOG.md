@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.1 — 2026-07-07
+
+- Make planning discipline native with PWR hooks
+
 ## v0.9.0 — 2026-07-07
 
 - Absorb planning-with-files working-memory discipline into checkin

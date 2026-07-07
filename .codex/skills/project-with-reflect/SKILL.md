@@ -307,19 +307,28 @@ narrative; it doesn't hand-edit the frontmatter facts. The body also holds the p
 backlog** (the `todo` action) — pending dev items flagged by reflect or parked by the user; it's body,
 so `gen-dashboard.sh` preserves it across regenerations.
 
-## Auto-log hooks (reliability)
-Logging is mostly behavioral, and the model drifts — so two non-blocking META-skill hooks
-(`SK/scripts/hook-autolog.sh`, declared in this SKILL's frontmatter) nudge the harness, not the
-model's memory: **PostToolUse(Bash)** fires on a `git commit` inside a registered project (gated via
-`registry.json` → repo match — silent everywhere else) and reminds you to log what the commit
-accomplished; **PreCompact** reminds you to flush un-logged events to the active stream before context
-is compacted (detail lost to a compaction can't be recovered at reflect time). Both always exit 0 —
-they never block a tool or a compaction. They cover the *mechanical* checkpoints; decisions /
-long-tasks / findings stay behavioral triggers (see a project's `Working`), and `reflect`'s
-capture-first is the end-of-session backstop. **Setting a goal is also a behavioral auto-record** —
-the built-in `/goal` can't be hooked, so when the user sets a goal the active project records it verbatim
-to the workstream's **goal-log folder note** (`workstreams/<workstream>/<workstream>.md`, `### <date>` +
-a ```goal``` block, **newest-first**); see a project's `Working`.
+## Native hooks (working-memory reliability)
+Working memory is mostly behavioral, and the model drifts — so non-blocking META-skill hooks
+(`SK/scripts/hook-autolog.sh`, mirrored by `.codex/hooks.json` for Codex adapters) nudge the harness,
+not the model's memory. They are PWR-native, inspired by planning-with-files' hook design but requiring
+no external planning skill:
+- **UserPromptSubmit**: when a prompt looks like substantial work inside a registered project, remind the
+  agent to start with `/<project> checkin`.
+- **PreToolUse(Bash)**: before risky/mutating/high-effort commands, remind the agent to refresh plan /
+  decisions from disk and mutate the approach after failures.
+- **PostToolUse(Write/Edit)**: after source edits, remind the agent to update `note` / `record` if the
+  edit completed a step or surfaced a finding.
+- **PostToolUse(Bash)**: on `git commit`, remind the agent to log what the commit accomplished.
+- **PreCompact**: flush un-logged events to the active stream before context compaction.
+
+Every hook is gated via `registry.json` → repo match, stays silent elsewhere, honors
+`PROJECT_WITH_REFLECT_HOOKS_DISABLED=1`, and always exits 0 — it never blocks a tool or a compaction.
+They cover the *mechanical* checkpoints; decisions / long-tasks / findings stay behavioral triggers
+(see a project's `Working`), and `reflect`'s capture-first is the end-of-session backstop. **Setting a goal
+is also a behavioral auto-record** — the built-in `/goal` can't be hooked, so when the user sets a goal the
+active project records it verbatim to the workstream's **goal-log folder note**
+(`workstreams/<workstream>/<workstream>.md`, `### <date>` + a ```goal``` block, **newest-first**); see a
+project's `Working`.
 
 ## Reflect = bounded update
 `reflect` is **log-and-reflect**: it **captures the session first** (appends this conversation's

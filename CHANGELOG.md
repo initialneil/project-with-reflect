@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.4 — 2026-07-07
+
+- checkin also renames the Claude Code desktop/web session/sidebar title when a native session-title tool is available — mirrors the existing Codex Desktop thread-title behavior (Terminal/iTerm2 OSC unchanged)
+
 ## v0.9.3 — 2026-07-07
 
 - Add Codex Desktop thread title checkin behavior

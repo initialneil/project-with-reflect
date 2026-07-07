@@ -38,6 +38,7 @@ prompt、向 agent **一遍遍解释**同一个项目的来龙去脉？
 - **万物皆 skill** —— project 和上面每个 connection，注册后都得到自己的 `/<name>`。
 - **工作时自动 log** —— commit、决定、关键发现、实验结果、error + 修复，随手记进当前 stream。
 - **`reflect` 蒸馏自己** —— 先 capture 这次 session，再把 log 提炼成**精简、可读的 lessons**，下次自动加载（实验结果则追加进一份永久的 **experiment record**）。
+- **checkin 从磁盘重启状态** —— 开始工作前，agent 重新加载 goal / plan、进展、发现和失败尝试。
 - **动手前先加载** —— agent 先读已有 lessons / decisions / 知识，不再重复解释、重复犯错。
 - **跨 agent 使用** —— Claude Code 走 plugin flow；Codex 和其他 agents 使用这个 repo 里的 skill surfaces。
 
@@ -104,7 +105,8 @@ ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.code
 
 `status` 是**智能简报**（Where · Recap · TODO · Workstreams · flags），不是 dump。`checkin` 是
 **一个 working session 的入口** —— 它加载上下文、处理 cwd、**静默地把终端 tab 标题设为 project + workstream**
-（iTerm2 / Terminal / 任意支持 OSC 的终端；其它环境自动跳过），并**以 `status` 收尾**，让你带着 recap 落地。
+（iTerm2 / Terminal / 任意支持 OSC 的终端；其它环境自动跳过），并**以 `status` 收尾**，让你从磁盘恢复出
+当前 goal / plan、已完成、已学到、下一步，以及失败或风险点。
 （connection 也有：`/gpubox checkin` 会 ssh-ping 这台机器、应用它的 quirks、再给一份简报。）
 
 > **`/compact` 或 `/clear` 之后，请再 `/<project> checkin` 一次。** 两者都会把已加载的 lessons / recap
@@ -337,7 +339,7 @@ Inspired by my dear friend Zhaolong WANG from Tsinghua.
 并借鉴了这些项目的思路：
 - [hermes-agent](https://github.com/nousresearch/hermes-agent) —— closed learning loop。
 - [grounding-rules](https://github.com/initialneil/grounding-rules) —— 精简、可读的 rules。
-- [planning-with-files](https://github.com/othmanadi/planning-with-files) —— 基于 hook 的磁盘工作记忆。
+- [planning-with-files](https://github.com/othmanadi/planning-with-files) —— 持久 Markdown 工作记忆；启发了 PWR 的 checkin reboot、两次观察就落盘，以及显式记录失败尝试。
 
 ## License
 

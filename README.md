@@ -40,6 +40,7 @@ All of it **Obsidian-friendly** (lessons / knowledge / dashboard are clean, read
 - **Everything is a skill** — a project, and each connection above, gets its own `/<name>` once registered.
 - **Auto-logs as you work** — commits, decisions, key findings, an experiment's result, an error + its fix, jotted to the active stream.
 - **`reflect` distills itself** — captures the session, then folds the log into **lean, readable lessons** it loads next time (and appends run results to a permanent **experiment record**).
+- **Checkin reboots from disk** — before work, the agent reloads the goal/plan, progress, findings, and failed attempts from persistent files.
 - **Loads before acting** — the agent reads existing lessons / decisions / knowledge first, so it stops re-explaining and repeating mistakes.
 - **Runs across agents** — Claude Code has the plugin flow; Codex and other agents use the skill surfaces in this repo.
 
@@ -107,7 +108,8 @@ The daily loop is: **register → check status / check in → work → log and r
 `status` is a **smart brief** (Where · Recap · TODO · Workstreams · flags), not a dump. `checkin` is the
 **front door to a working session** — it loads, handles the cwd, **silently sets your terminal tab title**
 to the project + workstream (iTerm2 / Terminal / any OSC terminal; no-ops elsewhere), and **ends by running
-`status`** so you land with a recap. (Connections have them too: `/gpubox checkin` ssh-pings the box,
+`status`** so you land with a reboot from disk: current goal/plan, what was done, what was learned, what is
+next, and what failed or is risky. (Connections have them too: `/gpubox checkin` ssh-pings the box,
 applies its quirks, and briefs it.)
 
 > **After `/compact` or `/clear`, run `/<project> checkin` again.** Both wipe the loaded lessons / recap
@@ -352,7 +354,7 @@ Inspired by my dear friend Zhaolong WANG from Tsinghua.
 Built on ideas from:
 - [hermes-agent](https://github.com/nousresearch/hermes-agent) — the closed learning loop.
 - [grounding-rules](https://github.com/initialneil/grounding-rules) — lean, readable rules.
-- [planning-with-files](https://github.com/othmanadi/planning-with-files) — hook-driven, on-disk working memory.
+- [planning-with-files](https://github.com/othmanadi/planning-with-files) — persistent markdown working memory; inspired PWR's checkin reboot, two-observation recording rule, and visible failed-attempt discipline.
 
 ## License
 

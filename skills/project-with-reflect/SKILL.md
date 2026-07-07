@@ -249,7 +249,8 @@ behavioral contract + handlers: `checkin [<workstream>] · status · bootstrap �
 [--reground] · record · note · handoff · pickup · todo · streams · register-workstream · <workstream> [pr|rebase|reset] ·
 register-eval · eval all · register-task · use-knowledge`, plus **hardware/host** handlers when a
 device or machine is bound: `bind · build · flash · monitor`. **`checkin`** is the front door to a
-working session (load context + handle the cwd cd-decision, then auto-run `status`); **`status`** is a
+working session (load context, run a disk-backed working-memory reboot inspired by planning-with-files,
+handle the cwd cd-decision, then auto-run `status`); **`status`** is a
 smart brief (Where / Recap / TODO / Workstreams / flags), not a dashboard dump — `<workstream>` / "work on
 `<workstream>`" is just `checkin` to that workstream. `bootstrap` seeds a freshly-registered project from
 its repo docs + the current session (initial reflect pass → lessons + decisions +

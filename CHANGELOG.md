@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.0 — 2026-07-07
+
+- Absorb planning-with-files working-memory discipline into checkin
+
 ## v0.8.14 — 2026-07-07
 
 - Add /project-with-reflect doctor repair command

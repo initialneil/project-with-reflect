@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.13 — 2026-07-07
+
+- Add scripts/regen-skills.sh: re-render project-SKILL.md.tmpl into every registered project's SKILL.md (or one by name), preserving each project's ## Lessons index — one deterministic command to propagate a template change instead of a hand-written loop. No-op when current; skips a SKILL with no index; guards unrendered placeholders; backs up rewrites.
+
 ## v0.8.12 — 2026-07-06
 
 - Add 'pickup', the receive side of handoff: grab the 📥 batons addressed to your lane + new shared decisions/results and act, mid-session, without a full checkin (checkin's Sibling-lanes surface is an auto-pickup). handoff sends, pickup receives — encodes the train (work→checkin) / paper (pickup→discuss→handoff) rhythm.

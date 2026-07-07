@@ -123,7 +123,7 @@ applies its quirks, and briefs it.)
 **Overall** (`/project-with-reflect`):
 
 ```
-/project-with-reflect           # bare → help; also: status [<name>] · checkin [<name>] · list · meta-reflect
+/project-with-reflect           # bare → help; also: status [<name>] · checkin [<name>] · doctor [<name>] · list · meta-reflect
 /register-project   <name>
 /register-machine   <name>      # ssh server / cloud VM
 /register-device    <name>      # USB / serial flash target
@@ -289,6 +289,9 @@ project/connection skills into both user skill directories:
 ~/.codex/skills/<name>
 ~/.claude/skills/<name>
 ```
+
+If an older Claude-created project exists in the root but Codex cannot find `/<name>`, run
+`/project-with-reflect doctor [<name>]` to repair the root pointer and generated skill links.
 
 Other agents can still use the same generated `SKILL.md` files by loading the repository instructions or
 symlinking/copying `$PROJECT_WITH_REFLECT_ROOT/projects/<name>` and

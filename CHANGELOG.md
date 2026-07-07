@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.14 — 2026-07-07
+
+- Add /project-with-reflect doctor repair command
+
 ## v0.8.13 — 2026-07-07
 
 - Add scripts/regen-skills.sh: re-render project-SKILL.md.tmpl into every registered project's SKILL.md (or one by name), preserving each project's ## Lessons index — one deterministic command to propagate a template change instead of a hand-written loop. No-op when current; skips a SKILL with no index; guards unrendered placeholders; backs up rewrites.

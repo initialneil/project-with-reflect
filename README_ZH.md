@@ -119,7 +119,7 @@ ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.code
 **总体**（`/project-with-reflect`）：
 
 ```
-/project-with-reflect           # 无参 → help；另有：status [<name>] · checkin [<name>] · list · meta-reflect
+/project-with-reflect           # 无参 → help；另有：status [<name>] · checkin [<name>] · doctor [<name>] · list · meta-reflect
 /register-project   <name>
 /register-machine   <name>      # ssh 服务器 / cloud VM
 /register-device    <name>      # USB / serial 烧录目标
@@ -281,6 +281,9 @@ connection skills 同时安装进两个 user-scope skill 目录：
 ~/.codex/skills/<name>
 ~/.claude/skills/<name>
 ```
+
+如果一个较早用 Claude 创建的 project 已经在 root 里，但 Codex 找不到 `/<name>`，
+运行 `/project-with-reflect doctor [<name>]`，它会修复 root pointer 和生成 skill 的链接。
 
 其他 agents 也能复用同一份生成的 `SKILL.md`：加载 repo 级说明，或把
 `$PROJECT_WITH_REFLECT_ROOT/projects/<name>` 和

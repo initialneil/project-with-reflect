@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.2 — 2026-07-07
+
+- Keep planning-with-files mention to acknowledgements
+
 ## v0.9.1 — 2026-07-07
 
 - Make planning discipline native with PWR hooks

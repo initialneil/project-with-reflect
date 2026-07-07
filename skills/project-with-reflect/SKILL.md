@@ -262,7 +262,7 @@ behavioral contract + handlers: `checkin [<workstream>] · status · bootstrap �
 [--reground] · record · note · handoff · pickup · todo · streams · register-workstream · <workstream> [pr|rebase|reset] ·
 register-eval · eval all · register-task · use-knowledge`, plus **hardware/host** handlers when a
 device or machine is bound: `bind · build · flash · monitor`. **`checkin`** is the front door to a
-working session (load context, run a disk-backed working-memory reboot inspired by planning-with-files,
+working session (load context, run a disk-backed working-memory reboot,
 handle the cwd cd-decision, then auto-run `status`); **`status`** is a
 smart brief (Where / Recap / TODO / Workstreams / flags), not a dashboard dump — `<workstream>` / "work on
 `<workstream>`" is just `checkin` to that workstream. `bootstrap` seeds a freshly-registered project from
@@ -338,8 +338,7 @@ so `gen-dashboard.sh` preserves it across regenerations.
 ## Native hooks (working-memory reliability)
 Working memory is mostly behavioral, and the model drifts — so non-blocking META-skill hooks
 (`SK/scripts/hook-autolog.sh`, declared in this SKILL's frontmatter and mirrored for Codex adapters)
-nudge the harness, not the model's memory. They are PWR-native, inspired by planning-with-files'
-hook design but requiring no external planning skill:
+nudge the harness, not the model's memory:
 - **UserPromptSubmit**: when a prompt looks like substantial work inside a registered project, remind the
   agent to start with `/<project> checkin`.
 - **PreToolUse(Bash)**: before risky/mutating/high-effort commands, remind the agent to refresh plan /

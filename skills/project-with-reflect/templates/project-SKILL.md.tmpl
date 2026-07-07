@@ -93,7 +93,7 @@ the finding is about**, so knowledge lands where it's reusable:
 
 **A goal or plan set → the workstream's goal/plan log (newest-first).** When the user sets a **goal** for the
 active workstream (a built-in `/goal`, or stating one in prose — "the goal is …") **or a plan is settled** (an
-approved **plan-mode** plan / `ExitPlanMode`, a planning-with-files `task_plan.md`, or a plan laid out in prose
+approved **plan-mode** plan / `ExitPlanMode`, a repo-local `task_plan.md`, or a plan laid out in prose
 — "here's the plan: …": a bulk of work to track) — **record it verbatim** to that workstream's **folder note**
 `workstreams/<workstream>/<workstream>.md` (distinct from `log.md`'s granular events), **prepended above prior
 entries (recent on top)**, tagging the fenced block by kind:
@@ -145,9 +145,8 @@ verdict**, a hard-won **recipe / config** — is painful to re-derive and easy t
 distilled lesson) and say where it landed — don't just log it and hope reflect catches it. (Example: a
 "GUAVA baseline on omni = PSNR 26.43 / …" result → `record` → `lessons/experiment-GUAVA.md` immediately.)
 
-**Working-memory discipline (inspired by planning-with-files, native to PWR).** The filesystem is the
-source of truth; the context window is only a cache. This is built into project-with-reflect; users do
-**not** need to install or maintain a separate planning skill. During a substantial work session:
+**Working-memory discipline.** The filesystem is the source of truth; the context window is only a cache.
+During a substantial work session:
 - **Re-read before deciding.** Before a branch/architecture/test/release decision, re-open the current
   workstream note, recent `log.md`, `decisions.md`, and the relevant lesson/record. This pulls the goal
   back into attention and prevents stale chat memory from steering.
@@ -191,7 +190,7 @@ source of truth; the context window is only a cache. This is built into project-
   and **What failed or is risky?** (recent errors, repeated attempts, blockers). If repo-local planning
   artifacts such as `task_plan.md`, `findings.md`, or `progress.md` already exist from any prior workflow,
   treat them as imported evidence and reconcile durable content into PWR's own goal/plan log, `record`, or
-  `note` as appropriate. Do not ask the user to install or maintain a parallel planning system.
+  `note` as appropriate.
   (2) **handle the working dir** (the Bash cwd persists across calls, so where you land is where plan /
   scratch files go) — **ask the user; `cd` only on their choice.** Two cases — and
   **bare `checkin` is project-level, NOT auto-resume a workstream:**

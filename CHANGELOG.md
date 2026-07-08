@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.9 — 2026-07-08
+
+- Add Codex command-skill autocomplete support for global project-with-reflect commands
+
 ## v0.9.8 — 2026-07-08
 
 - Include WebDAV connections in checkin title sync regeneration

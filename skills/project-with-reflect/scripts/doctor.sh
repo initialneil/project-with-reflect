@@ -132,6 +132,13 @@ echo "registry: $PWR_ROOT/registry.json"
 
 fix_pointer
 
+if bash "$HERE/install-codex-command-skills.sh"; then
+  OK=$((OK + 1))
+else
+  echo "[warn] failed to install Codex command skills" >&2
+  WARN=$((WARN + 1))
+fi
+
 if [ ! -s "$ROWS" ]; then
   if [ -n "$ONLY" ]; then
     echo "[warn] no registered project or connection named '$ONLY'" >&2

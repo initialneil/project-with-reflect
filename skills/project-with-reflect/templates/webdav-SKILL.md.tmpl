@@ -1,0 +1,41 @@
+---
+name: {{NAME}}
+description: "Operate the {{NAME}} WebDAV/rclone connection - list, push, pull, sync, and apply its learned quirks. Use when the user types /{{NAME}}, mentions {{NAME}}/WebDAV/rclone, or asks to move files through that remote."
+---
+# {{NAME}} - WebDAV connection skill (project-with-reflect)
+
+Facts live in this folder's `{{NAME}}.md` frontmatter and `connection.json` (transport: webdav).
+The remote is operated through `rclone`; secrets live in rclone's config or an external secret store,
+never printed, logged, or written to the vault.
+
+## Before acting
+1. Load `{{NAME}}.md` - remote name, vault/path conventions, setup notes, usage, and learned quirks
+   (`## Quirks`). Apply them instead of rediscovering them.
+2. Load `connection.json` for the hard facts (`rclone_remote`, `vault_root`, `base_url`, docs).
+3. Ground in `docs_url` for non-trivial or unfamiliar WebDAV/rclone behavior.
+4. Read-only commands run freely. Confirm before destructive sync/delete/move operations.
+5. Auto-log notable events to `log.md`: a working recipe, an error + fix, a rate/sync gotcha.
+
+## Actions
+- `ls <path>` - list with `rclone lsf` / `rclone lsd` against the configured remote or vault root.
+- `push <local> <remote-path>` - upload/overwrite one file with `rclone copyto`.
+- `pull <remote-path> <local>` - download one file with `rclone copyto`.
+- `sync <local-dir> <remote-dir>` - `rclone sync` a directory. Confirm first; sync deletes extras
+  on the destination.
+- `<rclone-subcmd ...>` - run the requested rclone command against the configured remote.
+- `checkin` - **pick up + get ready**: verify the remote is reachable (`rclone lsd <remote>:` or the
+  path from `connection.json`), apply learned quirks, and **must re-run title sync every time**:
+  Terminal/iTerm2 via `term-title.sh "{{NAME}}"` (no-ops off a real terminal; never surface its output),
+  plus Codex/Claude app thread/session title via native title tools when available (resolve the active
+  thread/session first if needed; skip only when no reliable tool/lookup exists), then auto-run `status`.
+- `status` - a **smart brief**: the facts (remote / root / docs) + reachable? + quirk count + the
+  most recent `log.md` line. Read-only.
+- `update "<content>"` - fold reference material into this note's body sections (`## Setup`,
+  `## Usage`, `## Gotchas`): merge + dedupe, lean. Secrets stay outside the vault.
+- `note "..."` - force a line into `log.md`.
+- `reflect` - fold `log.md` into the `## Quirks` section of `{{NAME}}.md`, then archive
+  (`reflect.sh archive-entity {{DIR}}`).
+- `help` - this menu.
+
+Setup, usage, rate limits, sync latency, conflict behavior, and gotchas live in `{{NAME}}.md`;
+reflect maintains them. Lean.

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.8 — 2026-07-08
+
+- Include WebDAV connections in checkin title sync regeneration
+
 ## v0.9.7 — 2026-07-08
 
 - Make checkin re-sync Terminal, Codex, and Claude titles every time

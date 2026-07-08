@@ -221,6 +221,8 @@ transport:
 - **http** — `/<name> <action>` calls the API with the key from `$<key_env>` (never echo it).
   Quirk e.g. "billed by socket wall-clock, not audio".
 - **mcp** — use its `mcp__<name>__*` tools per the note; `reconnect` re-runs the add command.
+- **webdav/rclone** — `/<name> ls | push | pull | sync | <rclone-subcmd ...>` operates a configured
+  WebDAV remote such as an Obsidian vault mirror. Secrets stay in rclone config / external secret stores.
 - Plus every connection has `checkin`, `status`, `update "<content>"` (fold reference material into its
   note's body — the skill-native form of `update connection`), `note "…"`, and `reflect` — which
   folds `log.md` into the `## Quirks` section of `<name>.md`, then archives
@@ -230,7 +232,7 @@ transport:
   available), then auto-runs **`status`** — a smart brief
   (facts + reachable? + quirk count + recent log), not just the raw facts: ssh `ssh <alias> true` /
   uptime; serial → the port is present; http → `$<key_env>` is set (optional health ping); mcp → the
-  `mcp__<name>__*` tools are available (re-wire if dropped).
+  `mcp__<name>__*` tools are available (re-wire if dropped); webdav → the rclone remote/root is reachable.
 
 **At register time, seed `<name>.md`'s body with lean useful content** — a one-line what-it-is
 plus a `## Quirks` section pre-filled with the real gotchas you already know (the practice repo,

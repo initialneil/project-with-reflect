@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.6 — 2026-07-08
+
+- Add quick /eval-* handles for registered evals
+
 ## v0.9.5 — 2026-07-07
 
 - Harden Codex/Claude Desktop title-setting: if the native title tool needs a thread/session id and it is not already in context, first resolve the active local thread/session via the app listing/current-thread tool instead of silently skipping.

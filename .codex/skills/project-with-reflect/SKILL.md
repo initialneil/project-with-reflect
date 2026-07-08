@@ -248,9 +248,10 @@ before merging. **A worktree-mode workstream has exactly ONE worktree, reused ac
 never improvise extra `git worktree add`s per task/PR (that litters `.claude/worktrees/`); a separate
 worktree means a new registered workstream or an explicit user OK.**
 
-**Discoverability convention:** every generated command — `/<name>` and each
-`/<name>-<handle>` alias — ships with an `argument-hint` frontmatter line (like `/goal`'s
-`[<condition> | clear]`) so its actions surface during tab-complete. The templates and
+**Discoverability convention:** every generated command — `/<name>`, each `/<name>-<handle>` alias, and
+eval quick handles like `/eval-<handle>` — ships with an `argument-hint` frontmatter line (like `/goal`'s
+`[<condition> | clear]`) so its actions surface during tab-complete. Eval quick handles are also installed
+as user-scope skills when the short name is not already owned by another project. The templates and
 `gen-command.sh` already include these; keep them in sync when you add an action.
 
 ## The behavioral contract (why this beats a plain notes folder)

@@ -156,7 +156,9 @@ thread/sidebar 标题，并**以 `status` 收尾**，让你从磁盘恢复出
 /<name> build | flash | monitor   # 通过绑定的 device / server
 /<name> register-workstream <b> --base <x>
 /<name>-<b> [pr | rebase | reset] # 这条 workstream 自己的命令
-/<name> register-eval <e>  ·  eval all
+/<name> register-eval <e>         # 生成 /<name>-<e>；若短名没被占用，也生成 /eval-<e>
+/eval-<e>                         # 快速引用 / 运行 eval 的 handle
+/<name> eval all
 /<name> register-task <t>
 /<name> use-knowledge <k>
 /<name> bootstrap | streams | list | help
@@ -173,8 +175,8 @@ thread/sidebar 标题，并**以 `status` 收尾**，让你从磁盘恢复出
 /<name> note "…" · update "…" · reflect           # reflect 把 log 折叠进 ## Quirks
 ```
 
-统一的 ergonomic：**注册一个 handle → 得到 `/<name>-<handle>`**
-（一条 workstream、一个 eval test case、或一个 task runbook）。
+统一的 ergonomic：**注册一个 handle → 得到 `/<name>-<handle>`**。
+eval handle 还会在短名未被其他 project 占用时得到 **`/eval-<handle>`**。
 
 ## 常见工作流 Common workflows
 

@@ -160,7 +160,9 @@ applies its quirks, and briefs it.)
 /<name> build | flash | monitor   # via a bound device / server
 /<name> register-workstream <b> --base <x>
 /<name>-<b> [pr | rebase | reset] # the workstream's own command
-/<name> register-eval <e>  ·  eval all
+/<name> register-eval <e>         # generates /<name>-<e> and /eval-<e> when that short alias is free
+/eval-<e>                         # quick eval reference/run handle
+/<name> eval all
 /<name> register-task <t>
 /<name> use-knowledge <k>
 /<name> bootstrap | streams | list | help
@@ -177,8 +179,8 @@ applies its quirks, and briefs it.)
 /<name> note "…" · update "…" · reflect           # reflect folds its log → ## Quirks
 ```
 
-One ergonomic for everything: **register a handle → get `/<name>-<handle>`**
-(a workstream, an eval test case, or a task runbook).
+One ergonomic for everything: **register a handle → get `/<name>-<handle>`**.
+Eval handles also get a short **`/eval-<handle>`** when that name is not already owned by another project.
 
 ## Common workflows
 

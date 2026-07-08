@@ -374,8 +374,11 @@ During a substantial work session:
 - `register-eval <e> [path]` — set up `evals/<e>/` as a **folder note**: the case spec is
   `evals/<e>/<e>.md` (named for the folder, **not** a generic `case.md`) with its input files (images,
   fixtures) as **siblings** in `evals/<e>/` — same folder-note convention as a lesson with artifacts, so
-  it renders cleanly in Obsidian. Then generate `/{{NAME}}-<e>` (`gen-command.sh {{NAME}} <e> eval
-  {{PDIR}}`). `eval all` runs the whole suite as a pre-release gate.
+  it renders cleanly in Obsidian. Then generate `/{{NAME}}-<e>` **and** the quick eval handle
+  `/eval-<e>` (`gen-command.sh {{NAME}} <e> eval {{PDIR}}`). The quick handle is also installed as an
+  `eval-<e>` user-scope skill for Codex/Claude discovery and autocomplete; if another project already owns
+  that short alias, keep the existing `/eval-<e>` and use the project-prefixed `/{{NAME}}-<e>` for this one.
+  `eval all` runs the whole suite as a pre-release gate.
 - `register-task <t>` — save a runbook `tasks/<t>.md`; generate `/{{NAME}}-<t>`.
 - `use-knowledge <k> [--unlink]` — link a global knowledge module
   (`$PROJECT_WITH_REFLECT_ROOT/knowledge/<k>`) into this project — the knowledge analog
@@ -413,6 +416,8 @@ During a substantial work session:
   to a fresh md):
   - **a result / benchmark / eval report** → its record file (`lessons/experiment-GUAVA.md`,
     `lessons/experiment-baseline.md`) — these **accumulate** (append the new run; don't rewrite history).
+    If the report establishes a named reusable eval case/protocol, also register the eval so it gets
+    `/eval-<name>` autocomplete plus the project-prefixed fallback.
   - **a rule / must-follow practice / invariant / settled conclusion** → a distilled lesson
     (`lessons/<topic>.md`, bounded update) + a line in `decisions.md` if it's a decision. **But if it's a
     *generalizable practice / recipe / pattern* others would reuse** (an in-repo `/release` skill, a CI

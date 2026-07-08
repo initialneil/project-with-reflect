@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.7 — 2026-07-08
+
+- Make checkin re-sync Terminal, Codex, and Claude titles every time
+
 ## v0.9.6 — 2026-07-08
 
 - Add quick /eval-* handles for registered evals

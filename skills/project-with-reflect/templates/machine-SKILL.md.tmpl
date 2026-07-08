@@ -38,9 +38,11 @@ Facts live in this folder's `{{NAME}}.md` frontmatter (ssh_alias / kind / repo /
   `/{{NAME}} nvidia-smi` → `ssh <alias> nvidia-smi`. **For a long-running job, don't run it here in the
   foreground — launch it detached** (see *Before acting* §4: tmux session + log; report session + log path).
 - `checkin` — **pick up + get ready**: verify reachable (`ssh <alias> true`), apply this box's learned
-  quirks (the power-limit-after-reboot, the dataset mount), **silently set the terminal title**
-  (`term-title.sh "{{NAME}}"` — no-ops off a real terminal; never surface its output), then auto-run
-  `status`. Use it when you sit down to work on this host.
+  quirks (the power-limit-after-reboot, the dataset mount), and **must re-run title sync every time**:
+  Terminal/iTerm2 via `term-title.sh "{{NAME}}"` (no-ops off a real terminal; never surface its output),
+  plus Codex/Claude app thread/session title via native title tools when available (resolve the active
+  thread/session first if needed; skip only when no reliable tool/lookup exists), then auto-run `status`.
+  Use it when you sit down to work on this host.
 - `status` — a **smart brief**: the facts (ssh alias / kind / endpoint) + **reachable?** + a quick
   health line adapted to the box (`ssh <alias> 'uptime; nvidia-smi; df -h'`) + quirk count + the most
   recent `log.md` line + the **`## Running jobs`** ledger, **reconciled** against ground truth

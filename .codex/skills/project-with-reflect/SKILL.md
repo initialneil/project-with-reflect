@@ -64,12 +64,14 @@ Bare `/project-with-reflect` → `help`.
 - **checkin `[<name>]`** — **pick up a project/connection and get ready** (the natural next step after
   `status`). Resolve the target: an explicit `<name>`, else the project whose `repo`/`dir` contains your
   cwd. Then **delegate to that skill's `checkin`** — it loads context, handles the working dir (cd
-  decision), **silently sets the terminal tab title** to what you're working on (via
-  `SK/scripts/term-title.sh "<name> · <workstream>"` — writes the title escape to the real terminal since the
-  Bash tool's stdout can't; no-ops off a real terminal, never surfaces output; in Codex Desktop, also rename
-  the app thread/sidebar title to the same compact title when the native thread-title tool and current
-  thread id are available; likewise in the Claude Code desktop/web app, rename the session/sidebar title via
-  its native session-title tool when available), and ends with a `status`
+  decision), and **must re-set the visible session title on every checkin**: Terminal/iTerm2 via
+  `SK/scripts/term-title.sh` (projects use `"<emoji> <name> · <workstream>"`, reading the emoji from
+  `config.json.emoji` each time and improvising + persisting it if missing; connections use `"<name>"`;
+  no-ops off a real terminal, never surfaces output), plus Codex Desktop and Claude Desktop/web via their
+  native thread/session title tools. If the current thread/session id is not already in context, resolve
+  the active local thread/session with the app's listing/current session tool before renaming; skip only
+  when the native title tool or a reliable lookup is unavailable, never because cwd/title already look
+  right. It then ends with a `status`
   recap, so you're immediately ready. If nothing resolves and no name was given, run meta `status` (the
   discovery list) and ask which to check into. From `~`: `status` to find it → `checkin <name>` to pick
   it up.
@@ -197,7 +199,9 @@ transport:
   note's body — the skill-native form of `update connection`), `note "…"`, and `reflect` — which
   folds `log.md` into the `## Quirks` section of `<name>.md`, then archives
   (`SK/scripts/reflect.sh archive-entity <conn_dir>`). Facts stay in frontmatter. **`checkin`** verifies
-  the connection is reachable and applies its quirks, then auto-runs **`status`** — a smart brief
+  the connection is reachable, applies its quirks, and must re-run the same title sync every time
+  (Terminal/iTerm2 via `term-title.sh "<name>"`, Codex/Claude app title via native title tools when
+  available), then auto-runs **`status`** — a smart brief
   (facts + reachable? + quirk count + recent log), not just the raw facts: ssh `ssh <alias> true` /
   uptime; serial → the port is present; http → `$<key_env>` is set (optional health ping); mcp → the
   `mcp__<name>__*` tools are available (re-wire if dropped).

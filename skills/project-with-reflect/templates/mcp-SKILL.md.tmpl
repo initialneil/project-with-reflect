@@ -18,9 +18,10 @@ in this folder's `{{NAME}}.md` frontmatter (`add_command`) and `connection.json`
 ## Actions
 - Use the `mcp__{{NAME}}__*` tools per `{{NAME}}.md`'s usage rules (what to reach for; what not to).
 - `checkin` — **pick up + get ready**: verify the `mcp__{{NAME}}__*` tools are available (re-wire via
-  `add_command` if dropped), apply learned quirks, **silently set the terminal title**
-  (`term-title.sh "{{NAME}}"` — no-ops off a real terminal; never surface its output), then auto-run
-  `status`.
+  `add_command` if dropped), apply learned quirks, and **must re-run title sync every time**:
+  Terminal/iTerm2 via `term-title.sh "{{NAME}}"` (no-ops off a real terminal; never surface its output),
+  plus Codex/Claude app thread/session title via native title tools when available (resolve the active
+  thread/session first if needed; skip only when no reliable tool/lookup exists), then auto-run `status`.
 - `status` — a **smart brief**: the facts (`add_command`) + **tools available?** + quirk count + the
   most recent `log.md` line. `reconnect` — re-run the `add_command`.
 - `update "<content>"` — fold reference material into this note's body sections (`## Usage`,

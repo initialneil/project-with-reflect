@@ -19,8 +19,10 @@ Facts live in this folder's `{{NAME}}.md` frontmatter (`base_url`, `key_env`) an
 - `<action> [args]` — make the documented call (curl / SDK / WebSocket) to the right endpoint
   from `{{NAME}}.md`, authenticating with `$<key_env>`. Return the result; **never echo the key**.
 - `checkin` — **pick up + get ready**: verify `$<key_env>` is set (optional cheap health ping to
-  `base_url`), apply learned quirks, **silently set the terminal title** (`term-title.sh "{{NAME}}"` —
-  no-ops off a real terminal; never surface its output), then auto-run `status`. **Never echo the key.**
+  `base_url`), apply learned quirks, and **must re-run title sync every time**: Terminal/iTerm2 via
+  `term-title.sh "{{NAME}}"` (no-ops off a real terminal; never surface its output), plus Codex/Claude app
+  thread/session title via native title tools when available (resolve the active thread/session first if
+  needed; skip only when no reliable tool/lookup exists), then auto-run `status`. **Never echo the key.**
 - `status` — a **smart brief**: the facts (`base_url` / `key_env`) + **key set? / reachable?** + quirk
   count + the most recent `log.md` line. Read-only; never prints the key.
 - `update "<content>"` — fold reference material into this note's body sections (`## Endpoints`,

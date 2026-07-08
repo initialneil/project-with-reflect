@@ -105,11 +105,11 @@ ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.code
 ```
 
 `status` 是**智能简报**（Where · Recap · TODO · Workstreams · flags），不是 dump。`checkin` 是
-**一个 working session 的入口** —— 它加载上下文、处理 cwd、**静默地把终端 tab 标题设为 project + workstream**
-（iTerm2 / Terminal / 任意支持 OSC 的终端；其它环境自动跳过），在 Codex Desktop 可用时也更新
-thread/sidebar 标题，并**以 `status` 收尾**，让你从磁盘恢复出
+**一个 working session 的入口** —— 它加载上下文、处理 cwd，并且**每次都重新设置可见标题**：iTerm2 /
+Terminal / 任意支持 OSC 的终端通过 title helper，Codex Desktop 和 Claude Desktop/web 则通过原生
+app title 工具（可用时）更新 thread / session 标题。然后它**以 `status` 收尾**，让你从磁盘恢复出
 当前 goal / plan、已完成、已学到、下一步，以及失败或风险点。
-（connection 也有：`/gpubox checkin` 会 ssh-ping 这台机器、应用它的 quirks、再给一份简报。）
+（connection 也有：`/gpubox checkin` 会 ssh-ping 这台机器、应用它的 quirks、重设标题、再给一份简报。）
 
 > **`/compact` 或 `/clear` 之后，请再 `/<project> checkin` 一次。** 两者都会把已加载的 lessons / recap
 > 从上下文里清掉（cwd 和 tab 标题仍在），重新 checkin 让你重新进入状态。两者都**不会**触发 `reflect` ——

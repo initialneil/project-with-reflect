@@ -24,8 +24,10 @@ monitor) and `connection.json` (transport: serial). Flash & monitor are baked in
   using its toolchain (MicroPython → paste-mode REPL; Arduino/PlatformIO → the matching serial
   command). Reconnect-wifi = push the wifi creds / re-run the connect routine over REPL.
 - `checkin` — **pick up + get ready**: verify the board is connected (its `connection.json.port` is
-  present), apply learned quirks (the download-mode dance, wiring), **silently set the terminal title**
-  (`term-title.sh "{{NAME}}"` — no-ops off a real terminal; never surface its output), then auto-run
+  present), apply learned quirks (the download-mode dance, wiring), and **must re-run title sync every
+  time**: Terminal/iTerm2 via `term-title.sh "{{NAME}}"` (no-ops off a real terminal; never surface its
+  output), plus Codex/Claude app thread/session title via native title tools when available (resolve the
+  active thread/session first if needed; skip only when no reliable tool/lookup exists), then auto-run
   `status`.
 - `status` — a **smart brief**: the facts (board / port / toolchain / baud) + **port present?** + quirk
   count + the most recent `log.md` line. Read-only.

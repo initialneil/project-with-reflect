@@ -478,6 +478,14 @@ During a substantial work session:
   (not every tick) to keep eval cost sane. Keep the plotter/panel scripts in the repo so any lane (or the
   next session) refreshes the same figures. This makes "watchable experiments" the default, not a one-off.
 
+  **Stamp every update with a date+time (`YYYY-MM-DD HH:MM`) and TELL the user what changed + where.** A long
+  record grows many sections (M1…M4, sweeps, stages) — the user loses track of where the new number landed.
+  So: (a) each time you write to the record, put a `YYYY-MM-DD HH:MM` stamp on the entry/row you add (and keep
+  a `Last updated:` stamp near the top of the live section), so entries are chronologically findable; and
+  (b) in your chat reply, name the **exact file + section** you touched and the one-line takeaway — e.g.
+  "updated `experiment-EHM-teacher.md` §STEP 1 curve + it-8000 row: adv-ft FID 63.9". Never silently update a
+  doc — an unannounced edit to a deep section is invisible to the user.
+
   **A lesson with artifacts is a *folder note*, never scattered files.** The moment a lesson needs to embed
   images/files, it becomes `lessons/<name>/<name>.md` (an Obsidian folder note) with its artifacts as
   **siblings in `lessons/<name>/`**, embedded by name (`![[<file>.png]]` resolves to the sibling). Copy the

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.10 — 2026-07-09
+
+- Add live experiment-record dashboard and timestamped update guidance
+
 ## v0.9.9 — 2026-07-08
 
 - Add Codex command-skill autocomplete support for global project-with-reflect commands

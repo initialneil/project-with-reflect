@@ -458,6 +458,26 @@ During a substantial work session:
   `e2e*` column) — plus a swap-parity metric (component-swapped e2e vs original e2e on the same
   reference).
 
+  **A long-running experiment keeps a LIVE dashboard in its record — refresh it along the way, not just at
+  the end.** For anything that trains/runs over time (a training run, a sweep, a multi-stage pipeline), the
+  experiment record is the user's **watch surface**: embed and re-generate, at every checkpoint, two kinds of
+  visual so the user can see how it's actually going without reading logs —
+  - **Metric / loss curves** (`![[…-curves.png]]`) — track that the run is **healthy, converging, and where it
+    saturates**: is loss still falling or plateaued, has the metric stopped improving (time to stop / it's
+    done), did it diverge. Plot the informative series over iteration; a **metric-over-checkpoints** curve
+    (FID/accuracy/… per eval, vs the baselines as reference lines) shows the real trajectory a single number
+    hides. **Write a small refreshable plotter** (reads the run's `log.jsonl` / an accumulating
+    `eval_metrics.json`) so a refresh is one command.
+  - **Qualitative panels** (`![[…-panel.png]]`) — the curves say a number moved; the **panel is how the user
+    knows the output is *actually* good** (GT | model-A | model-B … side by side, the regions that matter).
+    A metric can improve while the render is wrong; the vis catches what the metric can't.
+
+  Use a **fixed image path per figure** so re-generating updates it **in place** in the note (the embed
+  doesn't change) — the user just re-opens the note and sees the latest. **Cadence:** refresh curves at every
+  checkpoint (cheap — no compute); run the fuller qualitative/metric eval at the **meaningful** checkpoints
+  (not every tick) to keep eval cost sane. Keep the plotter/panel scripts in the repo so any lane (or the
+  next session) refreshes the same figures. This makes "watchable experiments" the default, not a one-off.
+
   **A lesson with artifacts is a *folder note*, never scattered files.** The moment a lesson needs to embed
   images/files, it becomes `lessons/<name>/<name>.md` (an Obsidian folder note) with its artifacts as
   **siblings in `lessons/<name>/`**, embedded by name (`![[<file>.png]]` resolves to the sibling). Copy the

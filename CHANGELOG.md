@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.12 — 2026-07-11
+
+- top-level /teammate-assemble + /teammate-dismiss commands (CLI autocomplete; cwd-resolved, log-and-reflect pattern)
+
 ## v0.9.11 — 2026-07-11
 
 - teammate mode for cooperating workstreams (teammate-assemble/dismiss + standby watch, Claude Code + iTerm2) · README EN|ZH switcher + handoff/pickup + teammate docs

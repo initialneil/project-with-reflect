@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.14 — 2026-07-12
+
+- teammate context hygiene — recycle instead of degrade: near-full/post-compact → flush → full checkin --as-teammate-of → re-arm watch; unrecoverable → clean exit + auto-revive; commander can force via recycle baton
+
 ## v0.9.13 — 2026-07-11
 
 - checkin is a BLOCKING gate — must complete (printed status recap) before any task starts, even same-message tasks; skipped-checkin failure mode documented

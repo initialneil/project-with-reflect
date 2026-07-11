@@ -449,6 +449,17 @@ During a substantial work session:
   to a lesson via `record` so they outlive the window. **Commanding stays vault-only:** the commander
   just uses normal `handoff <workstream> "…"` — assemble adds no new channel, only the auto-launch + the
   watch (see *Working*).
+  **Context hygiene — a teammate recycles instead of degrading.** The standby loop erodes the context
+  window (batons accumulate; an auto-compact wipes it). At an idle point when context is nearly full —
+  or right after **any** compaction — the teammate **flushes to disk, re-runs the FULL
+  `checkin <workstream> --as-teammate-of <commander>` ritual (reboot from disk — the blocking-gate rule
+  applies to a recycled teammate too), re-arms the watch**, then reports
+  `handoff <commander> "recycled: re-grounded, standing by"` — never keep taking batons on a choked or
+  freshly-compacted context. If re-grounding can't recover, flush and **exit cleanly**: the dead window
+  is revived fresh by the commander's next checkin (step 5) or an immediate `teammate-assemble` — state
+  lives in the vault, so a recycled teammate loses nothing. The **commander** watches for the signs
+  (replies degrade, a baton half-done, no "done" back) and can force a recycle anytime with a baton:
+  `handoff <workstream> "recycle: flush + exit"`.
 - `teammate-dismiss <workstream>` — **decouple.** First send the last baton — `handoff <workstream>
   "dismissed: flush + stand down"` — so the standby watch fires once more and the teammate does its
   **final flush** (write pending log/record entries, drop the `> ✅` receipt, stop its watch, say it's

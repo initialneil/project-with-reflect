@@ -187,7 +187,14 @@ During a substantial work session:
   **Every invocation runs the FULL ritual — load → reboot → cwd → freshness → title → status — even when the state
   looks already set.** Right after a `/compact` or `/clear` the loaded context is gone but the cwd + terminal
   title persist, so a checkin can *look* redundant — it isn't: re-run every step to re-ground (rebuilding
-  what compaction wiped is the whole point of checkin). **Never short-circuit to just the recap.** The entry
+  what compaction wiped is the whole point of checkin). **Never short-circuit to just the recap.**
+  **Checkin is a BLOCKING gate — it must COMPLETE before any task is picked up.** Complete means the full
+  ritual ran and ended with the printed `status` recap; "read a file or two, then jumped into the work" is a
+  **skipped** checkin, not a light one. When tasks arrive in the same message as the checkin (or right after
+  it), **finish the whole checkin first, then start task 1** — a skipped checkin is exactly how a session
+  does confident wrong work: wrong lane, stale plan, decisions/lessons unloaded, failed attempts re-derived,
+  batons unseen. If you notice mid-work that checkin never completed, **stop and run it in full** before
+  continuing. The entry
   point for a working session: (1) **load** the behavioral-contract context — `{{NAME}}.md` + `decisions.md`
   + (for a workstream) its `log.md` + `base`, the lesson modules matching the task, and bound-connection facts;
   then **reboot from disk** by answering, in the recap, the five questions:

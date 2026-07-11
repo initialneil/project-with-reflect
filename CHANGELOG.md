@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.13 — 2026-07-11
+
+- checkin is a BLOCKING gate — must complete (printed status recap) before any task starts, even same-message tasks; skipped-checkin failure mode documented
+
 ## v0.9.12 — 2026-07-11
 
 - top-level /teammate-assemble + /teammate-dismiss commands (CLI autocomplete; cwd-resolved, log-and-reflect pattern)

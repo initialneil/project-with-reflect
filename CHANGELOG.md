@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.11 — 2026-07-11
+
+- teammate mode for cooperating workstreams (teammate-assemble/dismiss + standby watch, Claude Code + iTerm2) · README EN|ZH switcher + handoff/pickup + teammate docs
+
 ## v0.9.10 — 2026-07-09
 
 - Add live experiment-record dashboard and timestamped update guidance

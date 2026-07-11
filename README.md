@@ -1,5 +1,7 @@
 # project-with-reflect
 
+**English** | [中文](README_ZH.md)
+
 > A **self-distilling** meta-skill for Codex, Claude Code, and other AI coding agents. — Neil Z. Shao
 >
 > Best used with [Obsidian](https://obsidian.md) + plugins:
@@ -156,6 +158,10 @@ applies its quirks, resets the title, and briefs it.)
 /<name> note "…"                  # ephemeral log line
 /<name> reflect [<target>] [--reground]
 /<name> todo                      # backlog
+/<name> handoff <lane> "…"        # pass a baton to a sibling workstream (through the shared vault)
+/<name> pickup                    # receive side: grab pending 📥 batons + new shared results
+/<name> teammate-assemble <lane>  # live teammate window for a sibling lane (Claude Code + iTerm2 only)
+/<name> teammate-dismiss <lane>   # decouple; the lane stays a normal workstream
 /<name> bind --connection <c> [--build "…"]
 /<name> build | flash | monitor   # via a bound device / server
 /<name> register-workstream <b> --base <x>
@@ -227,6 +233,28 @@ workstream**, not one-shot.
 ```
 Each is also its own skill — `/cardputer-adv flash`, `/gcs-server <cmd>` — and project-context
 `flash`/`monitor` delegate to it, so its learned quirks apply.
+
+**Two cooperating lanes — with a live teammate window** *(teammate mode is Claude Code + iTerm2 on macOS
+only; the underlying `handoff`/`pickup` protocol works everywhere)*:
+
+Two workstreams of one project (a `paper` lane that discusses and decides, a `train` lane that executes)
+coordinate **through the shared vault** — results land in shared lessons, directed batons travel via
+`handoff` → `pickup`. Normally each lane picks batons up on its next checkin; **teammate mode makes the
+sibling lane live** so a baton is acted on the moment it lands:
+
+```
+/myapp checkin paper                  # your lane: discuss, analyze, decide
+/myapp teammate-assemble train        # opens an iTerm2 window: claude checks in `train` and stands by
+/myapp handoff train "round 3: lr=1e-4, run it, log to the experiment record"
+# …the teammate window picks the baton up by itself, runs it, records results,
+#    hands back "done: …" — you analyze, discuss, send the next round…
+/myapp teammate-dismiss train         # decouple: teammate flushes to disk, window can be closed
+```
+
+The teammate is a full interactive session — you can type into its window anytime (e.g. a mid-phase
+"change the experiment-log format"). All content still flows through the vault files, so a closed
+teammate window loses nothing; every checkin of your lane revives a dead teammate window until you
+dismiss it, and a dismissed lane is just a normal workstream again (`checkin train` in any fresh window).
 
 ## First run: choosing the root
 

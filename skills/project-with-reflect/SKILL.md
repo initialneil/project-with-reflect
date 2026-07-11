@@ -93,11 +93,13 @@ Bare `/project-with-reflect` → `help`.
   decision), and **must re-set the visible session title on every checkin**: Terminal/iTerm2 via
   `SK/scripts/term-title.sh` (projects use `"<emoji> <name> · <workstream>"`, reading the emoji from
   `config.json.emoji` each time and improvising + persisting it if missing; connections use `"<name>"`;
-  no-ops off a real terminal, never surfaces output), plus Codex Desktop and Claude Desktop/web via their
-  native thread/session title tools. If the current thread/session id is not already in context, resolve
-  the active local thread/session with the app's listing/current session tool before renaming; skip only
-  when the native title tool or a reliable lookup is unavailable, never because cwd/title already look
-  right. It then ends with a `status`
+  no-ops off a real terminal, never surfaces output). **Codex Desktop**: also rename the thread/sidebar item
+  via its native thread-title tool. If the current thread id isn't already in context, resolve the active
+  thread with a **broad recent-thread lookup** (no narrow query first, or retry with no query if a query
+  returns nothing) matched by status/cwd/latest preview; a failed narrow search alone is not enough to skip.
+  **Claude Desktop/web**: Claude Code's title tool `mcp__ccd_session_mgmt__set_session_title` renames *other*
+  sessions, **not the current one** (it rejects self-rename) — so a session **cannot auto-title itself**; the
+  user double-clicks the sidebar title instead. Don't call it on the current session. It then ends with a `status`
   recap, so you're immediately ready. If nothing resolves and no name was given, run meta `status` (the
   discovery list) and ask which to check into. From `~`: `status` to find it → `checkin <name>` to pick
   it up.

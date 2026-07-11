@@ -136,6 +136,12 @@ shared changes since this lane was last here), and mid-session standalone **`pic
 without a full checkin — so a baton is impossible to miss. (Two lanes writing the **same** shared file at the
 exact same moment can clash — in practice the `handoff`/`pickup` turn-taking serializes them; keep shared
 writes append-only and, if you ever collide, re-read and re-append.)
+**Want the sibling lane LIVE — its own window, no human poke between batons?** `teammate-assemble
+<lane>` (see *Subcommands*): same blackboard channel, unchanged routing — the only additions are an
+auto-launched iTerm2 window for the sibling and a **standby watch** on its goal/plan log, so a
+`handoff` is acted on the moment it lands instead of at the sibling's next manual pickup. A
+**coupled phase**, not a merger: `teammate-dismiss` decouples and both lanes stay ordinary
+workstreams (all state is in the vault files, so a closed teammate window loses nothing).
 
 **Record durable results the moment they land — proactively, don't wait for `reflect`.** A *log* line is
 ephemeral working memory (consumed at reflect). But a **durable, reusable result** — a measured
@@ -241,14 +247,23 @@ During a substantial work session:
     — never surface its output.
   - **Codex Desktop**: must attempt to rename the Codex thread/sidebar item to the same compact title via
     the native thread-title tool. If the current thread id is not already available, use the app's
-    thread-list/current-thread tool to identify the active local thread first (match the active thread in
-    this cwd/title when needed). Skip only when the app title tool or a reliable current-thread lookup is
-    unavailable. This is an app-tool action, **not** a shell escape, and it should not block checkin.
-  - **Claude Desktop / web**: likewise, must attempt to rename the session/sidebar title via the native
-    session-title tool. If the session id is not already available, first use the app's session/thread
-    listing tool to resolve the active session when possible. Skip only when no native title tool or
-    reliable current-session lookup exists. App-tool action, **not** a shell escape.
+    thread-list/current-thread tool to identify the active local thread first. **Do a broad recent-thread
+    lookup before giving up**: list recent local Codex threads (no narrow query first, or retry with no
+    query if a query returns nothing), then pick the thread whose `status` is active and whose `cwd` and
+    latest preview/user prompt match this checkin. A failed narrow search is **not** a reliable lookup.
+    Rename it immediately once identified, and report only if the lookup stayed ambiguous/unavailable.
+    This is an app-tool action, **not** a shell escape, and it should not block checkin.
+  - **Claude Desktop / web**: the OSC escape no-ops here (no real terminal), and Claude Code's title tool
+    `mcp__ccd_session_mgmt__set_session_title` **renames *other* sessions, not the current one** (it rejects
+    self-rename) — so a session **cannot auto-title itself**; the user double-clicks the sidebar title to set
+    it. Don't call the tool on the current session. Wire it here only if a self-rename API appears.
   Then (4) **auto-run `status`** — so checkin always ends with a recap and you're ready to work.
+  Finally (5) **re-assemble teammates** (workstream checkin only): if this lane's `stream.json` has a
+  `teammates` list, reconcile each entry — `teammate.sh {{PDIR}} status <ws>` — and **relaunch any dead
+  one** (`teammate.sh {{PDIR}} assemble <ws> --commander <this-lane>`), reporting what was revived.
+  `teammate-dismiss` removes the entry, so a dismissed pair stays dismissed — never re-add on your own.
+  **`checkin <ws> --as-teammate-of <lane>`** (how an assembled window starts) = the full ritual above,
+  then enter **teammate standby** instead of waiting for the user — see `teammate-assemble`.
 - `status` — a **smart brief, not a dump** (read-only; no cd, no writes). Synthesize from `{{NAME}}.md`
   + the active stream's recent `log.md` + the `## TODO` backlog + the `stream.json`s, and print tersely,
   a few lines per heading:
@@ -410,6 +425,30 @@ During a substantial work session:
   and get to work; a ```handoff``` FYI / ask → address it (if it needs no plan entry, drop a `> ✅ <date>`
   read-receipt under it — the one allowed annotation, since it's your own mailbox). Nothing pending → say so
   in a line. **`handoff` sends, `pickup` receives.**
+- `teammate-assemble <workstream>` — **couple a sibling lane to this one, live** (macOS + iTerm2): run
+  `teammate.sh {{PDIR}} assemble <workstream> --commander <this-lane>`. It opens an iTerm2 window running
+  `claude "/{{NAME}} checkin <workstream> --as-teammate-of <this-lane>"`, writes
+  `workstreams/<workstream>/teammate.lock` (window liveness), and adds the lane to **this** lane's
+  `stream.json.teammates` — from then on **every checkin of this lane revives a dead teammate window
+  automatically** (checkin step 5), until dismissed. No iTerm2 / not macOS → the script fails with the
+  exact `claude` command to run manually in any window; the protocol below works the same.
+  **What the assembled window does — teammate standby:** after its normal checkin ritual it does not
+  wait for a human. It arms a **background watch** on its own goal/plan log
+  (`workstreams/<workstream>/<workstream>.md`) — e.g. a background `until` loop on the file's mtime
+  (re-armed after each firing), or a persistent Monitor if available — and on each change runs
+  **`pickup` → act** (execute the ```plan``` baton / answer the ```handoff``` ask) **→ `record` results +
+  `handoff <commander> "done: …"` → re-arm**. Between batons it sits idle. The human can still type into
+  the teammate window anytime (a mid-phase correction — "change the log format"); durable corrections go
+  to a lesson via `record` so they outlive the window. **Commanding stays vault-only:** the commander
+  just uses normal `handoff <workstream> "…"` — assemble adds no new channel, only the auto-launch + the
+  watch (see *Working*).
+- `teammate-dismiss <workstream>` — **decouple.** First send the last baton — `handoff <workstream>
+  "dismissed: flush + stand down"` — so the standby watch fires once more and the teammate does its
+  **final flush** (write pending log/record entries, drop the `> ✅` receipt, stop its watch, say it's
+  done); then run `teammate.sh {{PDIR}} dismiss <workstream> --commander <this-lane>` (removes it from
+  `teammates` + clears the lock — checkin stops reviving it). The window can then be closed; **the lane
+  stays a normal workstream** — remind the user: to drive it independently later, open a fresh window
+  and `checkin <workstream>`.
 - `record ["<what>"]` — **persist a durable thing into permanent memory NOW, in its right home**
   (not the ephemeral log — that's `note`; not the end-of-session sweep — that's `reflect`). **Flexible** —
   it's not experiment-specific: you (or the user — "record this as a rule", "record this website") infer

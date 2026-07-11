@@ -1,5 +1,7 @@
 # project-with-reflect
 
+[English](README.md) | **中文**
+
 > 一个面向 Codex、Claude Code 和其他 AI coding agents 的**帮你蒸馏自己的** meta-skill。 —— Neil Z. Shao
 >
 > 搭配 [Obsidian](https://obsidian.md) 和插件体验最佳：
@@ -152,6 +154,10 @@ app title 工具（可用时）更新 thread / session 标题。然后它**以 `
 /<name> note "…"                  # 临时 log 一行
 /<name> reflect [<target>] [--reground]
 /<name> todo                      # backlog
+/<name> handoff <lane> "…"        # 把接力棒传给兄弟 workstream（通过共享 vault）
+/<name> pickup                    # 接收侧：取待办的 📥 接力棒 + 新的共享结果
+/<name> teammate-assemble <lane>  # 给兄弟 lane 拉起实时 teammate 窗口（Claude Code + iTerm2 专用）
+/<name> teammate-dismiss <lane>   # 解耦；该 lane 仍是普通 workstream
 /<name> bind --connection <c> [--build "…"]
 /<name> build | flash | monitor   # 通过绑定的 device / server
 /<name> register-workstream <b> --base <x>
@@ -220,6 +226,27 @@ version lineage 就是 `base` 指针链 `v080 ← v090 ← v090-bug-fix`；`pr` 
 ```
 每个也都是自己的 skill —— `/cardputer-adv flash`、`/gcs-server <cmd>`；project 里的 `flash`/`monitor`
 会委托给它，于是它学到的 quirks 自动生效。
+
+**两条 lane 协作 —— 外加一个实时 teammate 窗口** *（teammate 模式为 Claude Code + iTerm2（macOS）专用；
+底层的 `handoff`/`pickup` 协议在任何环境都可用）*：
+
+同一 project 的两条 workstream（讨论决策的 `paper` lane、干活执行的 `train` lane）**通过共享 vault 协作**
+—— 结果落进共享 lesson，定向接力棒走 `handoff` → `pickup`。普通模式下对方要到下次 checkin 才会接棒；
+**teammate 模式让兄弟 lane 实时在线**，接力棒一落地就被执行：
+
+```
+/myapp checkin paper                  # 你的 lane：讨论、分析、拍板
+/myapp teammate-assemble train        # 自动拉起 iTerm2 窗口：claude checkin `train` 并待命
+/myapp handoff train "round 3: lr=1e-4，跑起来，结果写进 experiment record"
+# …teammate 窗口自动接棒、执行、record 结果、handoff 回报 "done: …"
+#    —— 你分析、讨论、再发下一轮…
+/myapp teammate-dismiss train         # 解耦：teammate 把状态 flush 落盘，窗口可以关掉
+```
+
+teammate 是一个完整的交互式会话 —— 你随时可以在它的窗口里直接打字插话（比如中途要求"改一下实验记录
+的写法"）。所有内容始终走 vault 文件，所以关掉 teammate 窗口不丢任何东西；在你的 lane 每次 checkin
+都会自动复活挂掉的 teammate 窗口，直到 dismiss；解耦后的 lane 就是普通 workstream（任何新窗口
+`checkin train` 即可继续）。
 
 ## 首次运行：选 root  First run
 

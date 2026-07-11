@@ -234,8 +234,9 @@ workstream**, not one-shot.
 Each is also its own skill — `/cardputer-adv flash`, `/gcs-server <cmd>` — and project-context
 `flash`/`monitor` delegate to it, so its learned quirks apply.
 
-**Two cooperating lanes — with a live teammate window** *(teammate mode is Claude Code + iTerm2 on macOS
-only; the underlying `handoff`/`pickup` protocol works everywhere)*:
+**Two cooperating lanes — with a live teammate window** *(the teammate window needs macOS + iTerm2 + the
+`claude` CLI; the **commanding** session can be any agent with the skill — Claude Code CLI, Claude
+Desktop, or Codex. The underlying `handoff`/`pickup` protocol works everywhere)*:
 
 Two workstreams of one project (a `paper` lane that discusses and decides, a `train` lane that executes)
 coordinate **through the shared vault** — results land in shared lessons, directed batons travel via

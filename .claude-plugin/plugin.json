@@ -1,6 +1,6 @@
 {
   "name": "project-with-reflect",
-  "version": "0.9.14",
+  "version": "0.9.15",
   "description": "A multi-agent meta-skill for Codex, Claude Code, and other coding agents. It turns each project, machine, device, API, and MCP server into a lightweight, self-improving skill: work through /<project>, auto-log moments that matter, and reflect logs into lean lessons so the next session starts smarter.",
   "author": {
     "name": "initialneil",

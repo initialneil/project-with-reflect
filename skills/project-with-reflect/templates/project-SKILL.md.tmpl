@@ -433,8 +433,10 @@ During a substantial work session:
   read-receipt under it — the one allowed annotation, since it's your own mailbox). Nothing pending → say so
   in a line. **`handoff` sends, `pickup` receives.**
 - `teammate-assemble <workstream>` — **couple a sibling lane to this one, live** (macOS + iTerm2): run
-  `teammate.sh {{PDIR}} assemble <workstream> --commander <this-lane>`. It opens an iTerm2 window running
-  `claude "/{{NAME}} checkin <workstream> --as-teammate-of <this-lane>"`, writes
+  `teammate.sh {{PDIR}} assemble <workstream> --commander <this-lane> [--model <m>] [--effort <e>]`
+  (model/effort pass through to the teammate's `claude` — e.g. an executor lane on `--model opus
+  --effort high` while the commander thinks on a different model). It opens an iTerm2 window running
+  `claude --teammate-mode in-process … "/{{NAME}} checkin <workstream> --as-teammate-of <this-lane>"`, writes
   `workstreams/<workstream>/teammate.lock` (window liveness), and adds the lane to **this** lane's
   `stream.json.teammates` — from then on **every checkin of this lane revives a dead teammate window
   automatically** (checkin step 5), until dismissed. No iTerm2 / not macOS → the script fails with the
@@ -455,7 +457,10 @@ During a substantial work session:
   `checkin <workstream> --as-teammate-of <commander>` ritual (reboot from disk — the blocking-gate rule
   applies to a recycled teammate too), re-arms the watch**, then reports
   `handoff <commander> "recycled: re-grounded, standing by"` — never keep taking batons on a choked or
-  freshly-compacted context. If re-grounding can't recover, flush and **exit cleanly**: the dead window
+  freshly-compacted context. If re-grounding can't recover, flush and **exit cleanly** — exit means
+  **`kill -TERM $PPID` from your own Bash tool** (your Bash tool's parent IS your claude process; this
+  touches nothing else). **Never a pattern kill** (`pkill -f …`) — the pattern can match sibling
+  teammates of other lanes/projects. The dead window
   is revived fresh by the commander's next checkin (step 5) or an immediate `teammate-assemble` — state
   lives in the vault, so a recycled teammate loses nothing. The **commander** watches for the signs
   (replies degrade, a baton half-done, no "done" back) and can force a recycle anytime with a baton:

@@ -227,8 +227,9 @@ version lineage 就是 `base` 指针链 `v080 ← v090 ← v090-bug-fix`；`pr` 
 每个也都是自己的 skill —— `/cardputer-adv flash`、`/gcs-server <cmd>`；project 里的 `flash`/`monitor`
 会委托给它，于是它学到的 quirks 自动生效。
 
-**两条 lane 协作 —— 外加一个实时 teammate 窗口** *（teammate 模式为 Claude Code + iTerm2（macOS）专用；
-底层的 `handoff`/`pickup` 协议在任何环境都可用）*：
+**两条 lane 协作 —— 外加一个实时 teammate 窗口** *（teammate 窗口本身需要 macOS + iTerm2 + `claude`
+CLI；**指挥侧**可以是任何装了 skill 的 agent —— Claude Code CLI、Claude Desktop 或 Codex。底层的
+`handoff`/`pickup` 协议在任何环境都可用）*：
 
 同一 project 的两条 workstream（讨论决策的 `paper` lane、干活执行的 `train` lane）**通过共享 vault 协作**
 —— 结果落进共享 lesson，定向接力棒走 `handoff` → `pickup`。普通模式下对方要到下次 checkin 才会接棒；

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.15 — 2026-07-12
+
+- teammate e2e-verified from Desktop commander; pid-based lock liveness (sid fallback); --model/--effort passthrough + --teammate-mode in-process; sanctioned exit = kill -TERM $PPID (pattern pkill forbidden); README: commander can be CLI/Desktop/Codex
+
 ## v0.9.14 — 2026-07-12
 
 - teammate context hygiene — recycle instead of degrade: near-full/post-compact → flush → full checkin --as-teammate-of → re-arm watch; unrecoverable → clean exit + auto-revive; commander can force via recycle baton

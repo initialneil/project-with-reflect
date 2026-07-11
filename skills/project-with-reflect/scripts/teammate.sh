@@ -21,10 +21,12 @@ WS="${3:?workstream required}"
 pwr_validate_name "workstream name" "$WS"
 shift 3
 
-LANE=""
+LANE=""; MODEL=""; EFFORT=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --commander) LANE="${2:?--commander needs a value}"; pwr_validate_name "commander lane" "$2"; shift 2 ;;
+    --model)     MODEL="${2:?--model needs a value}";  pwr_validate_name "model" "$2";  shift 2 ;;
+    --effort)    EFFORT="${2:?--effort needs a value}"; pwr_validate_name "effort" "$2"; shift 2 ;;
     *) echo "unknown arg: $1" >&2; exit 2 ;;
   esac
 done
@@ -37,15 +39,19 @@ WSDIR="$PDIR/workstreams/$WS"
 LOCK="$WSDIR/teammate.lock"
 [ -d "$WSDIR" ] || { echo "workstream '$WS' not registered (no $WSDIR) — register-workstream first" >&2; exit 1; }
 
-# Liveness = the locked iTerm2 session still exists ON THIS HOST.
-# ponytail: session-alive ≠ claude-alive (a Ctrl-C'd claude leaves the shell session up); good enough —
-# the model reports staleness when a "live" teammate stops answering batons.
+# Liveness: prefer the claude PID (exact — survives the "shell alive, claude dead" case the e2e
+# drill exposed); fall back to the iTerm2 session id for locks written before the pid upgrade.
 lock_liveness() {
   [ -f "$LOCK" ] || { echo "absent"; return; }
-  local host sid
+  local host sid pid
   host="$(python3 -c "import json;print(json.load(open('$LOCK')).get('host',''))" 2>/dev/null || echo "")"
   sid="$(python3 -c "import json;print(json.load(open('$LOCK')).get('sid',''))" 2>/dev/null || echo "")"
+  pid="$(python3 -c "import json;print(json.load(open('$LOCK')).get('pid',''))" 2>/dev/null || echo "")"
   [ "$host" = "$(hostname)" ] || { echo "other-host"; return; }   # vault syncs across machines; lock is machine-local
+  if [ -n "$pid" ]; then
+    kill -0 "$pid" 2>/dev/null && echo "alive" || echo "dead"
+    return
+  fi
   [ -n "$sid" ] || { echo "dead"; return; }
   osascript - "$sid" <<'OSA' 2>/dev/null || echo "dead"
 on run argv
@@ -97,27 +103,40 @@ case "$ACTION" in
     fi
     LAND="$PDIR"; [ -n "$REPO" ] && [ -d "$REPO" ] && LAND="$REPO"
     PROMPT="/$NAME checkin $WS --as-teammate-of $LANE"
-    SID="$(osascript - "$LAND" "$PROMPT" <<'OSA'
+    # --teammate-mode in-process keeps the teammate from spawning its own panes (paper-lane practice)
+    CMD="claude --teammate-mode in-process${MODEL:+ --model $MODEL}${EFFORT:+ --effort $EFFORT} '$PROMPT'"
+    SID="$(osascript - "$LAND" "$CMD" <<'OSA'
 on run argv
   set landDir to item 1 of argv
-  set thePrompt to item 2 of argv
+  set theCmd to item 2 of argv
   tell application "iTerm"
     activate
     set newWindow to (create window with default profile)
     tell current session of newWindow
-      write text "cd " & quoted form of landDir & " && claude " & quoted form of thePrompt
+      write text "cd " & quoted form of landDir & " && " & theCmd
       return id as text
     end tell
   end tell
 end run
 OSA
 )"
-    [ -n "$SID" ] || { echo "iTerm2 launch failed — open a window manually and run: claude \"$PROMPT\"" >&2; exit 1; }
-    python3 - "$LOCK" "$SID" "$LANE" <<PY
+    [ -n "$SID" ] || { echo "iTerm2 launch failed — open a window manually and run: $CMD" >&2; exit 1; }
+    # grab the claude PID for exact liveness (prompt string is unique per project+ws+lane)
+    PID=""
+    for _ in $(seq 1 15); do
+      PID="$(pgrep -nf "/$NAME checkin $WS --as-teammate-of $LANE" 2>/dev/null || true)"
+      [ -n "$PID" ] && break
+      sleep 1
+    done
+    [ -n "$PID" ] || echo "warn: claude pid not found after 15s — liveness will fall back to the iTerm2 session" >&2
+    python3 - "$LOCK" "$SID" "$LANE" "$PID" "$MODEL${EFFORT:+ --effort $EFFORT}" <<PY
 import json, sys, socket, datetime
-lock, sid, lane = sys.argv[1:4]
-json.dump({"sid": sid, "commander": lane, "host": socket.gethostname(),
-           "started": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")}, open(lock, "w"), indent=2)
+lock, sid, lane, pid, model = sys.argv[1:6]
+d = {"sid": sid, "commander": lane, "host": socket.gethostname(),
+     "started": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")}
+if pid: d["pid"] = int(pid)
+if model.strip(): d["model"] = model.strip()
+json.dump(d, open(lock, "w"), indent=2)
 PY
     edit_teammates add
     echo "assembled teammate '$WS' (commander: $LANE) — iTerm2 session $SID, lock at $LOCK"

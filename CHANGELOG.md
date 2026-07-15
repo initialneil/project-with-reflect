@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.16 — 2026-07-15
+
+- knowledge IS a personal skill: register-knowledge now creates knowledge/<slug>/ (<slug>.md content + SKILL.md loader) symlinked into ~/.claude/skills + ~/.codex/skills, so /<slug> autocompletes + auto-triggers everywhere; legacy flat notes migrate on re-run; use-knowledge linking unchanged (composes)
+
 ## v0.9.15 — 2026-07-12
 
 - teammate e2e-verified from Desktop commander; pid-based lock liveness (sid fallback); --model/--effort passthrough + --teammate-mode in-process; sanctioned exit = kill -TERM $PPID (pattern pkill forbidden); README: commander can be CLI/Desktop/Codex

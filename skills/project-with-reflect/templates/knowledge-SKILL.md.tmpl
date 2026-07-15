@@ -1,0 +1,22 @@
+---
+name: {{NAME}}
+description: "Apply the {{NAME}} knowledge — a reusable practice/recipe/reference from project-with-reflect. Use when the user types /{{NAME}} or the task matches this knowledge. (Tailor this description at register time: one targeted 'Use when …' sentence so it auto-triggers without misfiring.)"
+---
+# {{NAME}} — knowledge skill (project-with-reflect)
+
+A global knowledge module: a reusable practice / recipe / reference that serves many projects.
+The content lives in this folder's `{{NAME}}.md` (the folder note); this file is the loader.
+
+## Actions
+- **(default) apply** — read `{{NAME}}.md` and apply it to the task at hand. The note is the
+  single source of truth; don't improvise around it.
+- `update "<content>"` — fold new findings / corrections / tuning into `{{NAME}}.md`: merge +
+  dedupe, bounded update — **don't blind-append**. Keep it lean and reader-first (conclusion →
+  evidence → reference).
+- `note "…"` — force an ephemeral line into `log.md` (a gotcha hit while applying it).
+- `reflect` — fold `log.md` into `{{NAME}}.md`, then archive (`reflect.sh archive-entity {{DIR}}`).
+- `help` — this menu.
+
+Projects opt in with `/<project> use-knowledge {{NAME}}` (auto-loads when relevant there);
+this skill is the from-anywhere handle. Artifacts (images/files) live as siblings in this
+folder, embedded `![[<file>]]`.

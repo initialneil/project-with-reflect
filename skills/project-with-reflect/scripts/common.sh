@@ -55,7 +55,7 @@ pwr_validate_name() {
 }
 
 pwr_ensure_root() {
-  # connections/ = everything you operate (ssh | serial | http | mcp); knowledge/ = plain-md only.
+  # connections/ = everything you operate (ssh | serial | http | mcp); knowledge/ = reusable practices/recipes/references, skills too.
   mkdir -p "$PWR_ROOT"/projects "$PWR_ROOT"/connections \
            "$PWR_ROOT"/knowledge "$PWR_ROOT"/memories "$PWR_ROOT"/agents \
            "$PWR_ROOT"/templates "$PWR_ROOT"/scripts

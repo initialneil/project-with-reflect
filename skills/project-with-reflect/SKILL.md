@@ -56,7 +56,7 @@ project's **experiment records** — append-only, permanent (see the project tem
 `$PROJECT_WITH_REFLECT_ROOT` holds:
 `projects/ connections/ knowledge/ memories/ agents/ templates/ scripts/ registry.json`.
 **connections/** = everything you *operate* (ssh host · serial device · HTTP API · MCP server),
-each a skill with a `transport`. **knowledge/** = plain-md reference notes only.
+each a skill with a `transport`. **knowledge/** = reusable practices/recipes/references, each a skill too.
 
 **First run is enforced by the scripts, not just remembered here.** Any `register-*`
 script exits `3` printing `PWR_FIRST_RUN` when no root is configured (no env var, no
@@ -169,17 +169,21 @@ They differ only by transport:
   `claude mcp add --scope user <name> -- <command…>` (or `--transport http <name> <url>`),
   confirming the command — then `SK/scripts/register-mcp.sh <name> "<the add command>" ["note"]`.
   `mcp__<name>__*` tools become available; the skill records the re-add line + usage rules.
-- **register-knowledge `<slug>`** — a **plain-markdown reference note** (NOT a skill, NOT
-  operable): `SK/scripts/register-knowledge.sh <slug>` → a flat `$ROOT/knowledge/<slug>.md`. The
-  common, lightweight case that **piles up over time** (reflect/meta-reflect promote learnings
-  into these). Link to a project with `/<project> use-knowledge <slug>` (one note serves many
-  projects; the dashboard shows it as a `[[wikilink]]`; loads when relevant). For anything you
+- **register-knowledge `<slug>`** — a **global knowledge module as a real skill** (knowledge IS a
+  personal skill): `SK/scripts/register-knowledge.sh <slug>` → `$ROOT/knowledge/<slug>/` with
+  `<slug>.md` (the content, folder note) + `SKILL.md` (the loader), symlinked into the user skill
+  dirs so **`/<slug>` autocompletes + auto-triggers everywhere**. After the script, **tailor the
+  SKILL.md `description:`** to a targeted "Use when …" for this knowledge, then distill the content
+  into `<slug>.md`. Re-running on a legacy flat `knowledge/<slug>.md` migrates it (content kept).
+  These **pile up over time** (reflect/meta-reflect promote learnings into them). Link to a project
+  with `/<project> use-knowledge <slug>` (auto-loads when relevant there; the dashboard shows a
+  `[[wikilink]]`); the skill handle is the from-anywhere axis — they compose. For anything you
   *operate* (API / MCP / host / device) use a **connection**, not knowledge.
 - **register-agent `<name>`** — `SK/scripts/register-agent.sh <name>`.
 - **update `<kind> <name>` `"<content>"`** (`kind` = `knowledge` | `connection`) — fold new
   material into that entity's **note**, distilled into clean sections (e.g. `## Endpoints`,
   `## Setup`, `## Usage`, `## Gotchas`): **merge + dedupe, don't blind-append**, keep it lean.
-  Resolve the note: knowledge `$ROOT/knowledge/<name>.md`; connection
+  Resolve the note: knowledge `$ROOT/knowledge/<name>/<name>.md`; connection
   `$ROOT/connections/<name>/<name>.md`. **Secrets never hit disk** — an API key or "let me edit"
   leaves an env pointer (`<NAME>_API_KEY in env`), not the key. **Frontmatter facts are NOT edited
   here** — to change ssh alias / port / flash cmd / base-url, **re-run the matching `register-*`**
@@ -246,8 +250,8 @@ A project **`bind`s** the connections it operates, but **operates them skill-nat
 `build/flash/monitor`/deploy/call delegates to the connection's own `/<name>` skill, which loads +
 applies its learned quirks (one place, no drift). The project reads `connection.json` only for the
 hard facts it needs to orchestrate (port, alias, endpoint) — it never hand-reads the connection's
-quirk file. **Knowledge** stays linked into projects (plain-md reference, and there are many — not
-skills).
+quirk file. **Knowledge** is a skill too (`/<slug>` from anywhere) and additionally links into
+projects via `use-knowledge` for in-project auto-load.
 
 **One home per finding — log + reflect at the skill it's *about*, not the one you typed.** When you
 operate a bound connection inside a `/<project>` session, the *active* skill (project) isn't always
@@ -333,8 +337,8 @@ frontmatter facts** (below), which renders as Obsidian's Properties panel.
 attaches as its Obsidian **folder note**; `register-*` run `obsidian-folder-note.sh`. Only when a
 script prints a folder-notes line (i.e. the root is a vault with folder-notes) add one sentence to
 your summary — reload the folder-notes plugin to see it — otherwise don't mention folder-notes at
-all. (**Knowledge** is a flat plain-md file, not a folder, so it's a normal visible note, no
-folder note.) A project's dashboard surfaces its bound **connections** / linked **knowledge** as
+all. (**Knowledge** folders follow the same convention: `knowledge/<slug>/<slug>.md` is the folder
+note, `SKILL.md` the loader.) A project's dashboard surfaces its bound **connections** / linked **knowledge** as
 `[[wikilinks]]` so they're one click away.
 
 ## The dashboard `<name>.md`

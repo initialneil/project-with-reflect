@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.19 — 2026-07-15
+
+- Backfill Codex autocomplete for generated project command aliases
+
 ## v0.9.18 — 2026-07-15
 
 - teammate revival inherits the teammate's model: assemble without an explicit --model reads the previous lock's model (+ --effort) so a revived window keeps running what it ran before

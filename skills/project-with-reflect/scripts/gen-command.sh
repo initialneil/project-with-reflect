@@ -71,6 +71,8 @@ EOF
 BODY="$(cat "$HOME/.claude/commands/$P-$H.body")"
 rm -f "$HOME/.claude/commands/$P-$H.body"
 write_command "$P-$H" "$P — $KIND '$H' $TAG" "$BODY" "$AH"
+bash "$HERE/install-codex-command-skills.sh" "$HOME/.claude/commands/$P-$H.md" >/dev/null || \
+  echo "  ! Codex command-skill mirror failed — run project-with-reflect doctor" >&2
 
 if [ "$KIND" = eval ]; then
   EDIR="$PDIR/evals/$H"
@@ -131,6 +133,8 @@ EOF
   if [ "$ALIAS_OK" = 1 ]; then
     SHORT_BODY="$(cat "$HOME/.claude/commands/$ENAME.body")"
     write_command "$ENAME" "$P — eval '$H' quick handle" "$SHORT_BODY" "$AH"
+    bash "$HERE/install-codex-command-skills.sh" "$SHORT_CMD" >/dev/null || \
+      echo "  ! Codex command-skill mirror failed — run project-with-reflect doctor" >&2
     echo "Generated /$ENAME"
 
     for SKROOT in "$HOME/.claude/skills" "${CODEX_HOME:-$HOME/.codex}/skills"; do

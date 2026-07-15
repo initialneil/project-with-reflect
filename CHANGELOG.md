@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.20 — 2026-07-15
+
+- reader-first note guidance: lean cuts topics, never sentence parts — anti-compression counter-rule (no notation-for-words, keep qualifiers/context; template + skill + codex twin)
+
 ## v0.9.19 — 2026-07-15
 
 - Backfill Codex autocomplete for generated project command aliases

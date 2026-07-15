@@ -332,7 +332,10 @@ Every note is **reader-first**: conclusion first (verdict / rule / state up top;
 reference material last), headers as plain signposts (never rationale — "Setup — enough to reproduce"
 leaks the contract into the note), tables for enumerable facts, short paragraphs, one name per concept,
 interpretation caveats NEXT TO the data they guard, and format changes bump (one-line note) —
-recorded data is never altered.
+recorded data is never altered. **Lean cuts
+topics, never sentence parts**: qualifiers, connective words, and the context-setting sentence are not
+fat — notation may follow the worded phrase in parentheses, never replace it; if the reader must
+mentally re-expand a sentence, the note is over-compressed.
 bootstrap/reflect fill the files with **real content** (actual decisions, real lessons) and
 **never leave a placeholder behind**. The one machine-owned section is the dashboard's **YAML
 frontmatter facts** (below), which renders as Obsidian's Properties panel.

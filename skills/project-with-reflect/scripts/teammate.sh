@@ -101,6 +101,14 @@ case "$ACTION" in
       echo "teammate '$WS' already assembled (window alive) — no-op"
       exit 0
     fi
+    # no explicit --model → inherit from the previous lock, so a revival keeps the teammate's model
+    if [ -z "$MODEL" ] && [ -f "$LOCK" ]; then
+      PREV="$(python3 -c "import json;print(json.load(open('$LOCK')).get('model',''))" 2>/dev/null || echo "")"
+      case "$PREV" in
+        *" --effort "*) MODEL="${PREV%% --effort *}"; EFFORT="${PREV##* --effort }" ;;
+        ?*)             MODEL="$PREV" ;;
+      esac
+    fi
     LAND="$PDIR"; [ -n "$REPO" ] && [ -d "$REPO" ] && LAND="$REPO"
     PROMPT="/$NAME checkin $WS --as-teammate-of $LANE"
     # --teammate-mode in-process keeps the teammate from spawning its own panes (paper-lane practice)

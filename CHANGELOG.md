@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.18 — 2026-07-15
+
+- teammate revival inherits the teammate's model: assemble without an explicit --model reads the previous lock's model (+ --effort) so a revived window keeps running what it ran before
+
 ## v0.9.17 — 2026-07-15
 
 - register-knowledge refuses a slug that collides with an existing skill (user-scope or installed-plugin) via new pwr_check_skill_collision; renamed knowledge obsidian-markdown -> obsidian-md-gotchas (collided with the obsidian plugin's skill)

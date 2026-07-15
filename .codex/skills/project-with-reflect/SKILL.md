@@ -145,7 +145,9 @@ They differ only by transport:
 - **register-knowledge `<slug>`** — a **global knowledge module as a real skill** (knowledge IS a
   personal skill): `SK/scripts/register-knowledge.sh <slug>` → `$ROOT/knowledge/<slug>/` with
   `<slug>.md` (the content, folder note) + `SKILL.md` (the loader), symlinked into the user skill
-  dirs so **`/<slug>` autocompletes + auto-triggers everywhere**. After the script, **tailor the
+  dirs so **`/<slug>` autocompletes + auto-triggers everywhere**. The slug **must not collide with
+  an existing skill** — the script refuses a name owned by another user-scope skill or an installed
+  plugin (e.g. `obsidian-markdown`); pick a more specific slug. After the script, **tailor the
   SKILL.md `description:`** to a targeted "Use when …" for this knowledge, then distill the content
   into `<slug>.md`. Re-running on a legacy flat `knowledge/<slug>.md` migrates it (content kept).
   These **pile up over time** (reflect/meta-reflect promote learnings into them). Link to a project

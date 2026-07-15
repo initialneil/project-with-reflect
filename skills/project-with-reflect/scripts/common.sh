@@ -63,6 +63,36 @@ pwr_ensure_root() {
     echo '{"projects":{},"connections":{},"knowledge":{},"agents":{}}' > "$PWR_ROOT/registry.json"
 }
 
+# pwr_check_skill_collision <name> <own_dir>
+# Refuse to claim a /<name> handle an unrelated skill already owns: an existing
+# ~/.claude/skills/<name> or $CODEX_HOME/skills/<name> not pointing at <own_dir>, or an
+# installed plugin shipping skills/<name>. Prints the conflict and returns 1 — the caller
+# aborts and picks another slug. (A symlink already pointing at <own_dir> = re-registration, ok.)
+pwr_check_skill_collision() {
+  local NAME="$1" OWN="$2" d
+  for d in "$HOME/.claude/skills/$NAME" "${CODEX_HOME:-$HOME/.codex}/skills/$NAME"; do
+    if [ -L "$d" ]; then
+      [ "$(readlink "$d")" = "$OWN" ] || { echo "skill name '$NAME' is taken: $d -> $(readlink "$d"). Pick another slug." >&2; return 1; }
+    elif [ -e "$d" ]; then
+      echo "skill name '$NAME' is taken: $d exists (not a symlink to $OWN). Pick another slug." >&2; return 1
+    fi
+  done
+  local IPJ="$HOME/.claude/plugins/installed_plugins.json" HIT
+  if [ -f "$IPJ" ]; then
+    HIT="$(python3 - "$IPJ" "$NAME" <<'PY'
+import json, os, sys
+ipj, name = sys.argv[1:3]
+for plug, insts in json.load(open(ipj)).get("plugins", {}).items():
+    for inst in insts:
+        if os.path.isdir(os.path.join(inst.get("installPath", ""), "skills", name)):
+            print(plug); sys.exit()
+PY
+)"
+    [ -n "$HIT" ] && { echo "skill name '$NAME' is taken by installed plugin '$HIT' (ships skills/$NAME). Pick another slug." >&2; return 1; }
+  fi
+  return 0
+}
+
 # pwr_install_skill <entity_dir> <name> <template_path>
 # Make an entity a real skill: SKILL.md (from template, if absent) + log.md, symlinked into
 # each supported user-scope skill directory, and attach <name>.md as the Obsidian folder note.

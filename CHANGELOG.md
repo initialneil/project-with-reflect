@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.17 — 2026-07-15
+
+- register-knowledge refuses a slug that collides with an existing skill (user-scope or installed-plugin) via new pwr_check_skill_collision; renamed knowledge obsidian-markdown -> obsidian-md-gotchas (collided with the obsidian plugin's skill)
+
 ## v0.9.16 — 2026-07-15
 
 - knowledge IS a personal skill: register-knowledge now creates knowledge/<slug>/ (<slug>.md content + SKILL.md loader) symlinked into ~/.claude/skills + ~/.codex/skills, so /<slug> autocompletes + auto-triggers everywhere; legacy flat notes migrate on re-run; use-knowledge linking unchanged (composes)

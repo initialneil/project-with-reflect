@@ -8,7 +8,9 @@ Creates `$PROJECT_WITH_REFLECT_ROOT/knowledge/<slug>/` — a reusable practice /
 reference that serves many projects, registered as a **real user-scope skill**: `<slug>.md`
 holds the content (Obsidian folder note), `SKILL.md` is the loader that gives `/<slug>`
 autocomplete + description auto-trigger everywhere. Re-running on a legacy flat note
-migrates it to the folder form, content preserved.
+migrates it to the folder form, content preserved. The slug **must not collide with an
+existing skill** — the script refuses a name owned by another user-scope skill or an
+installed plugin; pick a more specific slug and re-run.
 
 After the script runs, **tailor the generated `SKILL.md` `description:`** into one targeted
 "Use when …" sentence for THIS knowledge (so it triggers on the right tasks without

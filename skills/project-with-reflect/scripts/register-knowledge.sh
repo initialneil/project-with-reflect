@@ -13,6 +13,7 @@ HERE="$(cd "$(dirname "$0")" && pwd)"; source "$HERE/common.sh"; pwr_first_run_g
 NAME="${1:?knowledge slug required}"
 pwr_validate_name "knowledge slug" "$NAME"
 KDIR="$PWR_ROOT/knowledge/$NAME"
+pwr_check_skill_collision "$NAME" "$KDIR" || exit 1
 mkdir -p "$KDIR"
 
 # migrate a legacy flat note into the folder as its folder note

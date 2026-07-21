@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.21 — 2026-07-21
+
+- checkin currency gate: never edit a stale/detached-HEAD base — a tracked lane doing code work must promote to a worktree off fresh origin/<base> first
+
 ## v0.9.20 — 2026-07-15
 
 - reader-first note guidance: lean cuts topics, never sentence parts — anti-compression counter-rule (no notation-for-words, keep qualifiers/context; template + skill + codex twin)

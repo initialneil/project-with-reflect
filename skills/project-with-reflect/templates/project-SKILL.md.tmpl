@@ -216,9 +216,25 @@ During a substantial work session:
       **stay**; code is on the host (operate via `/<host_connection>`).
   - **`checkin <workstream>`** (or the `/{{NAME}}-<workstream>` alias) → that **workstream**. You named it,
     so **just `cd` there — don't ask** (the destination is unambiguous, and `cd` is trivially reversible):
-    - **Local** → **`cd` to its code dir** = `worktree_path` (worktree mode) else `<repo>`. Already inside
+    - **Local** → **`cd` to its code dir** = `worktree_path` (worktree mode) else `<repo>`. ⚠️ **CURRENCY
+      GATE — do this BEFORE any edit; it is where "confident wrong work on a stale checkout" comes from.**
+      The landing dir MUST be on a real branch tracking `origin/<base>` and NOT behind it:
+      `git -C <dir> symbolic-ref -q HEAD` (a **detached HEAD** = a stale leftover from a deploy/build checkout —
+      never edit it) and `git -C <dir> rev-list --count HEAD..origin/<base>` (>0 = behind). Three failure cases,
+      all resolved BEFORE the first edit:
+      - **Worktree lane whose `worktree_path` is missing/moved** (dir gone) → re-establish it (a prior
+        `git worktree move`, or `git worktree add` off `origin/<base>`), then fix `worktree_path` in `stream.json`.
+      - **`tracked`/`logical` lane (no worktree) and you will write code** → do NOT edit `<repo>` on a
+        detached/behind HEAD. **Promote to a worktree FIRST:** reuse an existing per-PR worktree via
+        `git worktree move <old-dir> .claude/worktrees/<lane>` (keeps its build/pod setup) or `git worktree add`,
+        branch off **fresh `origin/<base>`** (`git checkout -B <feature> origin/<base>`), then set `stream.json`
+        `kind:"worktree"` + `worktree_path` so the NEXT checkin lands here automatically. (A tracked lane is
+        lineage-only by registration; if it's actually doing code work, that registration is the bug — fix it.)
+      - **Landing dir behind `origin/<base>`** → sync per Freshness below; then **verify a known-merged commit
+        is present** (`git merge-base --is-ancestor <sha> HEAD`) before trusting the tree.
+      Already inside
       it → **skip only the redundant `cd`** (you're already there) — **still** set the title, load context,
-      run the freshness check, and recap; "already inside" never means "skip the checkin". (Only if the tree
+      run the freshness + currency gate, and recap; "already inside" never means "skip the checkin". (Only if the tree
       is **dirty with unrelated changes** where landing would be confusing, ask first.) Want planning/scratch
       files in the vault instead? **Mention** you can move to the **workstream folder**
       `{{PDIR}}/workstreams/<workstream>/` — offer it, don't block on it.
@@ -236,6 +252,12 @@ During a substantial work session:
   `<base>`") — **don't ask.** Only **ask** when it's genuinely a choice: the lane has **diverged** (its own
   commits → catching up means a history-rewriting `rebase`) or the tree is **dirty** — then surface it in the
   recap and let the user pick `rebase` / `reset`. (Up to date or ahead → nothing to do.)
+  **A `tracked`/`logical` lane landing in `<repo>` is NOT exempt from currency** (this is the gap that let a
+  session edit a stale base): the base repo is often a **detached HEAD** left by a deploy/build checkout, and
+  gets no lane branch to fast-forward. So for such a lane, run the currency gate above — if `<repo>` is
+  detached or behind `origin/<base>`, treat it as **stale**: fine for project-wide READ work, but for any code
+  work promote to a worktree off fresh `origin/<base>` first (never fast-forward or edit a detached-HEAD base
+  blindly). The freshness/currency gate must PASS before the checkin is considered complete.
 
   After a switch, keep PWR's own plan/progress memory in the workstream state; any local scratch files the
   user chooses to create should live in the selected working dir.

@@ -33,7 +33,8 @@ State dir: `{{PDIR}}`
 This skill is self-contained: its `SKILL.md` works even without the meta-skill installed. When the
 meta-skill IS installed, prefer its helpers in the active agent's user skill directory
 (`~/.claude/skills/project-with-reflect/scripts/` for Claude Code,
-`~/.codex/skills/project-with-reflect/scripts/` for Codex) for deterministic ops.
+`~/.codex/skills/project-with-reflect/scripts/` for Codex,
+`~/.agents/skills/project-with-reflect/scripts/` for Kimi Code) for deterministic ops.
 
 **Codebase roots.** `config.json` carries `location` (`local` | `remote`) and `roots[]` (the working
 dirs — a project can span several, e.g. an app repo + a sibling dataset repo; if `roots` is absent the
@@ -422,7 +423,7 @@ During a substantial work session:
   fixtures) as **siblings** in `evals/<e>/` — same folder-note convention as a lesson with artifacts, so
   it renders cleanly in Obsidian. Then generate `/{{NAME}}-<e>` **and** the quick eval handle
   `/eval-<e>` (`gen-command.sh {{NAME}} <e> eval {{PDIR}}`). The quick handle is also installed as an
-  `eval-<e>` user-scope skill for Codex/Claude discovery and autocomplete; if another project already owns
+  `eval-<e>` user-scope skill for Codex/Claude/Kimi discovery and autocomplete; if another project already owns
   that short alias, keep the existing `/eval-<e>` and use the project-prefixed `/{{NAME}}-<e>` for this one.
   `eval all` runs the whole suite as a pre-release gate.
 - `register-task <t>` — save a runbook `tasks/<t>.md`; generate `/{{NAME}}-<t>`.

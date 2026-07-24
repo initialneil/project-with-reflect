@@ -15,6 +15,10 @@ else
   PWR_ROOT="$HOME/.project-with-reflect"
 fi
 
+# Supported user-scope skill directories.
+AGENTS_SKILLS_DIR="$HOME/.agents/skills"
+KIMI_SKILLS_DIR="${KIMI_CODE_HOME:-$HOME/.kimi-code}/skills"
+
 # A bash script can't AskUserQuestion, so on a genuine first run we REFUSE and
 # signal the model to prompt for a root path. Call this at the top of every entry
 # script BEFORE pwr_ensure_root. Exit 3 = "ask the user, then bootstrap + retry".
@@ -39,7 +43,7 @@ pwr_first_run_guard() {
 }
 
 # pwr_validate_name <label> <value> — entity names / workstreams / handles become paths,
-# symlinks in ~/.claude/skills, slash-commands, and shell-built JSON. Reject anything that
+# symlinks in ~/.claude/skills, ~/.codex/skills, ~/.agents/skills, slash-commands, and shell-built JSON. Reject anything that
 # could traverse (`..`, `/`) or corrupt those (quotes, spaces, control chars) BEFORE any
 # mkdir/ln/rm touches disk. Allowed: alnum start, then letters digits . _ -
 pwr_validate_name() {
@@ -65,12 +69,12 @@ pwr_ensure_root() {
 
 # pwr_check_skill_collision <name> <own_dir>
 # Refuse to claim a /<name> handle an unrelated skill already owns: an existing
-# ~/.claude/skills/<name> or $CODEX_HOME/skills/<name> not pointing at <own_dir>, or an
-# installed plugin shipping skills/<name>. Prints the conflict and returns 1 — the caller
-# aborts and picks another slug. (A symlink already pointing at <own_dir> = re-registration, ok.)
+# ~/.claude/skills/<name>, $CODEX_HOME/skills/<name>, or ~/.agents/skills/<name> not pointing at
+# <own_dir>, or an installed plugin shipping skills/<name>. Prints the conflict and returns 1 —
+# the caller aborts and picks another slug. (A symlink already pointing at <own_dir> = re-registration, ok.)
 pwr_check_skill_collision() {
   local NAME="$1" OWN="$2" d
-  for d in "$HOME/.claude/skills/$NAME" "${CODEX_HOME:-$HOME/.codex}/skills/$NAME"; do
+  for d in "$HOME/.claude/skills/$NAME" "${CODEX_HOME:-$HOME/.codex}/skills/$NAME" "$AGENTS_SKILLS_DIR/$NAME" "$KIMI_SKILLS_DIR/$NAME"; do
     if [ -L "$d" ]; then
       [ "$(readlink "$d")" = "$OWN" ] || { echo "skill name '$NAME' is taken: $d -> $(readlink "$d"). Pick another slug." >&2; return 1; }
     elif [ -e "$d" ]; then
@@ -103,10 +107,16 @@ pwr_link_skill_dirs() {
   ln -sfn "$DIR" "$HOME/.claude/skills/$NAME"
 
   # Codex discovers user skills from $CODEX_HOME/skills, with ~/.codex as the normal default.
-  # Other agents can still use the generated SKILL.md by copying or symlinking the same DIR.
   local CODEX_DIR="${CODEX_HOME:-$HOME/.codex}/skills"
   mkdir -p "$CODEX_DIR"
   ln -sfn "$DIR" "$CODEX_DIR/$NAME"
+
+  # Kimi Code discovers user skills from ~/.agents/skills/ (generic shared dir) and
+  # $KIMI_CODE_HOME/skills/ (Kimi-specific). Link both so isolated KIMI_CODE_HOME roots still work.
+  mkdir -p "$AGENTS_SKILLS_DIR"
+  ln -sfn "$DIR" "$AGENTS_SKILLS_DIR/$NAME"
+  mkdir -p "$KIMI_SKILLS_DIR"
+  ln -sfn "$DIR" "$KIMI_SKILLS_DIR/$NAME"
 }
 
 pwr_install_skill() {

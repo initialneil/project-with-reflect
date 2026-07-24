@@ -13,13 +13,15 @@ Before acting on a project or connection managed by this skill:
 2. Check prior decisions before proposing new direction.
 3. Record durable findings with `record` and close sessions with `reflect`.
 4. Keep secrets out of disk state; store only env-var names or ssh aliases.
-5. If running in Codex or Claude Code, use the user-scope skill install in
-   `~/.codex/skills/project-with-reflect` or `~/.claude/skills/project-with-reflect`.
+5. If running in Codex, Claude Code, or Kimi Code, use the user-scope skill install in
+   `~/.codex/skills/project-with-reflect`, `~/.claude/skills/project-with-reflect`, or
+   `~/.agents/skills/project-with-reflect` respectively.
 
 Agent-specific entrypoints in this repo are lightweight adapters:
 
 - `.codex/skills/project-with-reflect/` for Codex.
 - `.claude/skills/project-with-reflect` and `.claude-plugin/` for Claude Code.
+- `.kimi-code/skills/project-with-reflect/` and `~/.agents/skills/project-with-reflect` for Kimi Code.
 - `.cursor/rules/project-with-reflect.mdc` for Cursor.
 - `.gemini/GEMINI.md` for Gemini CLI.
 - `.opencode/AGENTS.md` for OpenCode.

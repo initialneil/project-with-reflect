@@ -2,7 +2,7 @@
 
 [English](README.md) | **中文**
 
-> 一个面向 Codex、Claude Code 和其他 AI coding agents 的**帮你蒸馏自己的** meta-skill。 —— Neil Z. Shao
+> 一个面向 Codex、Claude Code、Kimi Code 和其他 AI coding agents 的**帮你蒸馏自己的** meta-skill。 —— Neil Z. Shao
 >
 > 搭配 [Obsidian](https://obsidian.md) 和插件体验最佳：
 > - [Neat File Tree](https://github.com/initialneil/obsidian-neat-file-tree) —— 更清爽的文件树。
@@ -43,7 +43,7 @@ prompt、向 agent **一遍遍解释**同一个项目的来龙去脉？
 - **`reflect` 蒸馏自己** —— 先 capture 这次 session，再把 log 提炼成**精简、可读的 lessons**，下次自动加载（实验结果则追加进一份永久的 **experiment record**）。
 - **checkin 从磁盘重启状态** —— 开始工作前，agent 重新加载 goal / plan、进展、发现和失败尝试。
 - **动手前先加载** —— agent 先读已有 lessons / decisions / 知识，不再重复解释、重复犯错。
-- **跨 agent 使用** —— Claude Code 走 plugin flow；Codex 和其他 agents 使用这个 repo 里的 skill surfaces。
+- **跨 agent 使用** —— Claude Code 走 plugin flow；Codex 和 Kimi Code 使用这个 repo 里的 skill surfaces；其他 agent 直接加载生成的 SKILL.md。
 
 > **核心循环 core loop：** `work（自动 log）→ /<project> reflect（capture + 提炼）→ 精简可读 lessons → 下次更好`
 
@@ -74,6 +74,17 @@ mkdir -p ~/.codex/skills
 ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.codex/skills/project-with-reflect
 ```
 
+**Kimi Code 本地 / 开发安装：**
+
+Kimi Code 从 `~/.agents/skills/`（以及 `~/.kimi-code/skills/`）扫描 user skills。把 Kimi adapter 链过去：
+
+```
+mkdir -p ~/.agents/skills
+ln -sfn /path/to/project-with-reflect/.kimi-code/skills/project-with-reflect ~/.agents/skills/project-with-reflect
+```
+
+Hooks 以 `[[hooks]]` 形式写在 `~/.kimi-code/config.toml` 里；`doctor` 可修复/补装它们。
+
 ## 快速上手 Quick start
 
 日常循环是：**注册 → status / checkin → 开始工作 → log-and-reflect 收尾**。
@@ -81,7 +92,7 @@ ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.code
 **1. 注册一次**
 
 ```
-# 注册一个 project → 生成 /myapp skill
+# 注册一个 project → 生成 /myapp skill（Kimi Code 里用 /skill:myapp）
 /register-project myapp ~/code/myapp
 
 # 可选：注册一条可复用 workstream —— 直接说它基于哪条
@@ -96,6 +107,9 @@ ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.code
 /myapp checkin                      # 加载上下文，询问 cwd，然后用 status recap
 /myapp checkin train-v2             # 或直接 checkin 进具体 workstream
 ```
+
+> 在 Kimi Code 中，slash command 用 `/skill:<name>`：`/skill:project-with-reflect status`、
+> `/skill:myapp checkin`、`/skill:log-and-reflect` 等。
 
 **3. 工作、record、reflect**
 
@@ -301,6 +315,7 @@ connections/<name>/
 | --- | --- | --- |
 | Codex | 一等 skill 安装 | `.codex/skills/project-with-reflect/` |
 | Claude Code | Plugin + skill + slash commands/hooks | `.claude-plugin/`、`skills/project-with-reflect/`、`commands/` |
+| Kimi Code | Skill adapter + hooks | `.kimi-code/skills/project-with-reflect/`、`~/.agents/skills/project-with-reflect` |
 | 通用 agent CLI | repo 级说明 | `AGENTS.md`、`llms.txt` |
 | Cursor | rule adapter | `.cursor/rules/project-with-reflect.mdc` |
 | Gemini CLI | context adapter | `.gemini/GEMINI.md` |
@@ -308,16 +323,17 @@ connections/<name>/
 | Continue | prompt adapter | `.continue/prompts/project-with-reflect.md` |
 | GitHub Copilot coding agent | repo 级说明 | `.github/copilot-instructions.md` |
 
-Codex 和 Claude Code 的支持最完整，因为 project-with-reflect 会把生成出来的 project /
-connection skills 同时安装进两个 user-scope skill 目录：
+Codex、Claude Code 和 Kimi Code 的支持最完整，因为 project-with-reflect 会把生成出来的 project /
+connection skills 同时安装进三个 user-scope skill 目录：
 
 ```
 ~/.codex/skills/<name>
 ~/.claude/skills/<name>
+~/.agents/skills/<name>
 ```
 
-如果一个较早用 Claude 创建的 project 已经在 root 里，但 Codex 找不到 `/<name>`，
-运行 `/project-with-reflect doctor [<name>]`，它会修复 root pointer 和生成 skill 的链接。
+如果一个较早用 Claude 创建的 project 已经在 root 里，但 Codex 或 Kimi Code 找不到 `/<name>` /
+`/skill:<name>`，运行 `/project-with-reflect doctor [<name>]`，它会修复 root pointer 和生成 skill 的链接。
 
 其他 agents 也能复用同一份生成的 `SKILL.md`：加载 repo 级说明，或把
 `$PROJECT_WITH_REFLECT_ROOT/projects/<name>` 和

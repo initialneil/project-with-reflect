@@ -3,7 +3,7 @@
 # Check and repair the local project-with-reflect install:
 # - root pointer + root directory shape
 # - registry readability
-# - user-scope Claude/Codex skill links for registered projects/connections
+# - user-scope Claude/Codex/Kimi skill links for registered projects/connections
 set -euo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
@@ -97,6 +97,8 @@ fix_skill_links() {
 
   fix_link "$dir" "$HOME/.claude/skills/$name" "Claude $kind $name"
   fix_link "$dir" "${CODEX_HOME:-$HOME/.codex}/skills/$name" "Codex $kind $name"
+  fix_link "$dir" "$AGENTS_SKILLS_DIR/$name" "Kimi $kind $name"
+  fix_link "$dir" "$KIMI_SKILLS_DIR/$name" "Kimi-local $kind $name"
 }
 
 ROWS="$(mktemp)"
@@ -122,6 +124,15 @@ for name, meta in sorted(reg.get("connections", {}).items()):
         continue
     rows.append(("connection", name, meta.get("dir") or os.path.join(root, "connections", name)))
 
+for name, meta in sorted(reg.get("knowledge", {}).items()):
+    if only and name != only:
+        continue
+    # knowledge entries store a relative path; resolve against root
+    kpath = meta.get("path") or os.path.join(root, "knowledge", name)
+    if not os.path.isabs(kpath):
+        kpath = os.path.join(root, kpath)
+    rows.append(("knowledge", name, os.path.dirname(kpath)))
+
 for row in rows:
     print("\t".join(row))
 PY
@@ -136,6 +147,13 @@ if bash "$HERE/install-codex-command-skills.sh"; then
   OK=$((OK + 1))
 else
   echo "[warn] failed to install Codex command skills" >&2
+  WARN=$((WARN + 1))
+fi
+
+if bash "$HERE/install-kimi-command-skills.sh"; then
+  OK=$((OK + 1))
+else
+  echo "[warn] failed to install Kimi command skills" >&2
   WARN=$((WARN + 1))
 fi
 

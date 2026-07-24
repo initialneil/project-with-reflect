@@ -3,7 +3,7 @@
 # projects — as a real user-scope skill (knowledge IS a personal skill): a folder
 # knowledge/<slug>/ with <slug>.md (the content, Obsidian folder note) + SKILL.md (the
 # loader, giving /<slug> autocomplete + description auto-trigger), symlinked into
-# ~/.claude/skills and ~/.codex/skills like every other entity.
+# ~/.claude/skills, ~/.codex/skills, and ~/.agents/skills like every other entity.
 #   register-knowledge.sh <slug>
 # Re-running on an existing FLAT note (knowledge/<slug>.md) migrates it to the folder form,
 # preserving content. For things you OPERATE, register a CONNECTION instead:

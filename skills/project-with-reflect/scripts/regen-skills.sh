@@ -9,8 +9,8 @@
 # Safe by construction: skips a project whose SKILL has no `## Lessons index` (never clobbers a
 # hand-authored one), skips unknown connection transports, aborts a render that still has
 # `{{...}}` placeholders, is a no-op when a SKILL already matches, and backs up every file it
-# rewrites (prints the backup dir). The vault SKILL.md is symlinked into ~/.claude/skills and
-# ~/.codex/skills, so one write updates both.
+# rewrites (prints the backup dir). The vault SKILL.md is symlinked into ~/.claude/skills,
+# ~/.codex/skills, and ~/.agents/skills, so one write updates all agents.
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"; source "$HERE/common.sh"; pwr_first_run_guard; pwr_ensure_root
 TDIR="$HERE/../templates"

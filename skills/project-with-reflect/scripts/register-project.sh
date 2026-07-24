@@ -107,9 +107,9 @@ pwr_registry_put projects "$NAME" "{\"dir\":\"$PDIR\",\"repo\":\"$REPO\",\"locat
 bash "$HERE/obsidian-folder-note.sh" "$PDIR" || true
 
 if [ "$LOCATION" = "remote" ]; then
-  echo "Registered REMOTE project '$NAME' on host '$REMOTE' (workstream_mode=$WSM) at $PDIR — installed as a Claude/Codex skill."
+  echo "Registered REMOTE project '$NAME' on host '$REMOTE' (workstream_mode=$WSM) at $PDIR — installed as a Claude/Codex/Kimi skill."
   echo "Code lives on the host; operate it via /$REMOTE. ${#ROOTS[@]} extra root(s) recorded."
 else
-  echo "Registered project '$NAME' (workstream_mode=$WSM) at $PDIR — installed as a Claude/Codex skill."
+  echo "Registered project '$NAME' (workstream_mode=$WSM) at $PDIR — installed as a Claude/Codex/Kimi skill."
 fi
-echo "Use /$NAME (or just mention $NAME) to work on it. Restart/reload your agent if it does not see the new skill yet."
+echo "Use /$NAME (Kimi: /skill:$NAME) or just mention $NAME to work on it. Restart/reload your agent if it does not see the new skill yet."

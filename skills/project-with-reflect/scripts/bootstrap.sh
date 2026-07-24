@@ -13,6 +13,7 @@ export PROJECT_WITH_REFLECT_ROOT="$ROOT"
 source "$HERE/common.sh"
 pwr_ensure_root
 bash "$HERE/install-codex-command-skills.sh"
+bash "$HERE/install-kimi-command-skills.sh"
 
 # 1. pointer (robust resolution even when the shell never sourced the rc export)
 mkdir -p "$(dirname "$PWR_POINTER")"

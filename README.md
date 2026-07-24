@@ -2,7 +2,7 @@
 
 **English** | [中文](README_ZH.md)
 
-> A **self-distilling** meta-skill for Codex, Claude Code, and other AI coding agents. — Neil Z. Shao
+> A **self-distilling** meta-skill for Codex, Claude Code, Kimi Code, and other AI coding agents. — Neil Z. Shao
 >
 > Best used with [Obsidian](https://obsidian.md) + plugins:
 >
@@ -45,7 +45,7 @@ All of it **Obsidian-friendly** (lessons / knowledge / dashboard are clean, read
 - **`reflect` distills itself** — captures the session, then folds the log into **lean, readable lessons** it loads next time (and appends run results to a permanent **experiment record**).
 - **Checkin reboots from disk** — before work, the agent reloads the goal/plan, progress, findings, and failed attempts from persistent files.
 - **Loads before acting** — the agent reads existing lessons / decisions / knowledge first, so it stops re-explaining and repeating mistakes.
-- **Runs across agents** — Claude Code has the plugin flow; Codex and other agents use the skill surfaces in this repo.
+- **Runs across agents** — Claude Code has the plugin flow; Codex and Kimi Code use the skill surfaces in this repo; other agents load the same generated SKILL.md files.
 
 > **Core loop:** `work (auto-log) → /<project> reflect (capture + distill) → lean readable lessons → better next session`
 
@@ -76,6 +76,17 @@ mkdir -p ~/.codex/skills
 ln -sfn /path/to/project-with-reflect/.codex/skills/project-with-reflect ~/.codex/skills/project-with-reflect
 ```
 
+**Kimi Code local/dev install:**
+
+Kimi Code scans user skills from `~/.agents/skills/` (and `~/.kimi-code/skills/`). Symlink the Kimi adapter:
+
+```
+mkdir -p ~/.agents/skills
+ln -sfn /path/to/project-with-reflect/.kimi-code/skills/project-with-reflect ~/.agents/skills/project-with-reflect
+```
+
+Hooks are auto-log nudges in `~/.kimi-code/config.toml`; `doctor` can repair/install them.
+
 ## Quick start
 
 The daily loop is: **register → check status / check in → work → log and reflect**.
@@ -83,7 +94,7 @@ The daily loop is: **register → check status / check in → work → log and r
 **1. Register once**
 
 ```
-# register a project → generates the /myapp skill
+# register a project → generates the /myapp skill (Kimi Code: /skill:myapp)
 /register-project myapp ~/code/myapp
 
 # optional: register a reusable workstream — just say what it's based on
@@ -107,6 +118,9 @@ The daily loop is: **register → check status / check in → work → log and r
 /log-and-reflect          # from anywhere in the repo — resolves the project from your cwd
 # (≡ /myapp reflect — "reflect" already captures the session first)
 ```
+
+> In Kimi Code, slash commands are `/skill:<name>`: `/skill:project-with-reflect status`,
+> `/skill:myapp checkin`, `/skill:log-and-reflect`, etc.
 
 `status` is a **smart brief** (Where · Recap · TODO · Workstreams · flags), not a dump. `checkin` is the
 **front door to a working session** — it loads, handles the cwd, and **re-sets the visible title every
@@ -310,6 +324,7 @@ that source so one repo can be installed across common coding agents:
 | --- | --- | --- |
 | Codex | First-class skill install | `.codex/skills/project-with-reflect/` |
 | Claude Code | Plugin + skill + slash commands/hooks | `.claude-plugin/`, `skills/project-with-reflect/`, `commands/` |
+| Kimi Code | Skill adapter + hooks | `.kimi-code/skills/project-with-reflect/`, `~/.agents/skills/project-with-reflect` |
 | Generic agent CLIs | Repository instructions | `AGENTS.md`, `llms.txt` |
 | Cursor | Rule adapter | `.cursor/rules/project-with-reflect.mdc` |
 | Gemini CLI | Context adapter | `.gemini/GEMINI.md` |
@@ -317,16 +332,18 @@ that source so one repo can be installed across common coding agents:
 | Continue | Prompt adapter | `.continue/prompts/project-with-reflect.md` |
 | GitHub Copilot coding agent | Repository instructions | `.github/copilot-instructions.md` |
 
-Codex and Claude Code get the most complete behavior because project-with-reflect can install generated
-project/connection skills into both user skill directories:
+Codex, Claude Code, and Kimi Code get the most complete behavior because project-with-reflect can install generated
+project/connection skills into all three user skill directories:
 
 ```
 ~/.codex/skills/<name>
 ~/.claude/skills/<name>
+~/.agents/skills/<name>
 ```
 
-If an older Claude-created project exists in the root but Codex cannot find `/<name>`, run
-`/project-with-reflect doctor [<name>]` to repair the root pointer and generated skill links.
+If an older Claude-created project exists in the root but Codex or Kimi Code cannot find `/<name>` /
+`/skill:<name>`, run `/project-with-reflect doctor [<name>]` to repair the root pointer and generated
+skill links.
 
 Other agents can still use the same generated `SKILL.md` files by loading the repository instructions or
 symlinking/copying `$PROJECT_WITH_REFLECT_ROOT/projects/<name>` and

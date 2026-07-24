@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.22 — 2026-07-24
+
+- Add first-class Kimi Code support
+
 ## v0.9.21 — 2026-07-21
 
 - checkin currency gate: never edit a stale/detached-HEAD base — a tracked lane doing code work must promote to a worktree off fresh origin/<base> first

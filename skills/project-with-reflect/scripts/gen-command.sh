@@ -73,6 +73,8 @@ rm -f "$HOME/.claude/commands/$P-$H.body"
 write_command "$P-$H" "$P — $KIND '$H' $TAG" "$BODY" "$AH"
 bash "$HERE/install-codex-command-skills.sh" "$HOME/.claude/commands/$P-$H.md" >/dev/null || \
   echo "  ! Codex command-skill mirror failed — run project-with-reflect doctor" >&2
+bash "$HERE/install-kimi-command-skills.sh" "$HOME/.claude/commands/$P-$H.md" >/dev/null || \
+  echo "  ! Kimi command-skill mirror failed — run project-with-reflect doctor" >&2
 
 if [ "$KIND" = eval ]; then
   EDIR="$PDIR/evals/$H"
@@ -114,7 +116,7 @@ EOF
     echo "  ! /$ENAME already exists for another project — kept /$P-$H only" >&2
     ALIAS_OK=0
   fi
-  for SKROOT in "$HOME/.claude/skills" "${CODEX_HOME:-$HOME/.codex}/skills"; do
+  for SKROOT in "$HOME/.claude/skills" "${CODEX_HOME:-$HOME/.codex}/skills" "$AGENTS_SKILLS_DIR" "$KIMI_SKILLS_DIR"; do
     mkdir -p "$SKROOT"
     LINK="$SKROOT/$ENAME"
     if [ -L "$LINK" ]; then
@@ -135,9 +137,11 @@ EOF
     write_command "$ENAME" "$P — eval '$H' quick handle" "$SHORT_BODY" "$AH"
     bash "$HERE/install-codex-command-skills.sh" "$SHORT_CMD" >/dev/null || \
       echo "  ! Codex command-skill mirror failed — run project-with-reflect doctor" >&2
+    bash "$HERE/install-kimi-command-skills.sh" "$SHORT_CMD" >/dev/null || \
+      echo "  ! Kimi command-skill mirror failed — run project-with-reflect doctor" >&2
     echo "Generated /$ENAME"
 
-    for SKROOT in "$HOME/.claude/skills" "${CODEX_HOME:-$HOME/.codex}/skills"; do
+    for SKROOT in "$HOME/.claude/skills" "${CODEX_HOME:-$HOME/.codex}/skills" "$AGENTS_SKILLS_DIR" "$KIMI_SKILLS_DIR"; do
       LINK="$SKROOT/$ENAME"
       if [ -L "$LINK" ] || [ -e "$LINK" ]; then
         :

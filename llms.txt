@@ -11,6 +11,7 @@ Primary install surfaces:
 - Claude Code plugin: `.claude-plugin/`
 - Claude Code skill: `.claude/skills/project-with-reflect`
 - Codex skill: `.codex/skills/project-with-reflect`
+- Kimi Code skill: `.kimi-code/skills/project-with-reflect` (user install at `~/.agents/skills/project-with-reflect`)
 - Generic agent instructions: `AGENTS.md`
 
 Important behavior:
@@ -18,5 +19,5 @@ Important behavior:
 - Prefer a synced readable root such as an Obsidian vault folder named `Project-with-Reflect`.
 - Register projects with `register-project`, connections with `register-machine`,
   `register-device`, `register-api`, and `register-mcp`.
-- Generated project and connection skills are symlinked into Claude Code and Codex user skill dirs.
+- Generated project and connection skills are symlinked into Claude Code, Codex, and Kimi Code user skill dirs.
 - Durable findings go to lessons/decisions with `record`; session closure uses `reflect`.

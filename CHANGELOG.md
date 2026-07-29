@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.23 — 2026-07-29
+
+- checkin recovers a user-prescribed working pattern (stream.json.working_pattern): recorded verbatim when declared, rebooted via new 'How should I work?' question + Working pattern status surface
+
 ## v0.9.22 — 2026-07-24
 
 - Add first-class Kimi Code support

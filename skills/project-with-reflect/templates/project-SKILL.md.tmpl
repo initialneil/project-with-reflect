@@ -115,6 +115,16 @@ snapshot), not on every micro-edit — a fresh dated entry when it's substantial
 note if absent. (Built-in `/goal` and plan mode **can't be hooked**, so this is native skill behavior — record
 it the moment you see a goal or plan set.) `reflect` summarizes progress against the **top (latest)** goal/plan.
 
+**A working pattern prescribed → `stream.json.working_pattern` (durable, like `teammates`).** When the user
+prescribes **how** this lane's work should be executed — "orchestrate through opus48 sub-agents", "always
+assemble a teammate", "plan-first, then implement", "never edit prod directly" — that is **standing lane
+state, not a one-session remark**: persist it **verbatim** to the active lane's `stream.json` as
+`"working_pattern"` the moment it's said (add the key if absent). Every later `checkin` recovers and
+**adopts** it without being re-told (the *Working pattern* surface below); update the value when the user
+revises the pattern, delete the key when they rescind it. (The failure this closes: a lane told
+"orchestrate via opus48 sub-agents" one session, and the next session's checkin recovered nothing —
+the instruction lived only in a lost context window.)
+
 **Two workstreams cooperating (e.g. a `train` lane + a `paper` lane, or `dev` + `research`) — the shared
 vault is the blackboard; hand off through it, never window-to-window.** Two sessions (one per lane, often
 different terminals/machines) coordinate **asynchronously through this project's shared state** — they never
@@ -198,8 +208,10 @@ During a substantial work session:
   continuing. The entry
   point for a working session: (1) **load** the behavioral-contract context — `{{NAME}}.md` + `decisions.md`
   + (for a workstream) its `log.md` + `base`, the lesson modules matching the task, and bound-connection facts;
-  then **reboot from disk** by answering, in the recap, the five questions:
+  then **reboot from disk** by answering, in the recap, the six questions:
   **Where am I?** (project/workstream/cwd), **Where am I going?** (latest goal/plan + next phase),
+  **How should I work?** (the lane's `stream.json.working_pattern` — a standing user-prescribed execution
+  style, e.g. orchestrate-via-sub-agents, teammate-coupled; **adopt it now, don't wait to be re-told**),
   **What have I learned?** (relevant lessons/records/findings), **What have I done?** (recent log/progress),
   and **What failed or is risky?** (recent errors, repeated attempts, blockers). If repo-local planning
   artifacts such as `task_plan.md`, `findings.md`, or `progress.md` already exist from any prior workflow,
@@ -300,6 +312,9 @@ During a substantial work session:
   - **Where** — current state / version (the dashboard's "Where" line).
   - **Plan / Reboot** — latest goal/plan headline, next phase/step, what was learned, what was done, and
     the last failed/risky attempts to avoid repeating.
+  - **Working pattern** (only if the active lane's `stream.json` has `working_pattern`) — restate it and
+    **work that way this session** (e.g. spin up the prescribed sub-agents/teammate when the first task
+    arrives); it is a standing user instruction, not history.
   - **Recap** — the last session / most recent log highlights (what just happened).
   - **TODO** — the open `## TODO` items.
   - **Workstreams** — the workstreams + lineage; flag any behind `base`.

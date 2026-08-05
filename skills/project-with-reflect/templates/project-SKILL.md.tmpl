@@ -75,6 +75,14 @@ yourself if you want one. (Local single-root projects: `roots` is just the one r
 6. **Reboot from disk before work.** Treat context as volatile and the project files as durable memory:
    before decisions, recover the active goal/plan, progress, findings, and failed attempts from disk rather
    than trusting chat context. `checkin` is the normal reboot path.
+7. **Report in two registers — lead with the story, keep the ledger.** Open every user-facing report with a
+   **plain-language lead** (2–4 sentences: what question this answered → what the answer is → what it changes for
+   the project / decision), **no bare codenames**; ledger detail (numbers, receipts, SHAs, tables) follows below
+   or stays in the files, in full — never diluted. Expand each codename on first use per message ("B1 (the
+   insight-added arm)"). Relay a sub-agent's report as a **pyramid** (TL;DR in story register → key-numbers table
+   → file pointers), not the raw text whole. A decision that's yours → **break it out**: one question + 2–3
+   options + your recommendation, not buried at the end. This is an *added* lead layer — it never removes rigor
+   or gates a capability.
 
 ## Working
 Auto-log key events **as they happen** — not batched at session end (a long session loses the early
@@ -114,6 +122,14 @@ delete past entries** — append-only, reverse-chronological; record a **plan as
 snapshot), not on every micro-edit — a fresh dated entry when it's substantially revised. Create the folder
 note if absent. (Built-in `/goal` and plan mode **can't be hooked**, so this is native skill behavior — record
 it the moment you see a goal or plan set.) `reflect` summarizes progress against the **top (latest)** goal/plan.
+
+**A claim-shaped lane keeps a story-line tree at the top of its folder note — the first surface for "where are
+we?".** When a lane's work is a chain of claims being proven or killed (a research / experiment lane), maintain a
+small table at the top of `workstreams/<workstream>/<workstream>.md`: one row per claim → **status** (✅ settled ·
+🔶 narrowed · ❌ dead · 🧪 under test) + a **one-line evidence pointer**, under a one-sentence "story so far".
+Update it the moment a verdict lands (`record` / `reflect` keep it current), so "how's it going?" is one glance,
+not a `log.md` read. Same truth as the ledger — a dead claim is written ❌, never dressed up. Only where the work
+is claim-shaped; a straightforward build/fix lane doesn't need one.
 
 **A working pattern prescribed → `stream.json.working_pattern` (durable, like `teammates`).** When the user
 prescribes **how** this lane's work should be executed — "orchestrate through opus48 sub-agents", "always
@@ -665,6 +681,10 @@ Don't keep scaffold placeholders — replace them with real content.
 - **Conclusion first.** Lead with what a skimmer needs — the verdict, the rule, the current state —
   then evidence, then reference material (setups, commands, raw tables) last, read on demand. One
   screen at the top should fully inform.
+- **A long human-facing artifact opens with a plain "what this proves" lead.** Before the tables and
+  codenames of a new experiment-record section, a new dashboard section, or a review, put one or two plain
+  sentences — what question it settles, what the answer is, what it changes. The lead sits on top of the
+  ledger; it never replaces or softens it.
 - **Headers are plain signposts** (`## Setup`, `## Verdict`) — never carry rationale or contract text
   ("Setup — enough to reproduce" leaks the skill's contract into the note; the contract lives here).
 - **Tables for enumerable facts; short paragraphs; one idea per bullet.** No walls of prose.

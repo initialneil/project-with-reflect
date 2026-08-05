@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10.0 — 2026-08-05
+
+- Reporting register (汇报语域): user-facing reports lead with a plain-language story layer, claim-shaped lanes keep a story-line status tree, long artifacts open with a 'what this proves' lead — additive guidance across all project skills, not gates
+
 ## v0.9.23 — 2026-07-29
 
 - checkin recovers a user-prescribed working pattern (stream.json.working_pattern): recorded verbatim when declared, rebooted via new 'How should I work?' question + Working pattern status surface

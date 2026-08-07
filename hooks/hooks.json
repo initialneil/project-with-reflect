@@ -1,0 +1,51 @@
+{
+  "hooks": {
+    "SessionStart": [{
+      "matcher": "^compact$",
+      "hooks": [{
+        "type": "command",
+        "command": "SH=\"$PLUGIN_ROOT/skills/project-with-reflect/scripts/codex-hook-adapter.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.codex/skills/project-with-reflect/scripts/codex-hook-adapter.sh\"; [ -f \"$SH\" ] && sh \"$SH\" sessionstart; exit 0",
+        "statusMessage": "Re-grounding PWR memory after compaction",
+        "additionalContextLimit": 5000
+      }]
+    }],
+    "UserPromptSubmit": [{
+      "hooks": [{
+        "type": "command",
+        "command": "SH=\"$PLUGIN_ROOT/skills/project-with-reflect/scripts/codex-hook-adapter.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.codex/skills/project-with-reflect/scripts/codex-hook-adapter.sh\"; [ -f \"$SH\" ] && sh \"$SH\" userprompt; exit 0"
+      }]
+    }],
+    "PreToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{
+        "type": "command",
+        "command": "SH=\"$PLUGIN_ROOT/skills/project-with-reflect/scripts/codex-hook-adapter.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.codex/skills/project-with-reflect/scripts/codex-hook-adapter.sh\"; [ -f \"$SH\" ] && sh \"$SH\" pretool; exit 0",
+        "statusMessage": "Checking PWR memory"
+      }]
+    }],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [{
+          "type": "command",
+          "command": "SH=\"$PLUGIN_ROOT/skills/project-with-reflect/scripts/codex-hook-adapter.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.codex/skills/project-with-reflect/scripts/codex-hook-adapter.sh\"; [ -f \"$SH\" ] && sh \"$SH\" posttool; exit 0"
+        }]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [{
+          "type": "command",
+          "command": "SH=\"$PLUGIN_ROOT/skills/project-with-reflect/scripts/codex-hook-adapter.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.codex/skills/project-with-reflect/scripts/codex-hook-adapter.sh\"; [ -f \"$SH\" ] && sh \"$SH\" postwrite; exit 0"
+        }]
+      }
+    ],
+    "PreCompact": [{
+      "matcher": "*",
+      "hooks": [{
+        "type": "command",
+        "command": "SH=\"$PLUGIN_ROOT/skills/project-with-reflect/scripts/codex-hook-adapter.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.codex/skills/project-with-reflect/scripts/codex-hook-adapter.sh\"; [ -f \"$SH\" ] && sh \"$SH\" precompact; exit 0",
+        "statusMessage": "Preparing PWR memory"
+      }]
+    }]
+  }
+}

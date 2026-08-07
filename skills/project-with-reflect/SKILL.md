@@ -12,6 +12,11 @@ description: >-
   log->reflect->improve loop.
 argument-hint: "[status | checkin | doctor | help | list | bootstrap | register-project | register-machine | register-device | register-api | register-mcp | register-knowledge | update | register-agent | meta-reflect]"
 hooks:
+  SessionStart:
+    - matcher: "^compact$"
+      hooks:
+        - type: command
+          command: "SH=\"${CLAUDE_SKILL_DIR:-$HOME/.claude/skills/project-with-reflect}/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.claude/skills/project-with-reflect/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] && sh \"$SH\" --context=sessionstart; exit 0"
   UserPromptSubmit:
     - hooks:
         - type: command
@@ -362,7 +367,8 @@ so `gen-dashboard.sh` preserves it across regenerations.
 
 ## Native hooks (working-memory reliability)
 Working memory is mostly behavioral, and the model drifts — so non-blocking META-skill hooks
-(`SK/scripts/hook-autolog.sh`, declared in this SKILL's frontmatter and mirrored for Codex adapters)
+(`SK/scripts/hook-autolog.sh`, declared in this SKILL's frontmatter and bundled for Codex through
+`hooks/hooks.json`)
 nudge the harness, not the model's memory:
 - **UserPromptSubmit**: when a prompt looks like substantial work inside a registered project, remind the
   agent to start with `/<project> checkin`.
@@ -371,7 +377,13 @@ nudge the harness, not the model's memory:
 - **PostToolUse(Write/Edit)**: after source edits, remind the agent to update `note` / `record` if the
   edit completed a step or surfaced a finding.
 - **PostToolUse(Bash)**: on `git commit`, remind the agent to log what the commit accomplished.
-- **PreCompact**: flush un-logged events to the active stream before context compaction.
+- **PreCompact**: overwrite the active stream's `.compact-checkpoint.json` with the current project/lane,
+  transcript pointer, and durable-memory files, then nudge any still-unlogged event to disk before compaction.
+- **SessionStart (`compact`)**: immediately after manual or automatic compaction, inject a compact
+  developer-context recovery brief built from that checkpoint + the lane's latest goal/plan/log. The agent
+  must lightweight re-ground from those files before continuing the interrupted task; it escalates to the
+  full project `checkin` only when cwd/branch/freshness is uncertain. This also covers auto-compaction in the
+  middle of a turn, where waiting for the next user prompt would be too late.
 
 Every hook is gated via `registry.json` → repo match, stays silent elsewhere, honors
 `PROJECT_WITH_REFLECT_HOOKS_DISABLED=1`, and always exits 0 — it never blocks a tool or a compaction.

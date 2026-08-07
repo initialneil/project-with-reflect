@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10.1 — 2026-08-07
+
+- Restore project memory automatically after Codex compaction via disk checkpoints and SessionStart recovery hooks
+
 ## v0.10.0 — 2026-08-05
 
 - Reporting register (汇报语域): user-facing reports lead with a plain-language story layer, claim-shaped lanes keep a story-line status tree, long artifacts open with a 'what this proves' lead — additive guidance across all project skills, not gates

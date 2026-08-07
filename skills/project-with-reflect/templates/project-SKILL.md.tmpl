@@ -322,6 +322,15 @@ During a substantial work session:
   `teammate-dismiss` removes the entry, so a dismissed pair stays dismissed — never re-add on your own.
   **`checkin <ws> --as-teammate-of <lane>`** (how an assembled window starts) = the full ritual above,
   then enter **teammate standby** instead of waiting for the user — see `teammate-assemble`.
+
+  **Codex compaction recovery is automatic and lighter than a full checkin.** The meta-skill's central
+  hooks overwrite `workstreams/<workstream>/.compact-checkpoint.json` at `PreCompact`, then a
+  `SessionStart` hook matching source `compact` injects a disk-backed recovery gate immediately after
+  manual or automatic compaction (including compaction in the middle of a turn). On that signal, read the
+  checkpoint's dashboard / decisions / latest goal-plan / recent log pointers, give the terse six-question
+  reboot, and resume the interrupted step without redoing completed work. **Do not blindly run the full
+  checkin inside a mid-turn continuation**: escalate to it only when cwd, branch currency, sibling handoffs,
+  or teammate state is uncertain. The hook is a backstop; key events still land on disk as they happen.
 - `status` — a **smart brief, not a dump** (read-only; no cd, no writes). Synthesize from `{{NAME}}.md`
   + the active stream's recent `log.md` + the `## TODO` backlog + the `stream.json`s, and print tersely,
   a few lines per heading:

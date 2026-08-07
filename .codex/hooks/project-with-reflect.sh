@@ -1,19 +1,7 @@
 #!/bin/sh
-# Codex hook adapter for project-with-reflect. It delegates to the canonical
-# hook-autolog.sh script and preserves stdin JSON from Codex.
-CTX="$1"
-[ -n "$CTX" ] || exit 0
-
-SH=".codex/skills/project-with-reflect/scripts/hook-autolog.sh"
-if [ ! -f "$SH" ]; then
-  SH="$HOME/.codex/skills/project-with-reflect/scripts/hook-autolog.sh"
-fi
+# Repo-local compatibility wrapper. The implementation lives in the canonical
+# skill so hooks work from any registered project's cwd.
+SH=".codex/skills/project-with-reflect/scripts/codex-hook-adapter.sh"
+[ -f "$SH" ] || SH="$HOME/.codex/skills/project-with-reflect/scripts/codex-hook-adapter.sh"
 [ -f "$SH" ] || exit 0
-
-if [ "$CTX" = "pretool" ]; then
-  sh "$SH" "--context=$CTX" >&2 || true
-  printf '{"decision":"allow"}\n'
-  exit 0
-fi
-
-exec sh "$SH" "--context=$CTX"
+exec sh "$SH" "$@"

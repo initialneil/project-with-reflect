@@ -39,7 +39,7 @@ prompt、向 agent **一遍遍解释**同一个项目的来龙去脉？
 
 - **万物皆 skill** —— project 和上面每个 connection，注册后都得到自己的 `/<name>`。
 - **工作时自动 log** —— commit、决定、关键发现、实验结果、error + 修复，随手记进当前 stream。
-- **原生 hooks 提醒记忆卫生** —— 大块工作前 checkin，风险命令前重读磁盘记忆，编辑/发现后记录，compact 前 flush。
+- **原生 hooks 只在 session 边界维护记忆** —— startup/resume 加载、compact 前 checkpoint、compact 后 recovery；不会在每个 tool call 注入内容。
 - **`reflect` 蒸馏自己** —— 先 capture 这次 session，再把 log 提炼成**精简、可读的 lessons**，下次自动加载（实验结果则追加进一份永久的 **experiment record**）。
 - **checkin 从磁盘重启状态** —— 开始工作前，agent 重新加载 goal / plan、进展、发现和失败尝试。
 - **动手前先加载** —— agent 先读已有 lessons / decisions / 知识，不再重复解释、重复犯错。

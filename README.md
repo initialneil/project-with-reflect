@@ -41,7 +41,7 @@ All of it **Obsidian-friendly** (lessons / knowledge / dashboard are clean, read
 
 - **Everything is a skill** — a project, and each connection above, gets its own `/<name>` once registered.
 - **Auto-logs as you work** — commits, decisions, key findings, an experiment's result, an error + its fix, jotted to the active stream.
-- **Native hooks nudge memory hygiene** — checkin before substantial work, re-read disk memory before risky commands, record edits/findings, flush before compaction.
+- **Native hooks preserve memory at session boundaries** — load context at startup/resume, checkpoint before compaction, and re-ground after compaction; they do not inject content on every tool call.
 - **`reflect` distills itself** — captures the session, then folds the log into **lean, readable lessons** it loads next time (and appends run results to a permanent **experiment record**).
 - **Checkin reboots from disk** — before work, the agent reloads the goal/plan, progress, findings, and failed attempts from persistent files.
 - **Loads before acting** — the agent reads existing lessons / decisions / knowledge first, so it stops re-explaining and repeating mistakes.

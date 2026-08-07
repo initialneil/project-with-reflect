@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10.2 — 2026-08-07
+
+- Add Codex compaction recovery checkpoints and SessionStart re-grounding; quiet invalid hook injections
+
 ## v0.10.1 — 2026-08-07
 
 - Restore project memory automatically after Codex compaction via disk checkpoints and SessionStart recovery hooks

@@ -17,24 +17,6 @@ hooks:
       hooks:
         - type: command
           command: "SH=\"${CLAUDE_SKILL_DIR:-$HOME/.claude/skills/project-with-reflect}/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.claude/skills/project-with-reflect/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] && sh \"$SH\" --context=sessionstart; exit 0"
-  UserPromptSubmit:
-    - hooks:
-        - type: command
-          command: "SH=\"${CLAUDE_SKILL_DIR:-$HOME/.claude/skills/project-with-reflect}/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.claude/skills/project-with-reflect/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] && sh \"$SH\" --context=userprompt; exit 0"
-  PreToolUse:
-    - matcher: "Bash"
-      hooks:
-        - type: command
-          command: "SH=\"${CLAUDE_SKILL_DIR:-$HOME/.claude/skills/project-with-reflect}/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.claude/skills/project-with-reflect/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] && sh \"$SH\" --context=pretool; exit 0"
-  PostToolUse:
-    - matcher: "Bash"
-      hooks:
-        - type: command
-          command: "SH=\"${CLAUDE_SKILL_DIR:-$HOME/.claude/skills/project-with-reflect}/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.claude/skills/project-with-reflect/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] && sh \"$SH\" --context=posttool; exit 0"
-    - matcher: "Write|Edit"
-      hooks:
-        - type: command
-          command: "SH=\"${CLAUDE_SKILL_DIR:-$HOME/.claude/skills/project-with-reflect}/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] || SH=\"$HOME/.claude/skills/project-with-reflect/scripts/hook-autolog.sh\"; [ -f \"$SH\" ] && sh \"$SH\" --context=postwrite; exit 0"
   PreCompact:
     - matcher: "*"
       hooks:
@@ -370,13 +352,6 @@ Working memory is mostly behavioral, and the model drifts — so non-blocking ME
 (`SK/scripts/hook-autolog.sh`, declared in this SKILL's frontmatter and bundled for Codex through
 `hooks/hooks.json`)
 nudge the harness, not the model's memory:
-- **UserPromptSubmit**: when a prompt looks like substantial work inside a registered project, remind the
-  agent to start with `/<project> checkin`.
-- **PreToolUse(Bash)**: before risky/mutating/high-effort commands, remind the agent to refresh plan /
-  decisions from disk and mutate the approach after failures.
-- **PostToolUse(Write/Edit)**: after source edits, remind the agent to update `note` / `record` if the
-  edit completed a step or surfaced a finding.
-- **PostToolUse(Bash)**: on `git commit`, remind the agent to log what the commit accomplished.
 - **PreCompact**: overwrite the active stream's `.compact-checkpoint.json` with the current project/lane,
   transcript pointer, and durable-memory files, then nudge any still-unlogged event to disk before compaction.
 - **SessionStart (`compact`)**: immediately after manual or automatic compaction, inject a compact
@@ -385,7 +360,7 @@ nudge the harness, not the model's memory:
   full project `checkin` only when cwd/branch/freshness is uncertain. This also covers auto-compaction in the
   middle of a turn, where waiting for the next user prompt would be too late.
 
-Every hook is gated via `registry.json` → repo match, stays silent elsewhere, honors
+Hooks are limited to session/compaction boundaries (no per-tool injection), gated via `registry.json` → repo match, stays silent elsewhere, honors
 `PROJECT_WITH_REFLECT_HOOKS_DISABLED=1`, and always exits 0 — it never blocks a tool or a compaction.
 They cover the *mechanical* checkpoints; decisions / long-tasks / findings stay behavioral triggers
 (see a project's `Working`), and `reflect`'s capture-first is the end-of-session backstop. **Setting a goal or settling a plan is also a behavioral

@@ -10,7 +10,6 @@ SH="$HERE/hook-autolog.sh"
 
 if [ "$CTX" = "pretool" ]; then
   sh "$SH" "--context=$CTX" >&2 || true
-  printf '{"decision":"allow"}\n'
   exit 0
 fi
 

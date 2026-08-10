@@ -18,6 +18,10 @@ fi
 # Supported user-scope skill directories.
 AGENTS_SKILLS_DIR="$HOME/.agents/skills"
 KIMI_SKILLS_DIR="${KIMI_CODE_HOME:-$HOME/.kimi-code}/skills"
+# Kimi Work (the kimi-desktop app) discovers user skills from the daimon-share
+# skills dir — a different runtime from the Kimi Code CLI. Override with
+# DAIMON_SKILLS_DIR if the app data lives elsewhere.
+DAIMON_SKILLS_DIR="${DAIMON_SKILLS_DIR:-$HOME/Library/Application Support/kimi-desktop/daimon-share/daimon/skills}"
 
 # A bash script can't AskUserQuestion, so on a genuine first run we REFUSE and
 # signal the model to prompt for a root path. Call this at the top of every entry
@@ -74,7 +78,7 @@ pwr_ensure_root() {
 # the caller aborts and picks another slug. (A symlink already pointing at <own_dir> = re-registration, ok.)
 pwr_check_skill_collision() {
   local NAME="$1" OWN="$2" d
-  for d in "$HOME/.claude/skills/$NAME" "${CODEX_HOME:-$HOME/.codex}/skills/$NAME" "$AGENTS_SKILLS_DIR/$NAME" "$KIMI_SKILLS_DIR/$NAME"; do
+  for d in "$HOME/.claude/skills/$NAME" "${CODEX_HOME:-$HOME/.codex}/skills/$NAME" "$AGENTS_SKILLS_DIR/$NAME" "$KIMI_SKILLS_DIR/$NAME" "$DAIMON_SKILLS_DIR/$NAME"; do
     if [ -L "$d" ]; then
       [ "$(readlink "$d")" = "$OWN" ] || { echo "skill name '$NAME' is taken: $d -> $(readlink "$d"). Pick another slug." >&2; return 1; }
     elif [ -e "$d" ]; then
@@ -117,6 +121,13 @@ pwr_link_skill_dirs() {
   ln -sfn "$DIR" "$AGENTS_SKILLS_DIR/$NAME"
   mkdir -p "$KIMI_SKILLS_DIR"
   ln -sfn "$DIR" "$KIMI_SKILLS_DIR/$NAME"
+
+  # Kimi Work (kimi-desktop) scans the daimon-share skills dir. Link only when the
+  # app is installed (its daimon dir exists) so machines without it stay clean.
+  if [ -d "$(dirname "$DAIMON_SKILLS_DIR")" ]; then
+    mkdir -p "$DAIMON_SKILLS_DIR"
+    ln -sfn "$DIR" "$DAIMON_SKILLS_DIR/$NAME"
+  fi
 }
 
 pwr_install_skill() {

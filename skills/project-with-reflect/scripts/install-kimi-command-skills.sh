@@ -13,12 +13,18 @@ COMMAND_DIR="$REPO/commands"
 CLAUDE_COMMAND_DIR="$HOME/.claude/commands"
 AGENTS_SKILLS="$HOME/.agents/skills"
 KIMI_SKILLS="${KIMI_CODE_HOME:-$HOME/.kimi-code}/skills"
+# Kimi Work (kimi-desktop) scans the daimon-share skills dir; mirrored only when installed.
+DAIMON_SKILLS="${DAIMON_SKILLS_DIR:-$HOME/Library/Application Support/kimi-desktop/daimon-share/daimon/skills}"
 
 [ -d "$COMMAND_DIR" ] || { echo "missing command dir: $COMMAND_DIR" >&2; exit 1; }
 mkdir -p "$AGENTS_SKILLS"
 mkdir -p "$KIMI_SKILLS"
+DAIMON_ARG="$DAIMON_SKILLS"
+if [ ! -d "$(dirname "$DAIMON_SKILLS")" ]; then
+  DAIMON_ARG=""   # Kimi Work not installed on this machine — skip the mirror
+fi
 
-python3 - "$COMMAND_DIR" "$CLAUDE_COMMAND_DIR" "$AGENTS_SKILLS" "$KIMI_SKILLS" "$@" <<'PY'
+python3 - "$COMMAND_DIR" "$CLAUDE_COMMAND_DIR" "$AGENTS_SKILLS" "$KIMI_SKILLS" "$DAIMON_ARG" "$@" <<'PY'
 import json
 import os
 import re
@@ -29,7 +35,8 @@ command_dir = Path(sys.argv[1])
 claude_command_dir = Path(sys.argv[2])
 agents_skills = Path(sys.argv[3])
 kimi_skills = Path(sys.argv[4])
-explicit_paths = [Path(p) for p in sys.argv[5:]]
+daimon_skills = Path(sys.argv[5]) if sys.argv[5] else None
+explicit_paths = [Path(p) for p in sys.argv[6:]]
 
 name_re = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 marker = "Kimi adapter for project-with-reflect"
@@ -71,7 +78,11 @@ def is_pwr_generated_command(path: Path) -> bool:
         text = path.read_text()
     except OSError:
         return False
-    return "Project state dir:" in text and "project-with-reflect" in text
+    # gen-command.sh bodies carry "Project state dir:"; hand-written PWR aliases
+    # tag their description with "(project-with-reflect alias)" instead.
+    return "project-with-reflect" in text and (
+        "Project state dir:" in text or "(project-with-reflect alias)" in text
+    )
 
 
 def sources():
@@ -106,7 +117,7 @@ def write_skill(skill_dir: Path, name: str, description: str, argument_hint: str
         f"{args_line}"
         "---\n"
         f"# {name}\n\n"
-        f"{marker} command. In Kimi Code invoke with `/skill:{name}`; the body below was written for "
+        f"{marker} command. In Kimi Code invoke with `/skill:{name}` (in Kimi Work, `/{name}`); the body below was written for "
         "Claude Code's `/<name>` syntax — interpret `/name` references as user intent for this same command.\n\n"
         "## Command Body\n\n"
         f"{body}"
@@ -152,4 +163,8 @@ for path in sources():
     # Also mirror into the Kimi-specific dir so isolated KIMI_CODE_HOME roots work.
     if can_write(kimi_skills / name):
         write_skill(kimi_skills / name, name, description, argument_hint, body)
+
+    # And into Kimi Work (kimi-desktop) when that runtime is installed.
+    if daimon_skills is not None and can_write(daimon_skills / name):
+        write_skill(daimon_skills / name, name, description, argument_hint, body)
 PY

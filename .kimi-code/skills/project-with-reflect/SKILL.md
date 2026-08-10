@@ -30,6 +30,14 @@ The scripts resolve via `${KIMI_SKILL_DIR}` (this skill's directory, symlinked t
 Auto-log nudge hooks for Kimi Code live in `~/.kimi-code/config.toml` (`[[hooks]]` entries pointing
 at `.kimi-code/hooks/project-with-reflect.sh`), installed by `scripts/install-kimi-code.sh`.
 
+**Kimi Work (the kimi-desktop app)** is a separate runtime from the Kimi Code CLI: it discovers
+user skills from `<app-support>/kimi-desktop/daimon-share/daimon/skills/`
+(env override `DAIMON_SKILLS_DIR`), not `~/.agents/skills/`. `pwr_link_skill_dirs`,
+`install-kimi-command-skills.sh`, and `doctor.sh` mirror every generated skill there automatically
+when the app is installed. Its slash-command surface is the skill name itself
+(e.g. `/project-with-reflect status`); hooks are not currently mirrored there — Kimi Work relies on
+the behavioral contract instead.
+
 A meta-skill that **continuously generates and updates per-project sub-skills**.
 Core loop: `work (auto-logs key moments) → reflect = capture the session + distill (bounded) → lean,
 readable lessons → better next session`. (Plain `reflect` logs-and-reflects in one step — no need to

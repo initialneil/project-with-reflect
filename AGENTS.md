@@ -22,6 +22,8 @@ Agent-specific entrypoints in this repo are lightweight adapters:
 - `.codex/skills/project-with-reflect/` for Codex.
 - `.claude/skills/project-with-reflect` and `.claude-plugin/` for Claude Code.
 - `.kimi-code/skills/project-with-reflect/` and `~/.agents/skills/project-with-reflect` for Kimi Code.
+  The same adapter is mirrored into Kimi Work (kimi-desktop) at
+  `daimon-share/daimon/skills/project-with-reflect`; generated skills follow via `doctor`.
 - `.cursor/rules/project-with-reflect.mdc` for Cursor.
 - `.gemini/GEMINI.md` for Gemini CLI.
 - `.opencode/AGENTS.md` for OpenCode.

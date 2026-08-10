@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10.3 — 2026-08-10
+
+- Add Kimi Work (kimi-desktop) support: generated project/connection/command skills mirror into the daimon skills dir (pwr_link_skill_dirs, doctor, command-skill installer; DAIMON_SKILLS_DIR override, linked only when the app is installed); the command installer now also recognizes hand-written '(project-with-reflect alias)' commands
+
 ## v0.10.2 — 2026-08-07
 
 - Add Codex compaction recovery checkpoints and SessionStart re-grounding; quiet invalid hook injections

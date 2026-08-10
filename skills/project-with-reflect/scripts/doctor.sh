@@ -3,7 +3,7 @@
 # Check and repair the local project-with-reflect install:
 # - root pointer + root directory shape
 # - registry readability
-# - user-scope Claude/Codex/Kimi skill links for registered projects/connections
+# - user-scope Claude/Codex/Kimi Code/Kimi Work skill links for registered projects/connections
 set -euo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
@@ -99,6 +99,9 @@ fix_skill_links() {
   fix_link "$dir" "${CODEX_HOME:-$HOME/.codex}/skills/$name" "Codex $kind $name"
   fix_link "$dir" "$AGENTS_SKILLS_DIR/$name" "Kimi $kind $name"
   fix_link "$dir" "$KIMI_SKILLS_DIR/$name" "Kimi-local $kind $name"
+  if [ -d "$(dirname "$DAIMON_SKILLS_DIR")" ]; then
+    fix_link "$dir" "$DAIMON_SKILLS_DIR/$name" "Kimi Work $kind $name"
+  fi
 }
 
 ROWS="$(mktemp)"

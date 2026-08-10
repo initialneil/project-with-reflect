@@ -87,6 +87,19 @@ ln -sfn /path/to/project-with-reflect/.kimi-code/skills/project-with-reflect ~/.
 
 Hooks are auto-log nudges in `~/.kimi-code/config.toml`; `doctor` can repair/install them.
 
+**Kimi Work (kimi-desktop app):** a separate runtime from the Kimi Code CLI. It scans user skills
+from `<app-support>/kimi-desktop/daimon-share/daimon/skills/`, so the same symlink works there too:
+
+```
+ln -sfn /path/to/project-with-reflect/.kimi-code/skills/project-with-reflect \
+  "$HOME/Library/Application Support/kimi-desktop/daimon-share/daimon/skills/project-with-reflect"
+```
+
+Once the meta-skill is linked, `doctor` backfills every generated project/connection/command skill
+into Kimi Work automatically (override the location with `DAIMON_SKILLS_DIR`). Kimi Work has no
+hook surface — the auto-log nudges are Kimi Code–only; in Kimi Work the behavioral contract and
+`reflect`'s capture-first backstop carry the loop.
+
 ## Quick start
 
 The daily loop is: **register → check status / check in → work → log and reflect**.
@@ -325,6 +338,7 @@ that source so one repo can be installed across common coding agents:
 | Codex | First-class skill install | `.codex/skills/project-with-reflect/` |
 | Claude Code | Plugin + skill + slash commands/hooks | `.claude-plugin/`, `skills/project-with-reflect/`, `commands/` |
 | Kimi Code | Skill adapter + hooks | `.kimi-code/skills/project-with-reflect/`, `~/.agents/skills/project-with-reflect` |
+| Kimi Work (kimi-desktop) | Skill mirror (no hooks) | `daimon-share/daimon/skills/project-with-reflect` (via `doctor` / `pwr_link_skill_dirs`) |
 | Generic agent CLIs | Repository instructions | `AGENTS.md`, `llms.txt` |
 | Cursor | Rule adapter | `.cursor/rules/project-with-reflect.mdc` |
 | Gemini CLI | Context adapter | `.gemini/GEMINI.md` |
@@ -332,13 +346,14 @@ that source so one repo can be installed across common coding agents:
 | Continue | Prompt adapter | `.continue/prompts/project-with-reflect.md` |
 | GitHub Copilot coding agent | Repository instructions | `.github/copilot-instructions.md` |
 
-Codex, Claude Code, and Kimi Code get the most complete behavior because project-with-reflect can install generated
-project/connection skills into all three user skill directories:
+Codex, Claude Code, Kimi Code, and Kimi Work get the most complete behavior because project-with-reflect can install generated
+project/connection skills into all of their user skill directories:
 
 ```
 ~/.codex/skills/<name>
 ~/.claude/skills/<name>
 ~/.agents/skills/<name>
+"$HOME/Library/Application Support/kimi-desktop/daimon-share/daimon/skills/<name>"   # Kimi Work, when installed
 ```
 
 If an older Claude-created project exists in the root but Codex or Kimi Code cannot find `/<name>` /

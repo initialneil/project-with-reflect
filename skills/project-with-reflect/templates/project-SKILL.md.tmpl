@@ -19,11 +19,28 @@ State dir: `{{PDIR}}`
     (and numbers that host outputs later prune) is never lost or rewritten.
   `reflect` archives only the working `log.md` — **never a lesson**. See the `record` action for how new
   findings land here and **follow the format of the lesson they continue**.
-- `workstreams/<workstream>/` — per workstream: `stream.json` (state) + `log.md` (granular history) +
-  `<workstream>.md` (folder note = the **goal/plan log**: dated `### <date>` + ```` ```goal ```` / ```` ```plan ````
-  blocks, newest-first; see *Working*). This is the workstream's disk-backed "where are we going?"
-  surface; `log.md`, `decisions.md`, and `lessons/` provide the matching "what happened / what did we learn?"
-  surfaces.
+- `workstreams/<workstream>/` — per workstream: `stream.json` (state) + three md files with distinct roles:
+  - `<workstream>.md` (folder note) = the **workstream head** — a bounded (≤~120 lines), freely-rewritable
+    **quick guide, not a log**. Five sections, in order (canonical English names; localized names — e.g.
+    基本信息/交付手册/当前事项/按需 lessons/档案 — are fine, the roles + order are what's fixed):
+    `## Basics` (code dir / branch+PR flow / working pattern / deploy+verify channels / test env / red
+    lines), `## Delivery handbook` (one line defining "delivered" + a **checklist walked line-by-line
+    before shipping**, each item linking its backing `[[lesson]]`), `## Now` (doing / next / risks, with
+    pointers into `plan-log.md` + any repo-local plan file), `## Read-when` (a routing table: "doing X →
+    read [[lesson-a]]"), `## Archive` (pointers to plan-log / log / decisions / plan files). An optional
+    `## Jobs` tracks detached remote runs (see *Connections*). The head is a **materialized cache of the
+    six reboot questions, never a source of truth** — authority stays in `stream.json` / `decisions.md` /
+    `lessons/` / `plan-log.md`; a `Last updated: <date> · by <round-done|reflect|checkin-repair>` stamp
+    under its title keeps it honest (see *Working*).
+  - `plan-log.md` = the **goal/plan log + 📥 handoff mailbox**: dated `### <date>` + ```` ```goal ```` /
+    ```` ```plan ```` blocks, newest-first, append-only, verbatim (see *Working*). This is the disk-backed
+    "where are we going?" history; the head's `## Now` is its current-state distillation.
+  - `log.md` = granular history (commits, findings, errors; consumed by reflect).
+  **Migration (a pre-head lane):** an existing `<workstream>.md` that IS the goal/plan log (dated
+  newest-first entries, no head sections) → on that lane's next checkin, propose a one-time migration:
+  move its full content verbatim into `plan-log.md`, then draft the head from it + `stream.json` + the
+  lane's lessons. Until migrated, treat `<workstream>.md` as the plan log (old behavior) — `handoff`,
+  `pickup`, and the teammate watch target **wherever the lane's goal/plan log currently lives**.
 - `decisions.md` — ideas tried / chosen / rejected (+ datasets, settings).
 - `{{NAME}}.md` — the human dashboard / folder note (regenerated on reflect); also carries the
   project's `## TODO` backlog (see the `todo` action).
@@ -52,10 +69,13 @@ yourself if you want one. (Local single-root projects: `roots` is just the one r
      Append-only record lessons (e.g. `experiment-*.md`) need not be indexed here. -->
 
 ## Behavioral contract — every session, before acting
-1. **Load first, propose second.** Read `{{NAME}}.md` + `decisions.md` + the active
-   workstream, the lesson modules whose "load when…" matches the task, the relevant **experiment
-   records** when revisiting past runs/results, and any **linked global knowledge**
-   (`config.json.knowledge` → `$PROJECT_WITH_REFLECT_ROOT/knowledge/<k>`).
+1. **Load first, propose second.** A **workstream checkin loads head-first**: the lane's **workstream
+   head** (`workstreams/<ws>/<ws>.md`) + the 1–2 lessons its `## Read-when` routes to for the current
+   work — the head's summaries stand in for a full `{{NAME}}.md` + `decisions.md` read (reflect keeps
+   them synced; the checkin staleness gate catches drift). Read `{{NAME}}.md` + `decisions.md` in full on
+   a **bare/home checkin**, when the head routes you there, when the head is stale or missing, and at
+   `reflect`. Also load the relevant **experiment records** when revisiting past runs/results, and any
+   **linked global knowledge** (`config.json.knowledge` → `$PROJECT_WITH_REFLECT_ROOT/knowledge/<k>`).
 2. **Check the ledger before proposing.** If an idea/experiment is already in
    `decisions.md` or an experiment record, say so and cite it — never re-propose or re-derive blind.
 3. **Never improvise guarded state.** Datasets, training settings, branch/release
@@ -103,9 +123,10 @@ the finding is about**, so knowledge lands where it's reusable:
 **A goal or plan set → the workstream's goal/plan log (newest-first).** When the user sets a **goal** for the
 active workstream (a built-in `/goal`, or stating one in prose — "the goal is …") **or a plan is settled** (an
 approved **plan-mode** plan / `ExitPlanMode`, a repo-local `task_plan.md`, or a plan laid out in prose
-— "here's the plan: …": a bulk of work to track) — **record it verbatim** to that workstream's **folder note**
-`workstreams/<workstream>/<workstream>.md` (distinct from `log.md`'s granular events), **prepended above prior
-entries (recent on top)**, tagging the fenced block by kind:
+— "here's the plan: …": a bulk of work to track) — **record it verbatim** to that workstream's goal/plan log
+`workstreams/<workstream>/plan-log.md` (distinct from `log.md`'s granular events; a pre-head lane keeps it
+in `<workstream>.md` until migrated), **prepended above prior entries (recent on top)**, tagging the fenced
+block by kind:
 
 ````
 ### <date>
@@ -119,17 +140,31 @@ entries (recent on top)**, tagging the fenced block by kind:
 
 Use a `goal` block for a goal, a `plan` block for a plan; an entry can carry either or both. **Never rewrite or
 delete past entries** — append-only, reverse-chronological; record a **plan as it's settled / approved** (the
-snapshot), not on every micro-edit — a fresh dated entry when it's substantially revised. Create the folder
-note if absent. (Built-in `/goal` and plan mode **can't be hooked**, so this is native skill behavior — record
-it the moment you see a goal or plan set.) `reflect` summarizes progress against the **top (latest)** goal/plan.
+snapshot), not on every micro-edit — a fresh dated entry when it's substantially revised. Create the file
+if absent. (Built-in `/goal` and plan mode **can't be hooked**, so this is native skill behavior — record
+it the moment you see a goal or plan set.) A newly settled goal/plan is also a **round boundary**: refresh
+the head's `## Now` + stamp in the same breath (see the round-done update below). `reflect` summarizes
+progress against the **top (latest)** goal/plan.
 
-**A claim-shaped lane keeps a story-line tree at the top of its folder note — the first surface for "where are
+**A claim-shaped lane keeps a story-line tree in its head's `## Now` — the first surface for "where are
 we?".** When a lane's work is a chain of claims being proven or killed (a research / experiment lane), maintain a
-small table at the top of `workstreams/<workstream>/<workstream>.md`: one row per claim → **status** (✅ settled ·
+small table there: one row per claim → **status** (✅ settled ·
 🔶 narrowed · ❌ dead · 🧪 under test) + a **one-line evidence pointer**, under a one-sentence "story so far".
 Update it the moment a verdict lands (`record` / `reflect` keep it current), so "how's it going?" is one glance,
 not a `log.md` read. Same truth as the ledger — a dead claim is written ❌, never dressed up. Only where the work
 is claim-shaped; a straightforward build/fix lane doesn't need one.
+
+**Round-done → refresh the head (native behavior; what makes the fast checkin trustworthy).** The moment a
+round of work completes — a PR merged, a deploy verified in the real product, a user directive fully
+delivered, a new goal/plan settled — update the head's `## Now` (just finished → next → live risks) and its
+`Last updated` stamp (`by round-done`): one small edit, while `plan-log.md`/`log.md` keep their append-only
+entries as usual. The head is freely rewritable (history lives in plan-log/log — rewriting loses nothing)
+but **bounded ≤~120 lines**: details overflow into lessons / the plan log / a repo-local plan file, with
+pointers. `reflect` does the full rebalance (see `reflect`); round-done is the cheap habit in between.
+**Delivery gate:** before shipping — a PR review, a deploy, reporting "done" — walk the head's
+`## Delivery handbook` checklist **line by line**; it exists to be walked at that moment, not only read at
+checkin. An item that fails either gets fixed or gets called out explicitly in the report — never silently
+skipped.
 
 **A working pattern prescribed → `stream.json.working_pattern` (durable, like `teammates`).** When the user
 prescribes **how** this lane's work should be executed — "orchestrate through opus48 sub-agents", "always
@@ -222,9 +257,20 @@ During a substantial work session:
   does confident wrong work: wrong lane, stale plan, decisions/lessons unloaded, failed attempts re-derived,
   batons unseen. If you notice mid-work that checkin never completed, **stop and run it in full** before
   continuing. The entry
-  point for a working session: (1) **load** the behavioral-contract context — `{{NAME}}.md` + `decisions.md`
-  + (for a workstream) its `log.md` + `base`, the lesson modules matching the task, and bound-connection facts;
-  then **reboot from disk** by answering, in the recap, the six questions:
+  point for a working session: (1) **load** the behavioral-contract context. **A workstream checkin loads
+  head-first** (~3 reads instead of 6+):
+  - read the lane's **head** `workstreams/<ws>/<ws>.md` — it carries the guidance a session needs (basics /
+    delivery handbook / now / lesson routing);
+  - **staleness gate**: compare the head's `Last updated` stamp against `plan-log.md`'s top entry date +
+    `stream.json`. Stamp older → the head missed a round: read plan-log's top entries, repair the head
+    (stamp `by checkin-repair`), then continue. Head missing, or `<ws>.md` is still an old-format goal/plan
+    log → do the full old-style load (`{{NAME}}.md` + `decisions.md` + the plan log + recent `log.md`) and
+    **propose the one-time migration** (see the workstream layout above);
+  - **📥 scan**: `plan-log.md`'s top entries down to this lane's most recent own entry (the pickup rule);
+  - load the 1–2 lessons the head's `## Read-when` routes to for the current work, + bound-connection facts.
+  A **bare/home checkin** reads `{{NAME}}.md` + `decisions.md` in full (project-wide context is the point
+  there). Then **reboot from disk** by answering, in the recap, the six questions — the head is their
+  materialized view: answer from it, cross-checking `stream.json`:
   **Where am I?** (project/workstream/cwd), **Where am I going?** (latest goal/plan + next phase),
   **How should I work?** (the lane's `stream.json.working_pattern` — a standing user-prescribed execution
   style, e.g. orchestrate-via-sub-agents, teammate-coupled; **adopt it now, don't wait to be re-told**),
@@ -331,8 +377,9 @@ During a substantial work session:
   reboot, and resume the interrupted step without redoing completed work. **Do not blindly run the full
   checkin inside a mid-turn continuation**: escalate to it only when cwd, branch currency, sibling handoffs,
   or teammate state is uncertain. The hook is a backstop; key events still land on disk as they happen.
-- `status` — a **smart brief, not a dump** (read-only; no cd, no writes). Synthesize from `{{NAME}}.md`
-  + the active stream's recent `log.md` + the `## TODO` backlog + the `stream.json`s, and print tersely,
+- `status` — a **smart brief, not a dump** (read-only; no cd, no writes). Synthesize from the active
+  lane's **workstream head** (primary — it materializes the six questions) + its recent `log.md` + the
+  `## TODO` backlog + the `stream.json`s (project-level view: `{{NAME}}.md`), and print tersely,
   a few lines per heading:
   - **Where** — current state / version (the dashboard's "Where" line).
   - **Plan / Reboot** — latest goal/plan headline, next phase/step, what was learned, what was done, and
@@ -398,7 +445,11 @@ During a substantial work session:
   - **Everything else** → fold into the right `lessons/<topic>.md` distilled lesson + `decisions.md`
     (**bounded update**: add facts, fix wrong ones; **split a module** into another topic if it gets
     too long to read — no caps).
-  Then refresh the dashboard frontmatter facts (`gen-dashboard.sh {{PDIR}}`) and the `{{NAME}}.md`
+  Then **rebalance the active lane's workstream head**: clear finished items out of `## Now`; **promote
+  feedback the user has now given more than once into a `## Delivery handbook` checklist line** (backed by
+  a lesson holding the why); refresh the `## Read-when` routing for what's coming; re-sync `## Basics`
+  against `stream.json` / `decisions.md`; bump the stamp (`by reflect`). Then refresh the dashboard
+  frontmatter facts (`gen-dashboard.sh {{PDIR}}`) and the `{{NAME}}.md`
   narrative body, then archive consumed **logs** (`reflect.sh archive {{PDIR}} <stream>` — this archives
   the working `log.md` only, never the experiment records or lessons). Reflect stays **per-skill — no
   cascade**: end by listing bound connections that have unreflected `log.md` lines and suggesting
@@ -424,8 +475,9 @@ During a substantial work session:
   **`<repo>/.claude/worktrees/<b>`** by default (auto-created, kept out of the repo's `git status` via a
   local `.git/info/exclude` entry — no prompt; pass `--path <dir>` to override), forked from
   `origin/<base>` on a new branch `<b>`; **in-repo** → `git checkout -b` (HEAD switches, ready to work),
-  **logical** → no git. **Re-registering an existing workstream** updates its `base`/`pr_into` only — cycle /
-  log / git untouched. The script generates the `/{{NAME}}-<b>` alias.
+  **logical** → no git. The script scaffolds the lane's files — a **head skeleton** (`<b>.md`, the five
+  sections to fill) + an empty `plan-log.md` + `log.md`. **Re-registering an existing workstream** updates
+  its `base`/`pr_into` only — cycle / log / git / head untouched. The script generates the `/{{NAME}}-<b>` alias.
 
   **One worktree per workstream — reuse it, NEVER improvise.** A worktree-mode workstream has **exactly one**
   worktree (its `worktree_path`); **all its dev / fixes / PRs happen in that single dir**, across many
@@ -436,8 +488,8 @@ During a substantial work session:
   registered workstream** (`register-workstream`) or needs an **explicit user OK** — never spun up silently.
   Checked into a `tracked` / `logical` workstream (no worktree)? Work in the **base repo** or ask to register
   a worktree-workstream — do **not** conjure a worktree.
-- `<workstream>` (or "work on `<workstream>`") — **checkin to that workstream** (load its `log.md` + `base` + lessons,
-  run the working-dir decision, recap — the full behavior is the `checkin` action above), then the workstream
+- `<workstream>` (or "work on `<workstream>`") — **checkin to that workstream** (head-first load + `base` +
+  routed lessons, run the working-dir decision, recap — the full behavior is the `checkin` action above), then the workstream
   subcommands (all operate on its **one** worktree — never create another):
   - `pr` — open the PR, **verifying the lineage is current first — it always asks before any history-rewriting
     rebase** (the workstream *tracks* its `base`):
@@ -476,7 +528,8 @@ During a substantial work session:
   reflect). For a **durable** finding use `record` instead.
 - `handoff <other-workstream> "<what>"` — **pass a baton to a sibling lane** of this project (the
   cross-workstream channel — see *Working*). Append a dated entry to the **other** lane's goal/plan log
-  `{{PDIR}}/workstreams/<other-workstream>/<other-workstream>.md`, **newest-first**, prefixed `📥 from
+  `{{PDIR}}/workstreams/<other-workstream>/plan-log.md` (a pre-head lane keeps it in
+  `<other-workstream>.md` — append wherever that lane's goal/plan log lives), **newest-first**, prefixed `📥 from
   <this-lane>`: a ```plan``` block when you're handing over a plan/pivot to execute, a ```handoff``` block
   for an FYI / ask / pointer. Create the folder note if absent; **append-only** (never rewrite the sibling's
   past entries). The target lane's next `checkin`/`status` surfaces it (see *Sibling lanes*). Use it the
@@ -506,7 +559,7 @@ During a substantial work session:
   exact `claude` command to run manually in any window; the protocol below works the same.
   **What the assembled window does — teammate standby:** after its normal checkin ritual it does not
   wait for a human. It arms a **background watch** on its own goal/plan log
-  (`workstreams/<workstream>/<workstream>.md`) — e.g. a background `until` loop on the file's mtime
+  (`workstreams/<workstream>/plan-log.md`; a pre-head lane: `<workstream>.md`) — e.g. a background `until` loop on the file's mtime
   (re-armed after each firing), or a persistent Monitor if available — and on each change runs
   **`pickup` → act** (execute the ```plan``` baton / answer the ```handoff``` ask) **→ `record` results +
   `handoff <commander> "done: …"` → re-arm**. Between batons it sits idle. The human can still type into
@@ -648,8 +701,8 @@ is also its own skill `/<name>`; from here you orchestrate them in project conte
   don't bypass a connection's skill — that's where its learned quirks get applied. **A long-running
   remote job (training, a big build/eval) is launched detached on the host via `/<name>`** (tmux/nohup —
   see the machine skill) so a dropped local session / lost wifi never kills it. **The workstream that
-  launched it owns the tracking** — record it in the active workstream's folder note
-  `workstreams/<workstream>/<workstream>.md` under **`## Jobs`** (`job · host · tmux session · log path ·
+  launched it owns the tracking** — record it in the active workstream's **head**
+  (`workstreams/<workstream>/<workstream>.md`) under **`## Jobs`** (`job · host · tmux session · log path ·
   started · status`), so a run is tied to the work that spawned it and cleaned up with it (not left to the
   machine's generic ledger — that's only for jobs launched with no project active). `status` / `checkin`
   **reconcile** `## Jobs` against the host (`/<name> jobs` → `tmux ls`): flag finished/dead runs, prompt to

@@ -365,9 +365,11 @@ Hooks are limited to session/compaction boundaries (no per-tool injection), gate
 They cover the *mechanical* checkpoints; decisions / long-tasks / findings stay behavioral triggers
 (see a project's `Working`), and `reflect`'s capture-first is the end-of-session backstop. **Setting a goal or settling a plan is also a behavioral
 auto-record** — the built-in `/goal` and plan mode can't be hooked, so when the user sets a goal or a plan
-is approved the active project records it verbatim to the workstream's **goal/plan-log folder note**
-(`workstreams/<workstream>/<workstream>.md`, `### <date>` + a ```goal``` or ```plan``` block,
-**newest-first**); see a project's `Working`.
+is approved the active project records it verbatim to the workstream's **goal/plan log**
+(`workstreams/<workstream>/plan-log.md`, `### <date>` + a ```goal``` or ```plan``` block, **newest-first**;
+a pre-head lane still keeps it in `<workstream>.md`). The lane's folder note `<workstream>.md` is its
+**workstream head** — a bounded quick guide (Basics / Delivery handbook / Now / Read-when / Archive) that
+checkin loads head-first and a completed round of work refreshes; see a project's `Working`.
 
 **Two workstreams of one project cooperate through the shared vault, not window-to-window** (a `train`
 lane + a `paper` lane, `dev` + `research`, …). Two sessions coordinate asynchronously via shared state —

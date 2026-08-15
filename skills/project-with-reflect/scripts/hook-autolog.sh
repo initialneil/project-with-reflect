@@ -124,6 +124,7 @@ elif ctx == "precompact":
                 os.path.join(state_dir, f"{match}.md"),
                 os.path.join(state_dir, "decisions.md"),
                 os.path.join(stream_dir, f"{stream}.md"),
+                os.path.join(stream_dir, "plan-log.md"),
                 os.path.join(stream_dir, "log.md"),
             ],
         }
@@ -149,7 +150,8 @@ elif ctx == "sessionstart":
     if not memory:
         memory = [os.path.join(state_dir, f"{match}.md"), os.path.join(state_dir, "decisions.md")]
         if stream_dir:
-            memory += [os.path.join(stream_dir, f"{stream}.md"), os.path.join(stream_dir, "log.md")]
+            memory += [os.path.join(stream_dir, f"{stream}.md"), os.path.join(stream_dir, "plan-log.md"),
+                       os.path.join(stream_dir, "log.md")]
     existing = [p for p in memory if p and os.path.isfile(p)]
     files = "\n".join(f"- {p}" for p in existing)
     lane = stream or "project home"

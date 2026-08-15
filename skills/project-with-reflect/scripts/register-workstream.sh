@@ -88,6 +88,41 @@ resolve_start() {  # echo a valid start-point for $1 (prefer origin/), or return
 
 mkdir -p "$WS"
 [ -f "$WS/log.md" ] || echo "# $BR — stream log" > "$WS/log.md"
+[ -f "$WS/plan-log.md" ] || echo "# $BR — goal/plan log (newest-first)" > "$WS/plan-log.md"
+# workstream head skeleton (the folder note) — never touch an existing one (a pre-head lane's
+# <ws>.md is its goal/plan log until the model migrates it on checkin)
+if [ ! -f "$WS/$BR.md" ]; then
+  cat > "$WS/$BR.md" <<EOF
+# $BR — workstream head
+> [!note] One-liner
+> (what this lane is + its current mission — fill in at first checkin)
+
+Last updated: $(date +%F) · by register
+
+## Basics
+| | |
+|---|---|
+| code | (dir · branch · PR flow) |
+| pattern | (working pattern, mirrors stream.json) |
+| deploy / verify | (channels + guards) |
+| red lines | (invariants) |
+
+## Delivery handbook
+Delivered = (define it in one line). Walk before shipping:
+1. (grows via reflect from repeated user feedback)
+
+## Now
+- doing: —
+- next: —
+- risks: —
+
+## Read-when
+- (doing X → read [[lesson]])
+
+## Archive
+plan-log.md (goal/plan + 📥 mailbox) · log.md · [[decisions]]
+EOF
+fi
 KIND="logical"; WORKTREE_PATH=""
 
 if [ "$TRACK_ONLY" = "1" ]; then

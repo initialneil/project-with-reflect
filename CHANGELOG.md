@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.0 — 2026-08-15
+
+- workstream head: <ws>.md becomes a bounded quick-guide (Basics/Delivery handbook/Now/Read-when/Archive) with head-first fast checkin, round-done refresh + reflect rebalance; goal/plan log + handoff mailbox move to plan-log.md
+
 ## v0.10.3 — 2026-08-10
 
 - Add Kimi Work (kimi-desktop) support: generated project/connection/command skills mirror into the daimon skills dir (pwr_link_skill_dirs, doctor, command-skill installer; DAIMON_SKILLS_DIR override, linked only when the app is installed); the command installer now also recognizes hand-written '(project-with-reflect alias)' commands

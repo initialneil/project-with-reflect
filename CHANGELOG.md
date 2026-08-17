@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.1 — 2026-08-17
+
+- doctor: deterministic project-structure repair — migrate a pre-head lane (old-format <ws>.md → plan-log.md verbatim + bounded head), scaffold/flag; reflect now migrates a pre-head lane too
+
 ## v0.11.0 — 2026-08-15
 
 - workstream head: <ws>.md becomes a bounded quick-guide (Basics/Delivery handbook/Now/Read-when/Archive) with head-first fast checkin, round-done refresh + reflect rebalance; goal/plan log + handoff mailbox move to plan-log.md

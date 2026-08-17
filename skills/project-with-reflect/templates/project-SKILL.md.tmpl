@@ -37,7 +37,8 @@ State dir: `{{PDIR}}`
     "where are we going?" history; the head's `## Now` is its current-state distillation.
   - `log.md` = granular history (commits, findings, errors; consumed by reflect).
   **Migration (a pre-head lane):** an existing `<workstream>.md` that IS the goal/plan log (dated
-  newest-first entries, no head sections) → on that lane's next checkin, propose a one-time migration:
+  newest-first entries, no head sections) → on that lane's next **checkin or `reflect`** do a one-time
+  migration (checkin **proposes** it; `reflect` **performs** it as its head step — see the reflect action):
   move its full content verbatim into `plan-log.md`, then draft the head from it + `stream.json` + the
   lane's lessons. Until migrated, treat `<workstream>.md` as the plan log (old behavior) — `handoff`,
   `pickup`, and the teammate watch target **wherever the lane's goal/plan log currently lives**.
@@ -403,6 +404,22 @@ During a substantial work session:
   The full picture stays in `{{NAME}}.md`; `status` is the quick read. `checkin` ends by running it.
 - `list` — handles: workstreams (+ lineage / behind-base), evals, tasks, lesson
   modules + experiment records, global knowledge used (`config.json.knowledge`).
+- `doctor [<workstream>]` — **the project doctor: diagnose + repair the project's structural state,
+  deterministically — it acts, it does not interrogate.** Runs `repair-project.sh {{PDIR}} --apply
+  [<workstream>]` (drop `--apply` for a dry-run preview first). Per lane it:
+  - **migrates a pre-head lane** — a `<ws>.md` that's still an old-format goal/plan log (no head
+    sections) → moves it **verbatim** into `plan-log.md`, then writes a bounded head (Basics auto-filled
+    from `stream.json` + `working_pattern`; `## Now` seeded from the moved log's top `### <date>` entries).
+    The old log is never lost (it's in `plan-log.md` byte-for-byte); **idempotent** (a healthy head — any
+    localization — is left alone);
+  - **scaffolds a missing head**, **creates a missing `plan-log.md`/`log.md` stub**;
+  - **flags a stale head** (stamp older than `plan-log`'s top date) → `reflect` rebalances its `## Now`.
+  Report the summary (migrated / fixed / flagged / ok). Then **enrich each just-migrated head** from
+  `plan-log.md`'s top entries + the lane's lessons (the skeleton's `## Now`/`## Read-when` are
+  placeholders — fill the real one-liner + routing now; a later checkin/reflect refines further). Use
+  `doctor` when a `<ws>.md` looks wrong (a giant old log where a head belongs), after pulling the project
+  across machines, or whenever checkin/reflect didn't migrate a lane — it is the **explicit-intent repair**
+  so you never have to explain "what's wrong" to get the structure fixed.
 - `help` — this menu.
 - `reflect [<target>] [--reground]` — **`reflect` is log-and-reflect: it captures the session first,
   then distills** (aliases: `log-and-reflect`, and the top-level `/log-and-reflect` which resolves the
@@ -445,10 +462,21 @@ During a substantial work session:
   - **Everything else** → fold into the right `lessons/<topic>.md` distilled lesson + `decisions.md`
     (**bounded update**: add facts, fix wrong ones; **split a module** into another topic if it gets
     too long to read — no caps).
-  Then **rebalance the active lane's workstream head**: clear finished items out of `## Now`; **promote
-  feedback the user has now given more than once into a `## Delivery handbook` checklist line** (backed by
-  a lesson holding the why); refresh the `## Read-when` routing for what's coming; re-sync `## Basics`
-  against `stream.json` / `decisions.md`; bump the stamp (`by reflect`). Then refresh the dashboard
+  Then handle the lane's **workstream head — migrate first if it's still pre-head, otherwise rebalance:**
+  - **Pre-head lane** (its `<ws>.md` is still an old-format goal/plan log — dated newest-first entries, no
+    head sections — and no `plan-log.md` exists): **do the one-time migration now, don't defer it** — move
+    `<ws>.md`'s full content **verbatim** into `plan-log.md` (preserve every line), then draft the head into
+    `<ws>.md` from `plan-log.md`'s top entries + `stream.json` (Basics + any `working_pattern` as a red-line) +
+    the lane's lessons — the five sections (Basics / Delivery handbook / Now / Read-when / Archive) + a
+    `Last updated: <date> · by reflect` stamp. For a pre-head lane this migration **is** reflect's head step
+    (there is no head to rebalance yet) — so `/log-and-reflect` **converts** an un-migrated lane instead of
+    silently leaving it old.
+  - **Migrated lane** — **rebalance the head**: clear finished items out of `## Now`; **promote
+    feedback the user has now given more than once into a `## Delivery handbook` checklist line** (backed by
+    a lesson holding the why); refresh the `## Read-when` routing for what's coming; re-sync `## Basics`
+    against `stream.json` / `decisions.md`; bump the stamp (`by reflect`).
+
+  Either way (migrated or just-now-migrated) then refresh the dashboard
   frontmatter facts (`gen-dashboard.sh {{PDIR}}`) and the `{{NAME}}.md`
   narrative body, then archive consumed **logs** (`reflect.sh archive {{PDIR}} <stream>` — this archives
   the working `log.md` only, never the experiment records or lessons). Reflect stays **per-skill — no

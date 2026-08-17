@@ -94,11 +94,24 @@ Bare `/project-with-reflect` → `help`.
   prompt (recommend a synced, readable custom path — see "## The root"), then
   `SK/scripts/bootstrap.sh "<path>"`. Use to set up before registering, move the root,
   or repair a missing pointer / rc export.
-- **doctor `[<name>]`** — check/repair the local install: root pointer, root directory shape,
-  registry readability, and Claude/Codex user-scope skill links for already-registered
-  projects/connections. Run `SK/scripts/doctor.sh [<name>]`. Use when a project created in Claude
-  Code exists in `$ROOT/projects/<name>` but Codex cannot discover `/<name>` / `$<name>`, or after
-  moving/syncing the root across machines.
+- **doctor `[<name>]`** — check/repair the local install **and, for a project, its on-disk structure —
+  deterministically (it acts, it never interrogates).**
+  - **Install health** (always): root pointer, root directory shape, registry readability, and
+    Claude/Codex/Kimi user-scope skill links for registered projects/connections — `SK/scripts/doctor.sh
+    [<name>]`.
+  - **Project structure** (when `<name>`, or the cwd, resolves to a project): also run
+    `SK/scripts/repair-project.sh <project_dir> --apply` — the project doctor that **migrates a pre-head
+    lane** (an old-format `<ws>.md` goal/plan log → moved **verbatim** into `plan-log.md` + a bounded head
+    drafted from `stream.json`/`working_pattern`/the log's top entries), scaffolds a missing head /
+    `plan-log.md` / `log.md`, and flags a stale head. The old log is never lost; idempotent (a healthy head
+    in any localization is left alone). Then enrich each just-migrated head from `plan-log.md` + lessons and
+    report what migrated.
+  - **Bare `doctor` (no name)**: install-health for all + a project-structure **dry-run** across projects
+    (report which have pre-head lanes; writes nothing — run `doctor <project>` to fix one).
+
+  Use when a project's `<ws>.md` looks wrong (a giant old log where a head belongs), when Codex can't
+  discover `/<name>` / `$<name>`, or after moving/syncing the root across machines. `/<project> doctor` is
+  the same project-structure repair scoped to that project (defined in its own skill).
 - **register-project `<name> [path]`** — **the user describes it in plain language; you parse
   name / path(s) / local-or-remote / extra repos and fill the flags — they never type `--remote` /
   `--root`.** AskUserQuestion only for what's missing/ambiguous:

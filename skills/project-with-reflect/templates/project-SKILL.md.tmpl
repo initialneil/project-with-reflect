@@ -159,6 +159,10 @@ declare "all done". Two mechanisms close that, both additive:
   phase; **0 per tool call**), `.planning/` git-excluded. Fill the new `task_plan.md` from the plan-log entry
   (Goal one line · phases · **`## Next Step` one imperative line**). Skip for a short task (a single edit, a
   lookup) — pwf's own rule. **PWR runs no injection of its own** — the plan surface is pwf's, PWR frames it.
+  **pwf not installed** (`plan-init` prints `NO_PWF`; `doctor` shows the install hint) → PWR still works;
+  what's lost is per-turn plan recitation + the gated Stop hook. To keep a *mechanical* done-check anyway,
+  **write every multi-phase `plan` block in `plan-log.md` as a `- [ ]` checklist** and tick items `- [x]` as
+  they finish — `done-check.sh` counts the top entry's checklist when no pwf plan resolves.
 - **Head ↔ plan mapping (one mental model, no renaming):** pwf `task_plan.md` = the **live phase tracker
   for the current task** (task-scoped, freely rewritten, disposable after); PWR `plan-log.md` = the
   **permanent record** it distills into (lane-scoped, append-only); the head's `## Now` carries a
@@ -190,7 +194,8 @@ checkin. An item that fails either gets fixed or gets called out explicitly in t
 skipped. **A "done" claim runs `done-check.sh {{PDIR}} <ws> [<code_dir>]` first — no output, no done.** It
 is the termination oracle, deterministic like doctor: it judges the **artifacts on disk, not the transcript**
 — the active pwf plan's phases (any `in_progress`/`pending` phase → **exit 1 = NOT DONE**, with the phase
-names + `## Next Step`) plus the head's Delivery handbook printed for the line-by-line walk. Paste its
+names + `## Next Step`; **no pwf plan → the plan-log top entry's `- [ ]` checklist**, unchecked items = NOT
+DONE) plus the head's Delivery handbook printed for the line-by-line walk. Paste its
 verdict into the report and answer each handbook line (met / not met / n-a). NOT DONE → keep working, or
 **explicitly re-plan** (a new dated `plan` entry that says what's descoped and why) — never quietly narrow
 "done" to the phases that happened to finish. (pwf's own gated Stop hook backs this up mechanically.)

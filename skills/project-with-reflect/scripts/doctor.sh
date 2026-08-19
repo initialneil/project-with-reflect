@@ -146,6 +146,19 @@ echo "registry: $PWR_ROOT/registry.json"
 
 fix_pointer
 
+# planning-with-files (pwf) is the long-task ENGINE PWR composes with (per-turn plan injection + gated Stop
+# hook; see a project's *Long-task execution*). It is optional — everything else works without it — so a
+# missing install is a hint, not a warning. With it absent, `plan-init.sh` returns NO_PWF and `done-check.sh`
+# falls back to counting the plan-log's top checklist instead of pwf phases.
+if PWF_DIR="$(pwr_pwf_scripts 2>/dev/null)"; then
+  echo "[ok] planning-with-files: $PWF_DIR"
+  OK=$((OK + 1))
+else
+  echo "[hint] planning-with-files not installed — long-task plan injection + gated Stop hook unavailable"
+  echo "       (checkin/doctor/lessons/reflect unaffected; done-check falls back to the plan-log checklist)."
+  echo "       Install: /plugin marketplace add OthmanAdi/planning-with-files  →  /plugin install planning-with-files"
+fi
+
 if bash "$HERE/install-codex-command-skills.sh"; then
   OK=$((OK + 1))
 else

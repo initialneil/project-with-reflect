@@ -38,7 +38,32 @@ if PWF="$(pwr_pwf_scripts)"; then
 fi
 
 if [ -z "$PLAN" ]; then
-  echo "plan   : (no active pwf plan under $CODE — short task, or not a pwf run)"
+  # ---- fallback oracle (no pwf): the plan-log's TOP entry as a checklist ----
+  # A multi-phase plan written as `- [ ]` items in plan-log.md is countable without pwf; the agent ticks
+  # `- [x]` as it goes. No checklist there → nothing to count (short task) → PASS on the plan axis.
+  PLOG="$PDIR/workstreams/$WS/plan-log.md"
+  if [ -f "$PLOG" ] && grep -qE '^### ' "$PLOG"; then
+    TOP="$(awk '/^### /{n++} n==1{print} n>1{exit}' "$PLOG")"
+    HDR="$(printf '%s\n' "$TOP" | head -1 | sed 's/^### //')"
+    NCHK="$(printf '%s\n' "$TOP" | grep -cE '^\s*- \[[xX]\]' || true)"; : "${NCHK:=0}"
+    NUN="$(printf '%s\n' "$TOP" | grep -cE '^\s*- \[ \]' || true)";   : "${NUN:=0}"
+    NT=$((NCHK+NUN))
+    echo "plan   : (no pwf plan under $CODE) → plan-log top entry: $HDR"
+    if [ "$NT" -gt 0 ]; then
+      echo "items  : $NCHK/$NT checked"
+      if [ "$NUN" -gt 0 ]; then
+        RC=1
+        printf '%s\n' "$TOP" | grep -E '^\s*- \[ \]' | sed 's/^\s*- \[ \] */         ○ /'
+        echo "verdict: ❌ NOT DONE — $NUN plan-log item(s) unchecked. Tick them (- [x]) as they finish, or re-plan explicitly."
+      else
+        echo "verdict: ✅ all $NT plan-log items checked"
+      fi
+    else
+      echo "items  : (top entry has no - [ ] checklist — short task or prose plan; nothing to count)"
+    fi
+  else
+    echo "plan   : (no active pwf plan under $CODE, no plan-log entries — short task)"
+  fi
 else
   # same counting rules as pwf check-complete.sh (both **Status:** and [inline] forms, per-field max)
   TOTAL=$(grep -c '^### Phase' "$PLAN" 2>/dev/null || true); : "${TOTAL:=0}"

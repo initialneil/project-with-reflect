@@ -115,6 +115,10 @@ Delivered = (define it in one line). Walk before shipping:
 - doing: —
 - next: —
 - risks: —
+- plan: — (active pwf plan dir for a long task, e.g. \`.planning/<id>\`)
+
+## Next Step
+(one imperative line — the single next action; mirrors the active pwf plan's \`## Next Step\`)
 
 ## Read-when
 - (doing X → read [[lesson]])

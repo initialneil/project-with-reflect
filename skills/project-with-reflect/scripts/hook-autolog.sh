@@ -90,6 +90,28 @@ stream = active_stream()
 stream_dir = os.path.join(state_dir, "workstreams", stream) if stream else ""
 checkpoint = os.path.join(stream_dir, ".compact-checkpoint.json") if stream_dir else ""
 
+def pwf_plan_files():
+    """The active planning-with-files plan under cwd (the lane's LIVE task tracker), so a post-compact
+    re-ground re-opens the task's phases + Next Step, not only the lane memory. Mirrors pwf's resolver
+    order without invoking it: $PLAN_ID → .planning/.active_plan → legacy ./task_plan.md."""
+    root = os.environ.get("PWF_PLAN_ROOT") or cwd
+    pd = None
+    pid = os.environ.get("PLAN_ID") or ""
+    if pid and os.path.isfile(os.path.join(root, ".planning", pid, "task_plan.md")):
+        pd = os.path.join(root, ".planning", pid)
+    else:
+        try:
+            pid = open(os.path.join(root, ".planning", ".active_plan")).read().strip()
+            if pid and os.path.isfile(os.path.join(root, ".planning", pid, "task_plan.md")):
+                pd = os.path.join(root, ".planning", pid)
+        except Exception:
+            pass
+    if not pd and os.path.isfile(os.path.join(root, "task_plan.md")):
+        pd = root
+    if not pd:
+        return []
+    return [p for p in (os.path.join(pd, "task_plan.md"), os.path.join(pd, "progress.md")) if os.path.isfile(p)]
+
 if ctx == "userprompt":
     prompt = data.get("prompt") or data.get("message") or data.get("text") or ""
     if any(w in prompt.lower() for w in ("work", "continue", "resume", "plan", "goal", "fix", "implement", "release", "debug")):
@@ -126,7 +148,7 @@ elif ctx == "precompact":
                 os.path.join(stream_dir, f"{stream}.md"),
                 os.path.join(stream_dir, "plan-log.md"),
                 os.path.join(stream_dir, "log.md"),
-            ],
+            ] + pwf_plan_files(),   # the live pwf task tracker, if this task has one
         }
         try:
             os.makedirs(stream_dir, exist_ok=True)
@@ -152,6 +174,7 @@ elif ctx == "sessionstart":
         if stream_dir:
             memory += [os.path.join(stream_dir, f"{stream}.md"), os.path.join(stream_dir, "plan-log.md"),
                        os.path.join(stream_dir, "log.md")]
+        memory += pwf_plan_files()
     existing = [p for p in memory if p and os.path.isfile(p)]
     files = "\n".join(f"- {p}" for p in existing)
     lane = stream or "project home"

@@ -147,6 +147,28 @@ it the moment you see a goal or plan set.) A newly settled goal/plan is also a *
 the head's `## Now` + stamp in the same breath (see the round-done update below). `reflect` summarizes
 progress against the **top (latest)** goal/plan.
 
+**Long-task execution — checkin is the frame, planning-with-files (pwf) is the engine.** A checkin loads
+memory once; sixty tool calls later the plan is cold, and a long task then tends to finish phase 1–2 and
+declare "all done". Two mechanisms close that, both additive:
+- **A settled multi-phase plan auto-inits a pwf plan** — in the *same breath* as the `plan` block above, run
+  `plan-init.sh <code_dir> "<title>"` (SK = the meta-skill's `scripts/`). It is **resolve-then-init**: an
+  active pwf plan already resolving under the code dir (the user's own `.active_plan` / `PLAN_ID` / legacy
+  `task_plan.md`) is **adopted, never duplicated** (a second plan would flip pwf's `.active_plan` pointer and
+  silently mute the user's plan); none → `init-session.sh --gated` + `inject-smart` = **autonomous + gate +
+  lean injection** (~225 tok once per turn — title / Goal / Next Step / Current Phase / the one in_progress
+  phase; **0 per tool call**), `.planning/` git-excluded. Fill the new `task_plan.md` from the plan-log entry
+  (Goal one line · phases · **`## Next Step` one imperative line**). Skip for a short task (a single edit, a
+  lookup) — pwf's own rule. **PWR runs no injection of its own** — the plan surface is pwf's, PWR frames it.
+- **Head ↔ plan mapping (one mental model, no renaming):** pwf `task_plan.md` = the **live phase tracker
+  for the current task** (task-scoped, freely rewritten, disposable after); PWR `plan-log.md` = the
+  **permanent record** it distills into (lane-scoped, append-only); the head's `## Now` carries a
+  `plan: .planning/<id>` pointer and **mirrors pwf's `## Next Step`** as its own `## Next Step` line — both
+  files always show the same "what's next". Sub-agents: the **orchestrator alone writes `task_plan.md`**
+  (pwf single-writer rule); workers append to their own ledger / findings.
+- **Round-done bridge:** a phase or the task completes → pwf's completed phases become the `plan-log.md`
+  entry + head refresh; durable items in `findings.md` → `record` into lessons; `Errors Encountered` →
+  `log.md`; then `.planning/<id>` is disposable. Post-compact re-ground names the active plan pointer too.
+
 **A claim-shaped lane keeps a story-line tree in its head's `## Now` — the first surface for "where are
 we?".** When a lane's work is a chain of claims being proven or killed (a research / experiment lane), maintain a
 small table there: one row per claim → **status** (✅ settled ·
@@ -165,7 +187,13 @@ pointers. `reflect` does the full rebalance (see `reflect`); round-done is the c
 **Delivery gate:** before shipping — a PR review, a deploy, reporting "done" — walk the head's
 `## Delivery handbook` checklist **line by line**; it exists to be walked at that moment, not only read at
 checkin. An item that fails either gets fixed or gets called out explicitly in the report — never silently
-skipped.
+skipped. **A "done" claim runs `done-check.sh {{PDIR}} <ws> [<code_dir>]` first — no output, no done.** It
+is the termination oracle, deterministic like doctor: it judges the **artifacts on disk, not the transcript**
+— the active pwf plan's phases (any `in_progress`/`pending` phase → **exit 1 = NOT DONE**, with the phase
+names + `## Next Step`) plus the head's Delivery handbook printed for the line-by-line walk. Paste its
+verdict into the report and answer each handbook line (met / not met / n-a). NOT DONE → keep working, or
+**explicitly re-plan** (a new dated `plan` entry that says what's descoped and why) — never quietly narrow
+"done" to the phases that happened to finish. (pwf's own gated Stop hook backs this up mechanically.)
 
 **A working pattern prescribed → `stream.json.working_pattern` (durable, like `teammates`).** When the user
 prescribes **how** this lane's work should be executed — "orchestrate through opus48 sub-agents", "always
@@ -276,10 +304,13 @@ During a substantial work session:
   **How should I work?** (the lane's `stream.json.working_pattern` — a standing user-prescribed execution
   style, e.g. orchestrate-via-sub-agents, teammate-coupled; **adopt it now, don't wait to be re-told**),
   **What have I learned?** (relevant lessons/records/findings), **What have I done?** (recent log/progress),
-  and **What failed or is risky?** (recent errors, repeated attempts, blockers). If repo-local planning
-  artifacts such as `task_plan.md`, `findings.md`, or `progress.md` already exist from any prior workflow,
-  treat them as imported evidence and reconcile durable content into PWR's own goal/plan log, `record`, or
-  `note` as appropriate.
+  and **What failed or is risky?** (recent errors, repeated attempts, blockers). **An active pwf plan under
+  the code dir** (`.planning/.active_plan` / `PLAN_ID` / legacy `task_plan.md`) is the lane's **live task
+  tracker** — re-open its `task_plan.md` (+ `progress.md`, `findings.md`), report its phases + `## Next Step`
+  in the recap, and mirror that line into the head's `## Next Step` (see *Long-task execution*). This is how
+  a task survives `/compact`, `/clear`, or a new window: the head says *where the lane is*, the pwf plan says
+  *where this task is*. Other stray planning artifacts from a prior workflow are imported evidence —
+  reconcile durable content into PWR's own goal/plan log, `record`, or `note` as appropriate.
   (2) **handle the working dir** (the Bash cwd persists across calls, so where you land is where plan /
   scratch files go) — **ask the user; `cd` only on their choice.** Two cases — and
   **bare `checkin` is project-level, NOT auto-resume a workstream:**

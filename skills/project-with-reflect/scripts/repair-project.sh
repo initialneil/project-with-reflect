@@ -90,8 +90,12 @@ Delivered = (define it in one line). Walk before shipping:
 - doing: — (draft from plan-log.md top entries below)
 - next: —
 - risks: —
+- plan: — (active pwf plan dir for a long task, e.g. `.planning/<id>`)
 recent (from plan-log.md, newest-first):
 {seed}
+
+## Next Step
+(one imperative line — the single next action; mirrors the active pwf plan's `## Next Step`)
 
 ## Read-when
 - (doing X → read [[lesson]])

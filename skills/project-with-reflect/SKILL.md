@@ -381,8 +381,23 @@ auto-record** — the built-in `/goal` and plan mode can't be hooked, so when th
 is approved the active project records it verbatim to the workstream's **goal/plan log**
 (`workstreams/<workstream>/plan-log.md`, `### <date>` + a ```goal``` or ```plan``` block, **newest-first**;
 a pre-head lane still keeps it in `<workstream>.md`). The lane's folder note `<workstream>.md` is its
-**workstream head** — a bounded quick guide (Basics / Delivery handbook / Now / Read-when / Archive) that
-checkin loads head-first and a completed round of work refreshes; see a project's `Working`.
+**workstream head** — a bounded quick guide (Basics / Delivery handbook / Now / Next Step / Read-when /
+Archive) that checkin loads head-first and a completed round of work refreshes; see a project's `Working`.
+
+**Long tasks: checkin is the frame, planning-with-files (pwf) is the engine — composed, not copied.** A
+checkin loads memory once and it goes cold over a long task; pwf keeps the *plan* in the attention window
+(one lean turn-start injection) and its gated Stop hook refuses "done" while a phase is `in_progress`. So a
+**settled multi-phase plan auto-inits a pwf plan** via `SK/scripts/plan-init.sh <code_dir> "<title>"` —
+**resolve-then-init**: a plan the user already has active is **adopted** (never a second one, which would flip
+pwf's `.active_plan` pointer and mute theirs); none → `init-session.sh --gated` + `inject-smart` (~225 tok
+per turn, 0 per tool call; `.planning/` git-excluded). Mapping, one mental model, **no renaming**: pwf
+`task_plan.md` = the *live phase tracker for the current task*; PWR `plan-log.md` = the *permanent record* it
+distills into; the head's `## Next Step` mirrors pwf's. **A "done" claim runs `SK/scripts/done-check.sh
+<project_dir> <ws> [<code_dir>]` first** — the termination oracle (artifacts on disk, not the transcript):
+any unfinished pwf phase → exit 1 = NOT DONE, plus the head's Delivery handbook printed to walk. PWR itself
+injects nothing — pwf is the only injector; PWR frames it (checkin before, done-check + round-done bridge
+after). The PreCompact checkpoint includes the active pwf plan so a post-compact re-ground re-opens the
+task's phases, not only the lane memory.
 
 **Two workstreams of one project cooperate through the shared vault, not window-to-window** (a `train`
 lane + a `paper` lane, `dev` + `research`, …). Two sessions coordinate asynchronously via shared state —

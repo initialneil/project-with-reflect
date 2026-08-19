@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.12.0 — 2026-08-19
+
+- checkin + planning-with-files bridge: auto-init a gated+lean pwf plan on a settled multi-phase plan (resolve-then-init, adopts an existing user plan), done-check.sh termination oracle (unfinished phase → NOT DONE + Delivery handbook), head ## Next Step, PreCompact checkpoint carries the pwf plan
+
 ## v0.11.1 — 2026-08-17
 
 - doctor: deterministic project-structure repair — migrate a pre-head lane (old-format <ws>.md → plan-log.md verbatim + bounded head), scaffold/flag; reflect now migrates a pre-head lane too

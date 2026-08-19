@@ -154,3 +154,19 @@ PY
 pwr_log() {
   printf '%s — %s\n' "$(date '+%Y-%m-%d %H:%M')" "$2" >> "$1"
 }
+
+# pwr_pwf_scripts — echo the planning-with-files (pwf) scripts dir, or return 1 if pwf isn't
+# installed. Mirrors pwf's own hook self-discovery order (skill dir → marketplace clone → newest
+# plugin cache). PWR never re-implements pwf; it only locates + calls it (resolve/init/check).
+pwr_pwf_scripts() {
+  local d
+  for d in "$HOME/.claude/skills/planning-with-files/scripts" \
+           "$HOME/.claude/plugins/marketplaces/planning-with-files/skills/planning-with-files/scripts" \
+           "$HOME/.claude/plugins/marketplaces/planning-with-files/scripts"; do
+    [ -f "$d/resolve-plan-dir.sh" ] && { echo "$d"; return 0; }
+  done
+  # newest cached plugin version (dirs sort lexically; good enough for x.y.z with same width)
+  d="$(ls -d "$HOME/.claude/plugins/cache/planning-with-files/planning-with-files"/*/skills/planning-with-files/scripts 2>/dev/null | sort -V | tail -1)"
+  [ -n "$d" ] && [ -f "$d/resolve-plan-dir.sh" ] && { echo "$d"; return 0; }
+  return 1
+}

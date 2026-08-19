@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.12.1 — 2026-08-19
+
+- doctor: head schema upgrade — insert a missing ## Next Step section (before Read-when, any localization; existing heads otherwise untouched, idempotent)
+
 ## v0.12.0 — 2026-08-19
 
 - checkin + planning-with-files bridge: auto-init a gated+lean pwf plan on a settled multi-phase plan (resolve-then-init, adopts an existing user plan), done-check.sh termination oracle (unfinished phase → NOT DONE + Delivery handbook), head ## Next Step, PreCompact checkpoint carries the pwf plan

@@ -121,6 +121,25 @@ for WS in "$WSDIR"/*/; do
     made=""
     if [ ! -f "$LOG" ];  then made="log.md";                       [ "$APPLY" = 1 ] && echo "# $BR — stream log" > "$LOG"; fi
     if [ ! -f "$PLAN" ]; then made="${made:+$made, }plan-log.md";  [ "$APPLY" = 1 ] && echo "# $BR — goal/plan log (newest-first)" > "$PLAN"; fi
+    # head schema upgrade (v0.12.0): a head without a `## Next Step` section gets one inserted right
+    # before its Read-when section (any localization), else appended. Only the section is added — no
+    # other line of the head is touched. `Next Step` = one imperative line mirroring the pwf plan's.
+    if ! grep -qE '^## .*Next Step' "$HEAD"; then
+      made="${made:+$made, }## Next Step"
+      if [ "$APPLY" = 1 ]; then
+        python3 - "$HEAD" <<'PY'
+import re, sys
+p = sys.argv[1]; s = open(p, encoding="utf-8").read()
+sec = "## Next Step\n(one imperative line — the single next action; mirrors the active pwf plan's `## Next Step`)\n\n"
+m = re.search(r"^## .*(Read-when|按需)", s, re.M)
+if m:
+    s = s[:m.start()] + sec + s[m.start():]
+else:
+    s = s.rstrip("\n") + "\n\n" + sec.rstrip("\n") + "\n"
+open(p, "w", encoding="utf-8").write(s)
+PY
+      fi
+    fi
     stamp="$(grep -oE 'Last updated:[^0-9]*[0-9]{4}-[0-9]{2}-[0-9]{2}' "$HEAD" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1 || true)"
     ptop=""
     [ -f "$PLAN" ] && ptop="$(grep -oE '^### [0-9]{4}-[0-9]{2}-[0-9]{2}' "$PLAN" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1 || true)"

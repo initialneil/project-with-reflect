@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.12.3 — 2026-09-04
+
+- sync recent meta-skill updates (doctor project-repair, plan-log/workstream-head, planning-with-files bridge) into the Codex + Kimi adapter SKILLs; Codex hooks trimmed to session/compaction-only to match its wiring, Kimi per-tool hooks preserved
+
 ## v0.12.2 — 2026-08-19
 
 - pwf optional: doctor prints an install hint when planning-with-files is missing; done-check falls back to counting the plan-log top entry's - [ ] checklist (unchecked = NOT DONE) so the termination oracle stays mechanical without pwf; template asks for checklist-shaped multi-phase plans

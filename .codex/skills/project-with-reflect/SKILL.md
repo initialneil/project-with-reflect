@@ -80,11 +80,24 @@ Bare `/project-with-reflect` → `help`.
   prompt (recommend a synced, readable custom path — see "## The root"), then
   `SK/scripts/bootstrap.sh "<path>"`. Use to set up before registering, move the root,
   or repair a missing pointer / rc export.
-- **doctor `[<name>]`** — check/repair the local install: root pointer, root directory shape,
-  registry readability, and Claude/Codex user-scope skill links for already-registered
-  projects/connections. Run `SK/scripts/doctor.sh [<name>]`. Use when a project created in Claude
-  Code exists in `$ROOT/projects/<name>` but Codex cannot discover `/<name>` / `$<name>`, or after
-  moving/syncing the root across machines.
+- **doctor `[<name>]`** — check/repair the local install **and, for a project, its on-disk structure —
+  deterministically (it acts, it never interrogates).**
+  - **Install health** (always): root pointer, root directory shape, registry readability, and
+    Claude/Codex/Kimi user-scope skill links for registered projects/connections — `SK/scripts/doctor.sh
+    [<name>]`.
+  - **Project structure** (when `<name>`, or the cwd, resolves to a project): also run
+    `SK/scripts/repair-project.sh <project_dir> --apply` — the project doctor that **migrates a pre-head
+    lane** (an old-format `<ws>.md` goal/plan log → moved **verbatim** into `plan-log.md` + a bounded head
+    drafted from `stream.json`/`working_pattern`/the log's top entries), scaffolds a missing head /
+    `plan-log.md` / `log.md`, and flags a stale head. The old log is never lost; idempotent (a healthy head
+    in any localization is left alone). Then enrich each just-migrated head from `plan-log.md` + lessons and
+    report what migrated.
+  - **Bare `doctor` (no name)**: install-health for all + a project-structure **dry-run** across projects
+    (report which have pre-head lanes; writes nothing — run `doctor <project>` to fix one).
+
+  Use when a project's `<ws>.md` looks wrong (a giant old log where a head belongs), when Codex can't
+  discover `/<name>` / `$<name>`, or after moving/syncing the root across machines. `/<project> doctor` is
+  the same project-structure repair scoped to that project (defined in its own skill).
 - **register-project `<name> [path]`** — **the user describes it in plain language; you parse
   name / path(s) / local-or-remote / extra repos and fill the flags — they never type `--remote` /
   `--root`.** AskUserQuestion only for what's missing/ambiguous:
@@ -247,7 +260,7 @@ when you're working in that project. The state dir doubles as the skill dir (SKI
 lessons/decisions/workstreams). Alias handles `/<name>-<handle>` stay generated commands.
 The project SKILL.md carries the
 behavioral contract + handlers: `checkin [<workstream>] · status · bootstrap · list · help · reflect
-[--reground] · record · note · todo · streams · register-workstream · <workstream> [pr|rebase|reset] ·
+[--reground] · record · note · handoff · pickup · todo · streams · register-workstream · <workstream> [pr|rebase|reset] ·
 register-eval · eval all · register-task · use-knowledge`, plus **hardware/host** handlers when a
 device or machine is bound: `bind · build · flash · monitor`. **`checkin`** is the front door to a
 working session (load context, run a disk-backed working-memory reboot,
@@ -337,13 +350,6 @@ so `gen-dashboard.sh` preserves it across regenerations.
 Working memory is mostly behavioral, and the model drifts — so non-blocking META-skill hooks
 (`SK/scripts/hook-autolog.sh`, bundled through `hooks/hooks.json` for Codex) nudge the harness,
 not the model's memory:
-- **UserPromptSubmit**: when a prompt looks like substantial work inside a registered project, remind the
-  agent to start with `/<project> checkin`.
-- **PreToolUse(Bash)**: before risky/mutating/high-effort commands, remind the agent to refresh plan /
-  decisions from disk and mutate the approach after failures.
-- **PostToolUse(Write/Edit)**: after source edits, remind the agent to update `note` / `record` if the
-  edit completed a step or surfaced a finding.
-- **PostToolUse(Bash)**: on `git commit`, remind the agent to log what the commit accomplished.
 - **PreCompact**: overwrite the active stream's `.compact-checkpoint.json` with the current project/lane,
   transcript pointer, and durable-memory files, then nudge any still-unlogged event to disk before compaction.
 - **SessionStart (`compact`)**: immediately after manual or automatic compaction, inject a compact
@@ -352,14 +358,40 @@ not the model's memory:
   full project `checkin` only when cwd/branch/freshness is uncertain. This also covers auto-compaction in the
   middle of a turn, where waiting for the next user prompt would be too late.
 
-Every hook is gated via `registry.json` → repo match, stays silent elsewhere, honors
+Hooks are limited to session/compaction boundaries (no per-tool injection), gated via `registry.json` → repo match, stays silent elsewhere, honors
 `PROJECT_WITH_REFLECT_HOOKS_DISABLED=1`, and always exits 0 — it never blocks a tool or a compaction.
 They cover the *mechanical* checkpoints; decisions / long-tasks / findings stay behavioral triggers
-(see a project's `Working`), and `reflect`'s capture-first is the end-of-session backstop. **Setting a goal
-is also a behavioral auto-record** — the built-in `/goal` can't be hooked, so when the user sets a goal the
-active project records it verbatim to the workstream's **goal-log folder note**
-(`workstreams/<workstream>/<workstream>.md`, `### <date>` + a ```goal``` block, **newest-first**); see a
-project's `Working`.
+(see a project's `Working`), and `reflect`'s capture-first is the end-of-session backstop. **Setting a goal or settling a plan is also a behavioral
+auto-record** — the built-in `/goal` and plan mode can't be hooked, so when the user sets a goal or a plan
+is approved the active project records it verbatim to the workstream's **goal/plan log**
+(`workstreams/<workstream>/plan-log.md`, `### <date>` + a ```goal``` or ```plan``` block, **newest-first**;
+a pre-head lane still keeps it in `<workstream>.md`). The lane's folder note `<workstream>.md` is its
+**workstream head** — a bounded quick guide (Basics / Delivery handbook / Now / Next Step / Read-when /
+Archive) that checkin loads head-first and a completed round of work refreshes; see a project's `Working`.
+
+**Long tasks: checkin is the frame, planning-with-files (pwf) is the engine — composed, not copied.** A
+checkin loads memory once and it goes cold over a long task; pwf keeps the *plan* in the attention window
+(one lean turn-start injection) and its gated Stop hook refuses "done" while a phase is `in_progress`. So a
+**settled multi-phase plan auto-inits a pwf plan** via `SK/scripts/plan-init.sh <code_dir> "<title>"` —
+**resolve-then-init**: a plan the user already has active is **adopted** (never a second one, which would flip
+pwf's `.active_plan` pointer and mute theirs); none → `init-session.sh --gated` + `inject-smart` (~225 tok
+per turn, 0 per tool call; `.planning/` git-excluded). Mapping, one mental model, **no renaming**: pwf
+`task_plan.md` = the *live phase tracker for the current task*; PWR `plan-log.md` = the *permanent record* it
+distills into; the head's `## Next Step` mirrors pwf's. **A "done" claim runs `SK/scripts/done-check.sh
+<project_dir> <ws> [<code_dir>]` first** — the termination oracle (artifacts on disk, not the transcript):
+any unfinished pwf phase → exit 1 = NOT DONE, plus the head's Delivery handbook printed to walk. PWR itself
+injects nothing — pwf is the only injector; PWR frames it (checkin before, done-check + round-done bridge
+after). The PreCompact checkpoint includes the active pwf plan so a post-compact re-ground re-opens the
+task's phases, not only the lane memory.
+
+**Two workstreams of one project cooperate through the shared vault, not window-to-window** (a `train`
+lane + a `paper` lane, `dev` + `research`, …). Two sessions coordinate asynchronously via shared state —
+results → the shared `lessons/experiment-*.md` (`record`), pivots → shared `decisions.md`, and a directed
+"you pick this up next" → **`handoff <other-lane> "…"`** (writes a `📥`-tagged dated entry into the other
+lane's goal/plan log) received with **`pickup`** (`handoff` sends, `pickup` receives). Each `checkin`/`status`
+auto-does a pickup (surfacing sibling handoffs + shared changes since that lane was last here), and standalone
+`pickup` grabs a fresh baton mid-session without a full checkin, so the baton can't be missed; see a project's
+`Working`.
 
 ## Reflect = bounded update
 `reflect` is **log-and-reflect**: it **captures the session first** (appends this conversation's

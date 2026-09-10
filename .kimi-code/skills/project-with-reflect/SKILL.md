@@ -32,11 +32,14 @@ at `.kimi-code/hooks/project-with-reflect.sh`), installed by `scripts/install-ki
 
 **Kimi Work (the kimi-desktop app)** is a separate runtime from the Kimi Code CLI: it discovers
 user skills from `<app-support>/kimi-desktop/daimon-share/daimon/skills/`
-(env override `DAIMON_SKILLS_DIR`), not `~/.agents/skills/`. `pwr_link_skill_dirs`,
-`install-kimi-command-skills.sh`, and `doctor.sh` mirror every generated skill there automatically
-when the app is installed. Its slash-command surface is the skill name itself
-(e.g. `/project-with-reflect status`); hooks are not currently mirrored there — Kimi Work relies on
-the behavioral contract instead.
+(env override `DAIMON_SKILLS_DIR`), not `~/.agents/skills/`. It does **not** follow skill symlinks
+live — the app materializes them into real directory copies at scan, which then silently go stale —
+so `pwr_link_skill_dirs` and `doctor.sh` sync generated skills there as **real copies** (rsync,
+marked `.pwr-synced`; doctor re-syncs on drift and never clobbers an unrelated same-name skill),
+and `install-kimi-command-skills.sh` writes command skills there directly. **Re-run `doctor` after
+vault-side changes land on this machine** to refresh the copies. Its slash-command surface is the
+skill name itself (e.g. `/project-with-reflect status`); hooks are not mirrored there — Kimi Work
+relies on the behavioral contract instead.
 
 A meta-skill that **continuously generates and updates per-project sub-skills**.
 Core loop: `work (auto-logs key moments) → reflect = capture the session + distill (bounded) → lean,

@@ -8,6 +8,11 @@
 >
 > - [Neat File Tree](https://github.com/initialneil/obsidian-neat-file-tree) — a cleaner, calmer file tree.
 > - [Folder Notes](https://github.com/lostpaul/obsidian-folder-notes) — the `<folder>/<folder>.md` folder-note convention this skill optionally leans on (experiment records, evals, the per-workstream goal log).
+>
+> Companion skills, same philosophy (a few statements carry everything, 纲举目张):
+>
+> - [grounding-rules](https://github.com/initialneil/grounding-rules) — read a system through its load-bearing few: 5 to 12 rules that settle a design question in one line.
+> - [coding-by-contract](https://github.com/initialneil/coding-by-contract) — write a system by contract: the few rules every change is held to, changed only on purpose.
 
 
 Juggling **several projects at once**? Need to **remember** how to connect to **a handful of machines** and
@@ -88,15 +93,21 @@ ln -sfn /path/to/project-with-reflect/.kimi-code/skills/project-with-reflect ~/.
 Hooks are auto-log nudges in `~/.kimi-code/config.toml`; `doctor` can repair/install them.
 
 **Kimi Work (kimi-desktop app):** a separate runtime from the Kimi Code CLI. It scans user skills
-from `<app-support>/kimi-desktop/daimon-share/daimon/skills/`, so the same symlink works there too:
+from `<app-support>/kimi-desktop/daimon-share/daimon/skills/` — and it **materializes symlinked
+skills into real directory copies at scan**, so a symlink there silently goes stale. PWR therefore
+syncs **copies**, not links (rsync, marked `.pwr-synced`):
 
 ```
-ln -sfn /path/to/project-with-reflect/.kimi-code/skills/project-with-reflect \
-  "$HOME/Library/Application Support/kimi-desktop/daimon-share/daimon/skills/project-with-reflect"
+# one-time: seed the meta-skill copy (or let doctor handle everything below)
+rsync -a --delete --exclude .DS_Store \
+  /path/to/project-with-reflect/.kimi-code/skills/project-with-reflect/ \
+  "$HOME/Library/Application Support/kimi-desktop/daimon-share/daimon/skills/project-with-reflect/"
+touch "$HOME/Library/Application Support/kimi-desktop/daimon-share/daimon/skills/project-with-reflect/.pwr-synced"
 ```
 
-Once the meta-skill is linked, `doctor` backfills every generated project/connection/command skill
-into Kimi Work automatically (override the location with `DAIMON_SKILLS_DIR`). Kimi Work has no
+Once the meta-skill is there, `doctor` syncs every generated project/connection/command skill
+into Kimi Work automatically (override the location with `DAIMON_SKILLS_DIR`) — **re-run `doctor`
+after vault-side changes land on the machine** to refresh the copies. Kimi Work has no
 hook surface — the auto-log nudges are Kimi Code–only; in Kimi Work the behavioral contract and
 `reflect`'s capture-first backstop carry the loop.
 

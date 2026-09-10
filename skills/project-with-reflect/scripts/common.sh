@@ -78,13 +78,24 @@ pwr_ensure_root() {
 # the caller aborts and picks another slug. (A symlink already pointing at <own_dir> = re-registration, ok.)
 pwr_check_skill_collision() {
   local NAME="$1" OWN="$2" d
-  for d in "$HOME/.claude/skills/$NAME" "${CODEX_HOME:-$HOME/.codex}/skills/$NAME" "$AGENTS_SKILLS_DIR/$NAME" "$KIMI_SKILLS_DIR/$NAME" "$DAIMON_SKILLS_DIR/$NAME"; do
+  for d in "$HOME/.claude/skills/$NAME" "${CODEX_HOME:-$HOME/.codex}/skills/$NAME" "$AGENTS_SKILLS_DIR/$NAME" "$KIMI_SKILLS_DIR/$NAME"; do
     if [ -L "$d" ]; then
       [ "$(readlink "$d")" = "$OWN" ] || { echo "skill name '$NAME' is taken: $d -> $(readlink "$d"). Pick another slug." >&2; return 1; }
     elif [ -e "$d" ]; then
       echo "skill name '$NAME' is taken: $d exists (not a symlink to $OWN). Pick another slug." >&2; return 1
     fi
   done
+  # Kimi Work holds real directory COPIES (kimi-desktop materializes symlinks at scan).
+  # Our own synced copy (`.pwr-synced` marker, or a SKILL.md whose `name:` matches) is fine
+  # — it gets re-synced; anything else is a genuine name collision.
+  local DC="$DAIMON_SKILLS_DIR/$NAME"
+  if [ -e "$DC" ] && [ ! -L "$DC" ] && [ ! -f "$DC/.pwr-synced" ]; then
+    local DCNAME
+    DCNAME="$(perl -ne 'print $1 and exit if /^name:\s*(\S+)/' "$DC/SKILL.md" 2>/dev/null)"
+    if [ "$DCNAME" != "$NAME" ]; then
+      echo "skill name '$NAME' is taken: $DC exists (not a project-with-reflect sync). Pick another slug." >&2; return 1
+    fi
+  fi
   local IPJ="$HOME/.claude/plugins/installed_plugins.json" HIT
   if [ -f "$IPJ" ]; then
     HIT="$(python3 - "$IPJ" "$NAME" <<'PY'
@@ -105,6 +116,22 @@ PY
 # Make an entity a real skill: SKILL.md (from template, if absent) + log.md, symlinked into
 # each supported user-scope skill directory, and attach <name>.md as the Obsidian folder note.
 # Shared by every connection transport (ssh/serial/http/mcp) and any other skill-entity.
+# pwr_sync_daimon_skill <entity_dir> <name>
+# Kimi Work (kimi-desktop) does NOT follow skill symlinks live — it materializes
+# them into real directory copies at scan, so a symlink there silently goes stale.
+# Sync a real copy instead (rsync --delete), marked with `.pwr-synced` so the
+# collision check and doctor can recognize it as ours.
+pwr_sync_daimon_skill() {
+  local DIR="$1" NAME="$2"
+  local TARGET="$DAIMON_SKILLS_DIR/$NAME"
+  [ -d "$(dirname "$DAIMON_SKILLS_DIR")" ] || return 0   # Kimi Work not installed
+  mkdir -p "$DAIMON_SKILLS_DIR"
+  [ -L "$TARGET" ] && rm -f "$TARGET"
+  mkdir -p "$TARGET"
+  rsync -a --delete --exclude '.DS_Store' "$DIR/" "$TARGET/"
+  touch "$TARGET/.pwr-synced"
+}
+
 pwr_link_skill_dirs() {
   local DIR="$1" NAME="$2"
   mkdir -p "$HOME/.claude/skills"
@@ -122,12 +149,8 @@ pwr_link_skill_dirs() {
   mkdir -p "$KIMI_SKILLS_DIR"
   ln -sfn "$DIR" "$KIMI_SKILLS_DIR/$NAME"
 
-  # Kimi Work (kimi-desktop) scans the daimon-share skills dir. Link only when the
-  # app is installed (its daimon dir exists) so machines without it stay clean.
-  if [ -d "$(dirname "$DAIMON_SKILLS_DIR")" ]; then
-    mkdir -p "$DAIMON_SKILLS_DIR"
-    ln -sfn "$DIR" "$DAIMON_SKILLS_DIR/$NAME"
-  fi
+  # Kimi Work (kimi-desktop) scans the daimon-share skills dir — as copies, not links.
+  pwr_sync_daimon_skill "$DIR" "$NAME"
 }
 
 pwr_install_skill() {

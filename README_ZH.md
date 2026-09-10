@@ -7,6 +7,10 @@
 > 搭配 [Obsidian](https://obsidian.md) 和插件体验最佳：
 > - [Neat File Tree](https://github.com/initialneil/obsidian-neat-file-tree) —— 更清爽的文件树。
 > - [Folder Notes](https://github.com/lostpaul/obsidian-folder-notes) —— 更好的 `<folder>/<folder>.md` folder-note 显示（experiment record、eval、每条 workstream 的 goal log）。
+>
+> 同一哲理（几句话承载一切，纲举目张）的姊妹 skill：
+> - [grounding-rules](https://github.com/initialneil/grounding-rules) —— 用承重的几条规则读懂一个系统：5 到 12 条，一句话裁决设计问题。
+> - [coding-by-contract](https://github.com/initialneil/coding-by-contract) —— 按契约写系统：每次改动都要遵守的那几条规则，只在有意为之时修改。
 
 你是否**同时管理多个项目**？是否要**记住好几台**机器、服务的连接方式？是否厌烦了**反复写大段重复**的
 prompt、向 agent **一遍遍解释**同一个项目的来龙去脉？

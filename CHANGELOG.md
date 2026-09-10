@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.12.4 — 2026-09-10
+
+- README (EN + 中文): companion skills grounding-rules + coding-by-contract (same philosophy: the load-bearing few, 纲举目张); Kimi Work syncs skills as real copies (rsync, .pwr-synced) since the app materializes symlinks at scan (doctor/common + Kimi adapter SKILL + README)
+
 ## v0.12.3 — 2026-09-04
 
 - sync recent meta-skill updates (doctor project-repair, plan-log/workstream-head, planning-with-files bridge) into the Codex + Kimi adapter SKILLs; Codex hooks trimmed to session/compaction-only to match its wiring, Kimi per-tool hooks preserved

@@ -78,6 +78,44 @@ fix_link() {
   WARN=$((WARN + 1))
 }
 
+# fix_daimon_sync <dir> <name> <kind> — Kimi Work holds real copies (symlinks get
+# materialized at scan and silently go stale). Re-sync when the copy drifts from
+# the source; warn + leave when the target is an unrelated dir (no marker, name
+# mismatch) — never clobber someone else's skill.
+fix_daimon_sync() {
+  local dir="$1" name="$2" kind="$3" target="$DAIMON_SKILLS_DIR/$name" drift dcname
+
+  if [ -L "$target" ]; then
+    rm -f "$target"   # our old symlink layout — replace with a synced copy
+  fi
+
+  if [ -e "$target" ] && [ ! -d "$target" ]; then
+    echo "[warn] Kimi Work $kind $name target is not a directory: $target" >&2
+    WARN=$((WARN + 1))
+    return
+  fi
+
+  if [ -d "$target" ] && [ ! -f "$target/.pwr-synced" ]; then
+    dcname="$(perl -ne 'print $1 and exit if /^name:\s*(\S+)/' "$target/SKILL.md" 2>/dev/null)"
+    if [ "$dcname" != "$name" ]; then
+      echo "[warn] Kimi Work $kind $name target is an unrelated skill (no .pwr-synced, name '$dcname'): $target" >&2
+      echo "       Leave it in place; move it aside if you want doctor to replace it." >&2
+      WARN=$((WARN + 1))
+      return
+    fi
+  fi
+
+  drift="$(diff -qr "$dir" "$target" 2>/dev/null | grep -v -e '\.DS_Store' -e '\.pwr-synced' || true)"
+  if [ ! -d "$target" ] || [ -n "$drift" ]; then
+    pwr_sync_daimon_skill "$dir" "$name"
+    echo "[fix] Kimi Work $kind $name synced: $target"
+    FIXED=$((FIXED + 1))
+  else
+    echo "[ok] Kimi Work $kind $name in sync: $target"
+    OK=$((OK + 1))
+  fi
+}
+
 fix_skill_links() {
   local kind="$1" name="$2" dir="$3"
 
@@ -100,7 +138,7 @@ fix_skill_links() {
   fix_link "$dir" "$AGENTS_SKILLS_DIR/$name" "Kimi $kind $name"
   fix_link "$dir" "$KIMI_SKILLS_DIR/$name" "Kimi-local $kind $name"
   if [ -d "$(dirname "$DAIMON_SKILLS_DIR")" ]; then
-    fix_link "$dir" "$DAIMON_SKILLS_DIR/$name" "Kimi Work $kind $name"
+    fix_daimon_sync "$dir" "$name" "$kind"
   fi
 }
 

@@ -13,7 +13,12 @@ State dir: `{{PDIR}}`
   long one; readability rules). **Exception — a lesson with artifacts is a folder note:** when a lesson
   embeds images/files it becomes `lessons/<name>/<name>.md` with its artifacts as siblings in
   `lessons/<name>/` (e.g. `lessons/experiment-GUAVA/experiment-GUAVA.md` + its `*.png`) — **never scatter
-  a lesson's images flat in `lessons/`**. A lesson's **update style follows its nature**, which the model infers:
+  a lesson's images flat in `lessons/`**. **A site / page / Artifact the user asks you (Claude or Codex) to
+  build is such a lesson folder too** — `lessons/<name>/` holds the working copy (`<name>.md` = what it is +
+  published URL + how to republish; `index.html`, images, assets as siblings). Build and edit it THERE, not in
+  tmp/scratchpad (those vanish; the lesson persists + syncs); publish from it and republish to the same URL. If
+  the publish tool only reads files under the working dir/scratchpad, copy the folder there just to publish —
+  the lesson stays canonical. A lesson's **update style follows its nature**, which the model infers:
   - most are **distilled** — bounded-updated (add facts, fix wrong ones), loaded on demand.
   - some **accumulate** — an experiment-run log, a running results table: **append-only**, so the history
     (and numbers that host outputs later prune) is never lost or rewritten.
@@ -734,7 +739,8 @@ During a substantial work session:
   host artifact (a grid/image) into that folder so it survives host pruning — **never dump images directly
   in `lessons/`** (that scatters them across the tree). A text-only lesson stays a flat `lessons/<name>.md`;
   promote it to a folder the first time it gains an artifact (move the `.md` to `lessons/<name>/<name>.md`,
-  put the files beside it). Same rule for `record`, `reflect`, and `bootstrap`.
+  put the files beside it). Same rule for `record`, `reflect`, and `bootstrap` — and for a **site / Artifact
+  you build** (its html + images live and get edited in `lessons/<name>/`, never only in tmp).
 
   Bare `record` captures the latest durable thing from this session. Unlike `reflect`, `record` is
   **surgical and immediate** (one thing → its home; archives nothing, runs no session sweep). **Be

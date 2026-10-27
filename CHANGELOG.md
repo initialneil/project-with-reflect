@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.13.1 — 2026-10-27
+
+- Sites / pages / Artifacts the user asks Claude or Codex to build live in a lesson folder (lessons/<name>/: folder note with URL + republish steps, html + images as siblings) — edited and published from there, not tmp/scratchpad, so they persist + sync
+
 ## v0.13.0 — 2026-10-27
 
 - Portable paths in the synced root: SKILL.md/registry.json render $ROOT as ~/… (no machine-specific /Users/<me>), registry drops absolute dir (derived; legacy/foreign dir falls back), hook cwd match uses expanduser+realpath+deepest-match; scripts/check-portable-paths.sh proves two $HOMEs render byte-identical

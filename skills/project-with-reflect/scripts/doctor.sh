@@ -154,16 +154,21 @@ reg_path, root, only = sys.argv[1:4]
 with open(reg_path) as f:
     reg = json.load(f)
 
+def entity_dir(meta, kind, name):
+    # legacy "dir" may be another machine's absolute path (synced root) — fall back to the derived one
+    d = os.path.expanduser(meta.get("dir") or "")
+    return d if d and os.path.isdir(d) else os.path.join(root, kind, name)
+
 rows = []
 for name, meta in sorted(reg.get("projects", {}).items()):
     if only and name != only:
         continue
-    rows.append(("project", name, meta.get("dir") or os.path.join(root, "projects", name)))
+    rows.append(("project", name, entity_dir(meta, "projects", name)))
 
 for name, meta in sorted(reg.get("connections", {}).items()):
     if only and name != only:
         continue
-    rows.append(("connection", name, meta.get("dir") or os.path.join(root, "connections", name)))
+    rows.append(("connection", name, entity_dir(meta, "connections", name)))
 
 for name, meta in sorted(reg.get("knowledge", {}).items()):
     if only and name != only:

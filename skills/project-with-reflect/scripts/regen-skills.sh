@@ -19,9 +19,13 @@ PTPL="$TDIR/project-SKILL.md.tmpl"
 ONLY="${1:-}"
 BK="$(mktemp -d)/pwr-skill-backups"; mkdir -p "$BK"
 
-python3 - "$PTPL" "$TDIR" "$PWR_ROOT/projects" "$PWR_ROOT/connections" "$BK" "$ONLY" <<'PY'
+python3 - "$PTPL" "$TDIR" "$PWR_ROOT/projects" "$PWR_ROOT/connections" "$BK" "$ONLY" "$HOME" <<'PY'
 import json, os, re, sys, glob, shutil
-ptpl_path, tdir, projdir, conndir, bk, only = sys.argv[1:7]
+ptpl_path, tdir, projdir, conndir, bk, only, home = sys.argv[1:8]
+
+def tilde(p):
+    # same as common.sh pwr_tilde: the root syncs across machines whose $HOME differs
+    return "~" + p[len(home):] if p == home or p.startswith(home + "/") else p
 ptpl = open(ptpl_path).read()
 LESSON_RE = re.compile(r'(?ms)^## Lessons index\n.*?(?=^## )')
 PLACEHOLDER_RE = re.compile(r'\{\{[A-Za-z_]+\}\}')
@@ -47,7 +51,7 @@ for cfgp in sorted(glob.glob(os.path.join(projdir, "*", "config.json"))):
     m = LESSON_RE.search(live)
     if not m:
         print(f"  ! {name}: no '## Lessons index' block — skip (hand-check)"); skipped += 1; continue
-    rendered = render(ptpl, {"NAME": name, "PDIR": pdir})
+    rendered = render(ptpl, {"NAME": name, "PDIR": tilde(pdir)})
     rendered, n = LESSON_RE.subn(lambda _m: m.group(0), rendered, count=1)
     if n != 1:
         print(f"  ! {name}: template has no Lessons-index slot — ABORT this one"); skipped += 1; continue
@@ -85,7 +89,7 @@ for cfgp in sorted(glob.glob(os.path.join(conndir, "*", "connection.json"))):
         print(f"  ! connection {name}: no template {tname} — skip"); skipped += 1; continue
     skp = os.path.join(cdir, "SKILL.md")
     live = open(skp).read() if os.path.exists(skp) else ""
-    rendered = render(open(tpl_path).read(), {"NAME": name, "DIR": cdir})
+    rendered = render(open(tpl_path).read(), {"NAME": name, "DIR": tilde(cdir)})
     leftover = sorted(set(PLACEHOLDER_RE.findall(rendered)))
     if leftover:
         print(f"  ! connection {name}: unrendered placeholders {leftover} — skip"); skipped += 1; continue

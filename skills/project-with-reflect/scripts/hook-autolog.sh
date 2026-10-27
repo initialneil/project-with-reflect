@@ -44,24 +44,28 @@ try:
 except Exception:
     sys.exit(0)
 
-# Which registered project's repo (or state dir) contains cwd?
+# Which registered project's repo (or state dir) contains cwd? Deepest base wins, so a
+# project whose repo is ~ itself doesn't shadow every other project's state dir.
 match = None
 project_meta = None
+best = -1
+def state_of(name, meta):
+    # legacy registries carry an absolute "dir" (maybe another machine's); new ones derive it
+    d = os.path.expanduser(meta.get("dir") or "")
+    return d if d and os.path.isdir(d) else os.path.join(root, "projects", name)
+
+cwd_real = os.path.realpath(cwd) if cwd else cwd
 for name, meta in (reg.get("projects") or {}).items():
-    for base in (meta.get("repo"), meta.get("dir")):
-        if not base:
-            continue
+    bases = [os.path.expanduser(b) for b in (meta.get("repo"), state_of(name, meta)) if b]
+    bases += [os.path.realpath(b) for b in bases]   # root is often reached via a symlink
+    for base in bases:
         base = base.rstrip("/")
-        if cwd == base or cwd.startswith(base + "/"):
-            match = name
-            project_meta = meta
-            break
-    if match:
-        break
+        if len(base) > best and any(c == base or c.startswith(base + "/") for c in (cwd, cwd_real)):
+            match, project_meta, best = name, meta, len(base)
 if not match:
     sys.exit(0)   # not in a registered project → stay silent
 
-state_dir = (project_meta or {}).get("dir") or os.path.join(root, "projects", match)
+state_dir = state_of(match, project_meta or {})
 
 def active_stream():
     streams_dir = os.path.join(state_dir, "workstreams")

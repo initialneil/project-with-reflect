@@ -7,5 +7,5 @@ NAME="${1:?agent name required}"
 pwr_validate_name "agent name" "$NAME"
 ADIR="$PWR_ROOT/agents/$NAME"; mkdir -p "$ADIR"
 [ -f "$ADIR/agent.md" ] || printf '# %s — reusable sub-agent\n\n**Role:** \n**Use when:** \n**Tools:** \n' "$NAME" > "$ADIR/agent.md"
-pwr_registry_put agents "$NAME" "{\"dir\":\"$ADIR\"}"
+pwr_registry_put agents "$NAME" "{}"   # dir is always $ROOT/agents/<name>; no absolute path in the synced registry
 echo "Registered agent '$NAME' at $ADIR"

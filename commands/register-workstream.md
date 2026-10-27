@@ -5,7 +5,7 @@ argument-hint: "<workstream> based on <base>  — e.g. \"v081 based on v080, jus
 Run the **register-workstream** action of the `project-with-reflect` skill with arguments: $ARGUMENTS
 
 **Resolve the project from the current directory first.** Match `$PWD` against `registry.json`
-projects' `repo` / `dir` (the project whose repo contains `$PWD`). If none matches, **ask which
+projects' `repo` (`~` = $HOME) / state dir (`$PROJECT_WITH_REFLECT_ROOT/projects/<name>`; legacy `dir`) (the project whose repo contains `$PWD`). If none matches, **ask which
 project** — don't guess. (This is the same cwd→registry match the auto-log hook uses.)
 
 Then parse the args — **natural language is fine**, you translate it to flags:

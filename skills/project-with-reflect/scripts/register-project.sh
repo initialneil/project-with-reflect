@@ -90,7 +90,7 @@ PY
 # Scaffolds are a clean heading only — no meta-notes, no comment cruft (guidance lives in
 # SKILL.md). bootstrap fills them with real content; nothing to leave behind.
 [ -f "$PDIR/decisions.md" ] || printf '# Decisions — %s\n' "$NAME" > "$PDIR/decisions.md"
-[ -f "$PDIR/SKILL.md" ]     || sed "s/{{NAME}}/$NAME/g; s|{{PDIR}}|$PDIR|g" "$TPL/project-SKILL.md.tmpl" > "$PDIR/SKILL.md"
+[ -f "$PDIR/SKILL.md" ]     || sed "s/{{NAME}}/$NAME/g; s|{{PDIR}}|$(pwr_tilde "$PDIR")|g" "$TPL/project-SKILL.md.tmpl" > "$PDIR/SKILL.md"
 # Dashboard <name>.md = auto facts block (+ starter narrative if new); refreshes on re-register.
 bash "$HERE/gen-dashboard.sh" "$PDIR"
 
@@ -100,7 +100,9 @@ bash "$HERE/gen-dashboard.sh" "$PDIR"
 rm -f "$HOME/.claude/commands/$NAME.md"
 pwr_link_skill_dirs "$PDIR" "$NAME"
 
-pwr_registry_put projects "$NAME" "{\"dir\":\"$PDIR\",\"repo\":\"$REPO\",\"location\":\"$LOCATION\",\"host_connection\":\"$REMOTE\",\"workstream_mode\":\"$WSM\"}"
+# No "dir": the state dir is always $ROOT/projects/<name> (readers derive it), and an absolute
+# path here would break the other machines syncing this root. repo is ~-abbreviated for the same reason.
+pwr_registry_put projects "$NAME" "{\"repo\":\"$(pwr_tilde "$REPO")\",\"location\":\"$LOCATION\",\"host_connection\":\"$REMOTE\",\"workstream_mode\":\"$WSM\"}"
 
 # If the project lives inside an Obsidian vault with the folder-notes plugin, make sure
 # <name>/<name>.md attaches as the folder note (no-ops otherwise).

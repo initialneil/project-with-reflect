@@ -5,7 +5,7 @@ argument-hint: "<what to record>   (e.g. \"the GUAVA baseline …\" / \"this pap
 Run the **record** action of the current project's `project-with-reflect` skill with arguments: $ARGUMENTS
 
 **Resolve the project from the current directory first:** match `$PWD` against `registry.json` projects'
-`repo` / `dir` (the project whose repo or state dir contains `$PWD`). If none matches, **ask which
+`repo` (`~` = $HOME) / state dir (`$PROJECT_WITH_REFLECT_ROOT/projects/<name>`; legacy `dir`) (the project whose repo or state dir contains `$PWD`). If none matches, **ask which
 project** — don't guess. (Same cwd→registry match `/log-and-reflect` and the auto-log hook use.) Then
 follow `<project_dir>/SKILL.md`'s **record** action.
 

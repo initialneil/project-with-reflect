@@ -153,10 +153,21 @@ pwr_link_skill_dirs() {
   pwr_sync_daimon_skill "$DIR" "$NAME"
 }
 
+# pwr_tilde <path> — echo <path> with a leading $HOME shown as `~`. Use for every path
+# written INTO the synced root (SKILL.md, registry.json): the root syncs across machines whose
+# $HOME differs, so an expanded /Users/<me>/... breaks the others. Local-only files keep absolute.
+pwr_tilde() {
+  case "$1" in
+    "$HOME")   echo "~" ;;
+    "$HOME"/*) echo "~/${1#"$HOME"/}" ;;
+    *)         echo "$1" ;;
+  esac
+}
+
 pwr_install_skill() {
   local DIR="$1" NAME="$2" TPL="$3" HERE
   HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  [ -f "$DIR/SKILL.md" ] || sed "s/{{NAME}}/$NAME/g; s|{{DIR}}|$DIR|g" "$TPL" > "$DIR/SKILL.md"
+  [ -f "$DIR/SKILL.md" ] || sed "s/{{NAME}}/$NAME/g; s|{{DIR}}|$(pwr_tilde "$DIR")|g" "$TPL" > "$DIR/SKILL.md"
   [ -f "$DIR/log.md" ]   || echo "# log" > "$DIR/log.md"
   pwr_link_skill_dirs "$DIR" "$NAME"
   bash "$HERE/obsidian-folder-note.sh" "$DIR" || true

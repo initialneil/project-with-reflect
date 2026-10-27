@@ -5,7 +5,7 @@ argument-hint: "<workstream>   (the teammate lane to dismiss)"
 Run the **teammate-dismiss** action of the current project's `project-with-reflect` skill with arguments: $ARGUMENTS
 
 **Resolve the project from the current directory first:** match `$PWD` against `registry.json` projects'
-`repo` / `dir` (the project whose repo contains `$PWD`). If none matches, **ask which project** — don't
+`repo` (`~` = $HOME) / state dir (`$PROJECT_WITH_REFLECT_ROOT/projects/<name>`; legacy `dir`) (the project whose repo contains `$PWD`). If none matches, **ask which project** — don't
 guess. The commander lane = this session's active workstream.
 
 Then follow `<project_dir>/SKILL.md`'s **teammate-dismiss** workflow:

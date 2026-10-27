@@ -5,7 +5,7 @@ argument-hint: "[what to reflect on]   (optional — natural language ok)"
 Run the **reflect** action of the current project's `project-with-reflect` skill with arguments: $ARGUMENTS
 
 **Resolve the project from the current directory first:** match `$PWD` against `registry.json` projects'
-`repo` / `dir` (the project whose repo contains `$PWD`). If none matches, **ask which project** — don't
+`repo` (`~` = $HOME) / state dir (`$PROJECT_WITH_REFLECT_ROOT/projects/<name>`; legacy `dir`) (the project whose repo contains `$PWD`). If none matches, **ask which project** — don't
 guess. (Same cwd→registry match the auto-log hook and `/register-workstream` use.) Then follow
 `<project_dir>/SKILL.md`'s **reflect** workflow.
 

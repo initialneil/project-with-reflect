@@ -5,7 +5,7 @@ argument-hint: "<workstream>   (the sibling lane to assemble as a live teammate)
 Run the **teammate-assemble** action of the current project's `project-with-reflect` skill with arguments: $ARGUMENTS
 
 **Resolve the project from the current directory first:** match `$PWD` against `registry.json` projects'
-`repo` / `dir` (the project whose repo contains `$PWD`). If none matches, **ask which project** — don't
+`repo` (`~` = $HOME) / state dir (`$PROJECT_WITH_REFLECT_ROOT/projects/<name>`; legacy `dir`) (the project whose repo contains `$PWD`). If none matches, **ask which project** — don't
 guess. **Resolve the commander lane** = this session's active workstream (from the last checkin); if this
 session isn't checked into a workstream, ask which lane commands.
 

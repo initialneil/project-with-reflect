@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.13.0 — 2026-10-27
+
+- Portable paths in the synced root: SKILL.md/registry.json render $ROOT as ~/… (no machine-specific /Users/<me>), registry drops absolute dir (derived; legacy/foreign dir falls back), hook cwd match uses expanduser+realpath+deepest-match; scripts/check-portable-paths.sh proves two $HOMEs render byte-identical
+
 ## v0.12.4 — 2026-09-10
 
 - README (EN + 中文): companion skills grounding-rules + coding-by-contract (same philosophy: the load-bearing few, 纲举目张); Kimi Work syncs skills as real copies (rsync, .pwr-synced) since the app materializes symlinks at scan (doctor/common + Kimi adapter SKILL + README)
